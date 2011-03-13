@@ -1,4 +1,5 @@
-elsif ($message =~ /$sl !(8|eightball) (.+)/i) { 
+push (@commands_regexes, "$sl !(8|eightball) (.+)");
+push (@commands_subs, sub {
   my @response;
   $response[0] = "As I see it, yes.";
   $response[1] = "It is certain.";
@@ -24,4 +25,4 @@ elsif ($message =~ /$sl !(8|eightball) (.+)/i) {
   $answer = $response[$answer];
 
   ACT("MESSAGE","$target","$receiver: $answer"); 
-}
+});
