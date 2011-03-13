@@ -53,7 +53,7 @@ my $output = '';
 my($sender, $account, $hostname, $command, $target, $message, $receiver, $authed_channels, $answer, $plugin_list);
 my $nl = " :nlsh: ";
 my $sl = "^" . $self . "[:,]";
-my $version = "Gambot 5.0 | Experimental Plugin Processor | Perl 5.10.1 | Ubuntu 10.10";
+my $version = "Gambot 5.0 | Example Processor | Perl 5.10.1 | Ubuntu 10.10";
 my $about = "I am an IRC bot developed by Gambit. For more information, try my !help command, or visit my home channel: ##Gambot";
 
 #Sanitize any artificial end-of-message strings in the input
@@ -94,6 +94,7 @@ sub message_processor {
   if (($command eq 'MSG') || ($command eq 'PRIVMSG')) { 
     LoadPlugin("$home_folder/plugins/ctcp.pm");
     LoadPlugin("$home_folder/plugins/version.pm");
+    LoadPlugin("$home_folder/plugins/help.pm");
     LoadPlugin("$home_folder/plugins/about.pm");
     LoadPlugin("$home_folder/plugins/time.pm");
     LoadPlugin("$home_folder/plugins/hug.pm");
