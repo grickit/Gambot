@@ -1,4 +1,5 @@
 push (@commands_regexes, "$sl !quote? ?([0-9]+)? ?(.+)");
+push (@commands_helps, "!quote - Recalls a saved quote.");
 push (@commands_subs, sub {
   my ($choice, $person, $quotes, $temp_person, $i);
   $choice = $1;

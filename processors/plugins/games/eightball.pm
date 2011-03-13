@@ -1,4 +1,5 @@
 push (@commands_regexes, "$sl !(8|eightball) (.+)");
+push (@commands_helps, "!eightball - Predicts the future!");
 push (@commands_subs, sub {
   my @response;
   $response[0] = "As I see it, yes.";

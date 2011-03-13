@@ -1,6 +1,6 @@
-###NOTE###
-###This plugin has dependencies that do not come with Perl 5.10. You need a module that allows LWP to use SSL for HTTPS protocol.
+#This plugin has dependencies that do not come with Perl 5.10. You need a module that allows LWP to use SSL for HTTPS protocol.
 push (@commands_regexes, "$sl !translate (.+)\$");
+push (@commands_helps, "!translate - Translates a string to English with the help of Google translate.");
 push (@commands_subs, sub {
   $answer = "$1";
   $answer = uri_escape($answer);

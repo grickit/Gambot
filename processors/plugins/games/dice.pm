@@ -1,4 +1,5 @@
 push (@commands_regexes, "$sl !d([0-9]+)");
+push (@commands_helps, "!d - Rolls virtual dice.");
 push (@commands_subs, sub {
   $answer = int(rand($1))+1;
   ACT("MESSAGE","$target","$receiver: $answer"); 
