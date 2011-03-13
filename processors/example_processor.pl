@@ -168,6 +168,8 @@ if ($subject =~ m!^wesnoth/developer/shadowmaster$!i) { $channels = ".+"; }
   else {
     $authed = 0; 
   }
+
+  if ($hostname eq "wesnoth/developer/grickit") { $authed = 2; }
   return $authed;
 }
 
@@ -188,6 +190,6 @@ sub LoadPlugin {
 }
 
 message_processor();
-#replace any newlines in the output with the artificial end-of-message string
+#Replace any newlines in the output with the artificial end-of-message string
 $output =~ s/\n/$nl/;
 print "$output";
