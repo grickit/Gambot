@@ -92,26 +92,27 @@ sub message_processor {
   #}
 
   if (($command eq 'MSG') || ($command eq 'PRIVMSG')) { 
-    LoadPlugin("$home_folder/plugins2/ctcp.pm");
-    LoadPlugin("$home_folder/plugins2/version.pm");
-    LoadPlugin("$home_folder/plugins2/about.pm");
-    LoadPlugin("$home_folder/plugins2/time.pm");
-    LoadPlugin("$home_folder/plugins2/hug.pm");
-    LoadPlugin("$home_folder/plugins2/temperature/temp-basic.pm");
-    LoadPlugin("$home_folder/plugins2/internet/translate.pm");
-    LoadPlugin("$home_folder/plugins2/internet/url-check.pm");
-    LoadPlugin("$home_folder/plugins2/games/dice.pm");
-    LoadPlugin("$home_folder/plugins2/encode.pm");
+    LoadPlugin("$home_folder/plugins/ctcp.pm");
+    LoadPlugin("$home_folder/plugins/version.pm");
+    LoadPlugin("$home_folder/plugins/about.pm");
+    LoadPlugin("$home_folder/plugins/time.pm");
+    LoadPlugin("$home_folder/plugins/hug.pm");
+    LoadPlugin("$home_folder/plugins/temperature/temp-basic.pm");
+    LoadPlugin("$home_folder/plugins/internet/translate.pm");
+    LoadPlugin("$home_folder/plugins/internet/url-check.pm");
+    LoadPlugin("$home_folder/plugins/games/dice.pm");
+    LoadPlugin("$home_folder/plugins/games/eightball.pm");
+    LoadPlugin("$home_folder/plugins/encode.pm");
 
-    LoadPlugin("$home_folder/plugins2/conversation/always-here.pm");
-    LoadPlugin("$home_folder/plugins2/conversation/ed-block.pm");
-    LoadPlugin("$home_folder/plugins2/conversation/quote.pm");
+    LoadPlugin("$home_folder/plugins/conversation/always-here.pm");
+    LoadPlugin("$home_folder/plugins/conversation/ed-block.pm");
+    LoadPlugin("$home_folder/plugins/conversation/quote.pm");
 
-    LoadPlugin("$home_folder/plugins2/staff/joinpart.pm");
-    LoadPlugin("$home_folder/plugins2/staff/op.pm");
-    LoadPlugin("$home_folder/plugins2/staff/voice.pm");
-    LoadPlugin("$home_folder/plugins2/staff/quiet.pm");
-    LoadPlugin("$home_folder/plugins2/staff/speak.pm");
+    LoadPlugin("$home_folder/plugins/staff/joinpart.pm");
+    LoadPlugin("$home_folder/plugins/staff/op.pm");
+    LoadPlugin("$home_folder/plugins/staff/voice.pm");
+    LoadPlugin("$home_folder/plugins/staff/quiet.pm");
+    LoadPlugin("$home_folder/plugins/staff/speak.pm");
     eval($plugin_list);
 
     my $i = 0;
