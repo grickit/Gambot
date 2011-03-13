@@ -114,6 +114,7 @@ sub message_processor {
     LoadPlugin("$home_folder/plugins/staff/voice.pm");
     LoadPlugin("$home_folder/plugins/staff/quiet.pm");
     LoadPlugin("$home_folder/plugins/staff/speak.pm");
+    LoadPlugin("$home_folder/plugins/staff/checkauth.pm");
     eval($plugin_list);
 
     my $i = 0;
