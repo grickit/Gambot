@@ -40,7 +40,6 @@ my $sockqueue = Thread::Queue->new();
 unless (-e $config_file) {
   #This sets up all the variable values for the bot such as its name and what channels/rooms it uses.
   CONFIGURE:
-    system("reset");
     $config_vers = 3;
     print "Hello. It appears you have never run Gambot before.\n";
     print "You need to answer a few questions to setup the bot.\n----------\n";
