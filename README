@@ -57,11 +57,36 @@ the name of a text file for an alternate configuration. For example:
 
 ********** v. Developing plugins
 
+For developing plugins there are a few important variables:
+
+a. $sender - The nick of the person that sent the message
+b. $hostname - The hostname of the person that sent the messgae
+c. $target - What channel the message was sent to. For private messages
+this is automatically converted to $sender. This way you can always send
+messages back to $target.
+d. $message - The message itself.
+e. $receiver - Sometimes users would like to redirect the bot's response
+to another user in the same channel. $receiver will have that other user's
+nick. It will default to $sender if no redirect was specified.
+
+There are three basic jobs a command has to do.
+
+1. Push its regex into @commands_regexes
+2. Push a help string into @commands_helps
+3. Push a subroutine containing the command's actual code into @commands_subs
+
+They should be done in that order. See 
+processors/plugins/temperature/temp-basic.pm for a good example of a
+plugin that contains multiple commands.
+
+Then make sure that your plugin is being loaded by the processor that your
+bot is using.
+
 ********** vi. Developing alternate processors
 
 Gambot processors needn't be written in perl. Any programming
-language that can output plain text. You can even use server side
-web langauges such as PHP or ColdFusion.
+language that can output plain text can be used. You can even use server 
+side web langauges such as PHP or ColdFusion.
 
 The processor is run with a system call. It receives two arguments: 
 A raw IRC message that has been uri escaped (see Gambot.pl at around 
