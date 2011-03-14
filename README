@@ -1,12 +1,13 @@
 ********** Gambot IRC Bot **********
 
-i.   Licensing
-ii.  Setup
-iii. Directories and files
-iv.  Hosting Gambot
-v.   Developing plugins
-vi.  Developing processors
-vii. Developing Gambot
+i.    Licensing
+ii.   Setup
+iii.  Directories and files
+iv.   Hosting Gambot
+v.    Developing plugins
+vi.   Developing processors
+vii.  Developing Gambot
+viii. Getting help
 
 ************************************
 
@@ -50,8 +51,22 @@ The processor requirements should be minimal except during startup.
 
 We recommend storing your logs in logs/bot_name_goes_here/
 
+If you'd like to host more than one Gambot you can run Gambot.pl with
+the name of a text file for an alternate configuration. For example:
+'Gambot.pl foobar.txt'
+
 ********** v. Developing plugins
 
 ********** vi. Developing processors
 
 ********** vii. Develping Gambot
+
+The connection script itself is considered mostly complete at this time.
+Suggestions and patches are welcome however.
+
+********** viii. Getting help
+
+Currently the best way to contact me is on the freenode.net IRC network.
+Join ##Gambot and ask for Gambit.
+
+The bug/suggestion tracker is at: https://github.com/grickit/Gambot/issues
