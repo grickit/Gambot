@@ -1,0 +1,57 @@
+********** Gambot IRC Bot **********
+
+i.   Licensing
+ii.  Setup
+iii. Directories and files
+iv.  Hosting Gambot
+v.   Developing plugins
+vi.  Developing processors
+vii. Developing Gambot
+
+************************************
+
+********** i. Licensing
+
+This program's licensing information can be found in COPYING.
+If COPYING is not present you may not have received this program
+from an official source.
+
+********** ii. Setup
+
+Setting up Gambot is very simple. There are no prerequisites
+besides perl 5.10 or later. Run Gambot.pl and it will ask you a 
+few questions.
+
+********** iii. Directories and files
+
+In the root directory you should see Gambot.pl which is the main
+script.
+
+gamb_connect.pm, gamb_output.pm, and gamb_terminal.pm contain
+also contain source code pertinent to the main script.
+
+processors/example_processor.pl is an example processor script.
+This will be kept up to date as we upgrade things. It serves as a
+template for you to use for creating and upgrading your own bot
+configurations.
+
+processors/plugins/ contains all the default plugins. Plugin
+files contain code for related commands. If you're developing your
+own plugins, processors/plugins/version.pm serves as a good template.
+
+********** iv. Hosting Gambot
+
+Gambot requires at least 20MB of memory to run. 30MB or more is
+recommended. It is a very fractured, and threaded program. Memory can
+be saved by reducing the number of processing threads in Gambot.pl or
+by forgoing the terminal thread all togethor.
+
+The processor requirements should be minimal except during startup.
+
+We recommend storing your logs in logs/bot_name_goes_here/
+
+********** v. Developing plugins
+
+********** vi. Developing processors
+
+********** vii. Develping Gambot
