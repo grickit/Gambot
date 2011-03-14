@@ -18,8 +18,6 @@
 use strict;
 use warnings;
 
-system("reset");
-
 use threads;
 use Thread::Queue;
 use FindBin;
