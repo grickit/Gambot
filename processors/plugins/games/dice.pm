@@ -14,5 +14,5 @@ push (@commands_subs, sub {
   $i += 1;
   #ACT("MESSAGE","$target","$receiver: roll $i yielded $rand\n"); 
   }
-  ACT("MESSAGE","$target","$receiver: The total is $answer"); 
+  ACT("MESSAGE",$target,"$receiver: The total is $answer"); 
 });

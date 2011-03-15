@@ -30,6 +30,6 @@ push (@commands_subs, sub {
 
   $choice = int(rand($main::quotes{$person}{'size'})) + 1 if !($choice);
 
-  ACT("MESSAGE","$target","$receiver: \"$main::quotes{$person}{$choice}\" - $person $choice") if ($main::quotes{$person}{$choice});
-  ACT("MESSAGE","$target","$sender: I couldn't find any quotes for that person.") if !($main::quotes{$person}{$choice});
+  ACT("MESSAGE",$target,"$receiver: \"$main::quotes{$person}{$choice}\" - $person $choice") if ($main::quotes{$person}{$choice});
+  ACT("MESSAGE",$target,"$sender: I couldn't find any quotes for that person.") if !($main::quotes{$person}{$choice});
 });

@@ -177,7 +177,7 @@ if ($subject =~ m!^wesnoth/developer/shadowmaster$!i) { $channels = ".+"; }
 
 sub Error {
   my $channel = shift;
-  ACT("MESSAGE","$target","$sender: Sorry. You don't have permission to do that in $channel.");
+  ACT("MESSAGE",$target,"$sender: Sorry. You don't have permission to do that in $channel.");
 }
 
 sub LoadPlugin {

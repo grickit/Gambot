@@ -25,5 +25,5 @@ push (@commands_subs, sub {
   $answer = int(rand(19));
   $answer = $response[$answer];
 
-  ACT("MESSAGE","$target","$receiver: $answer"); 
+  ACT("MESSAGE",$target,"$receiver: $answer"); 
 });

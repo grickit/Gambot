@@ -10,5 +10,5 @@ push (@commands_subs, sub {
   my $content = $response->decoded_content;
   if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { $answer="$1"; $answer=~s/(\n|\s|\r|\t)+/ /g; ACT("MESSAGE","$target","$receiver: title: $answer"); }
   elsif (defined $content) { ACT("MESSAGE","$target","$receiver: It doesn't look like that page has a title."); }
-  else { ACT("MESSAGE","$target","$receiver: I can't get that page for some reason."); }
+  else { ACT("MESSAGE",$target,"$receiver: I can't get that page for some reason."); }
 });
