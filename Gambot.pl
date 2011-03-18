@@ -25,8 +25,6 @@ use lib "$FindBin::Bin";
 use URI::Escape;
 use Term::ANSIColor;
 $Term::ANSIColor::AUTORESET = 1;
-use POSIX qw/strftime/;
-use File::Path qw(make_path);
 
 my $home_folder = $FindBin::RealBin;
 our ($config_vers, $config_file, $server, $port, $self, $pass, $user, $logdir, $processor_name, $sock);
@@ -55,7 +53,7 @@ unless (-e $config_file) {
     print "4/7 What password should it login with?\n";
       $pass = <STDIN>;
       chop $pass;
-    print "6/7 Where should the bot's logs be stored? Enter the full path. If any folders do not exist, they will be created.\n";
+    print "6/7 Where should the bot's logs be stored? Enter the full path. This directory must already exist.\n";
       $logdir = <STDIN>;
       chop $logdir;
     print "7/7 What is the name of the bot's message processing script? If you don't have one you can use 'example_processor.pl'.\n";
@@ -64,7 +62,6 @@ unless (-e $config_file) {
     print "----------\nConnect to: $server:$port\nLogin as: $self\nUse password: $pass\nStore logs in $logdir\nProcessor: $processor_name\n";
     print "You can change any of these settings later by editing or deleting 'config.txt'.\n";
  
-  File::Path::mkpath("$logdir") unless(-d $logdir);
   open (CONFIGW, ">$config_file");
     print CONFIGW "$config_vers\n";
     print CONFIGW "$server\n";
@@ -98,17 +95,59 @@ goto CONFIGURE unless ($config_vers >= 3);
   chop $processor_name;
 close (CONFIGR);
 
-require gamb_output;
-require gamb_terminal;
-require gamb_connect;
+sub colorOutput {
+  #Get the current date and time. This is done every time in case the day changes while the bot is live.
+ my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
+  $mon += 1;
+  $year += 1900;
+  my $datestamp = "$year-$mon-$mday";
+  my $timestamp = "$hour:$min:$sec";
+  
+  #Grab the parameters.
+  my ($prefix, $message, $formatting) = @_;
+ 
+  #Print the message to the terminal output.
+  print colored ("$prefix $timestamp $message", "$formatting"), "\n";
+  #Print the message in the logs.
+  open FILE, ">>$main::logdir/$datestamp-$main::self.txt" or die "unable to open logfile \"$main::logdir/$datestamp-$main::self.txt\"";
+  print FILE "$prefix $timestamp $message\n";
+  close FILE;
+}
+
+sub terminal_input {
+  while(my $term_input = <STDIN>) {
+    chop $term_input;
+    print $main::sock "$term_input\r\n";
+    #Make a note of direct administrative input in the logs.
+    colorOutput("TERMINAL","$term_input",'red');
+  }
+}
+
+sub connect { 
+  #Create the socket and connect.
+  colorOutput("BOTERROR","I am attempting to connect.",'bold blue');
+  use IO::Socket; 
+  $main::sock = new IO::Socket::INET( 
+    PeerAddr => "$main::server", 
+    PeerPort => $main::port, 
+    Proto => 'tcp') 
+    or die "Error while connecting.";
+
+  #Login with services.
+  colorOutput("BOTERROR","I am attempting to login.",'bold blue');
+  ###Uncomment this line below if you have an account.
+  print $main::sock "PASS $main::user:$main::pass\x0D\x0A";
+  print $main::sock "NICK $main::self\x0D\x0A"; 
+  print $main::sock "USER $main::user 8 * :Perl Gambot\x0D\x0A"; 
+}
 
 sub process_message {
   while (my $inbound = $sockqueue->dequeue()) {
     chop $inbound; 
 
     #Highlighted?
-    unless ($inbound =~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) 372 $self :.+/) {
-      if ($inbound =~ /[ :]$self/) { colorOutput("INCOMING","$inbound",'dark yellow'); }
+    if ($inbound !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $self :.+/) {
+      if ($inbound =~ /$self/) { colorOutput("INCOMING","$inbound",'dark yellow'); }
       else { colorOutput("INCOMING","$inbound",''); }
  
       my $string = uri_escape($inbound,"A-Za-z0-9\0-\377");
@@ -132,13 +171,11 @@ my $thr1 = threads->create(\&terminal_input);
 my $thr2 = threads->create(\&process_message);
 my $thr3 = threads->create(\&process_message);
 my $thr4 = threads->create(\&process_message);
-my $thr5 = threads->create(\&process_message);
 
 $thr1->detach();
 $thr2->detach();
 $thr3->detach();
 $thr4->detach();
-$thr5->detach();
 
 #Grab socket input
 while(my $incoming_message = <$sock>) { 
