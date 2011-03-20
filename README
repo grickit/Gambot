@@ -89,14 +89,13 @@ language that can output plain text can be used. You can even use server
 side web langauges such as PHP or ColdFusion.
 
 The processor is run with a system call. It receives two arguments: 
-A raw IRC message that has been uri escaped (see Gambot.pl at around 
-line 114) and the name of the bot.
+A raw IRC message that has been uri escaped (see Gambot.pl) and the name of the bot.
 
 You just need to accept these arguments and unescape the message before
 processing.
 
 Print your output just like you normally would, but separate individual
-lines with the string " :nlsh: " (spaces included).
+lines with newlines.
 
 ********** vii. Develping Gambot
 
