@@ -20,8 +20,6 @@ use warnings;
 
 #####----------Setup----------#####
 
-use Switch;
-use CGI;
 use URI::Escape;
 use POSIX qw/strftime/;
 use LWP::Simple;
@@ -29,21 +27,7 @@ use FindBin;
 use lib "$FindBin::Bin";
 my $home_folder = $FindBin::RealBin;
 
-#The arguments for running this as a cgi page or a script
-my $url_args = CGI->new;
-my @cmd_args = @ARGV;
-my ($incoming_message, $self);
-
-#If it's run as a script
-if (@cmd_args > 0) {
-  $incoming_message = $cmd_args[0];
-  $self = $cmd_args[1]; }
-
-#If it's run as a webpage
-else {
-  $incoming_message = $url_args->param('msg');
-  $self=$url_args->param('self');
-  print "Content-type: text/html\r\n\r\n"; }
+my ($incoming_message, $self) = @ARGV;
 
 #Messages are sent in a heavily uri_escaped form. We need to undo that before we can parse them.
 $incoming_message = uri_unescape($incoming_message,"A-Za-z0-9\0-\377");
@@ -133,16 +117,10 @@ sub message_processor {
 #####----------Subroutines----------#####
 
 sub ACT {
-  switch ($_[0]) {
-
-    case /MESSAGE/ { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
-
-    case /ACTION/ { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
-
-    case /(NOTICE|PART|KICK|INVITE)/ { $output = $output . "$_[0] $_[1] :$_[2]"; }
-
-    case /JOIN/ { $output = $output . "JOIN $_[1]"; }
-  }
+  if ($_[0] =~ /MESSAGE/) { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
+  elsif ($_[0] =~ /ACTION/) { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
+  elsif ($_[0] =~ /(NOTICE|PART|KICK|INVITE)/) { $output = $output . "$_[0] $_[1] :$_[2]"; }
+  elsif ($_[0] =~ /JOIN/) { $output = $output . "JOIN $_[1]"; }
 }
 
 sub CheckAuth {
@@ -180,15 +158,12 @@ sub Error {
 
 sub LoadPlugin {
   my $plugin = shift;
-  open(DAT, $plugin) || die("Could not open file!");
-  my @raw_data=<DAT>;
-  close(DAT);
-
-  foreach my $current_line (@raw_data) {
-    $plugin_list = $plugin_list . $current_line;
+  open(DAT, $plugin) or die "Could not open file plugin file \"$plugin\"";
+  while(<DAT>) {
+    $plugin_list .= $_;
   }
+  close(DAT);
 }
 
 message_processor();
-#Replace any newlines in the output with the artificial end-of-message string
 print "$output";
