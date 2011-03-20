@@ -51,14 +51,12 @@ $incoming_message = uri_unescape($incoming_message,"A-Za-z0-9\0-\377");
 #general variables
 my $output = '';
 my($sender, $account, $hostname, $command, $target, $message, $receiver, $authed_channels, $answer, $plugin_list);
-my $nl = " :nlsh: ";
 my $sl = "^" . $self . "[:,]";
 my $version = "Gambot 5.0 | Example Processor | Perl 5.10.1 | Ubuntu 10.10";
 my $about = "I am an IRC bot developed by Gambit. For more information, try my !help command, or visit my home channel: ##Gambot";
 
 #Sanitize any artificial end-of-message strings in the input
 chop $incoming_message;
-$incoming_message =~ s/$nl//;
 
 #####----------Parsing----------#####
 
@@ -193,5 +191,4 @@ sub LoadPlugin {
 
 message_processor();
 #Replace any newlines in the output with the artificial end-of-message string
-$output =~ s/\n/$nl/;
 print "$output";
