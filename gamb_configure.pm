@@ -42,7 +42,7 @@ sub read_configuration {
     }
   }
   else {
-    print "Config file does not exist. Run setup.pl\n";
+    print "Config file \"$main::config_file\" does not exist. Run setup.pl\n";
     exit;
   }
 }
