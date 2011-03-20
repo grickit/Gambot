@@ -57,7 +57,7 @@ sub process_message {
     chop $inbound; 
 
     #Filter MotD spam
-    if ($inbound !~ /^:[a-zA-Z0-9-_\w]+\.+(net|com|org|gov|edu) (372|375|376) $self :.+/) {
+    if ($inbound !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $self :.+/) {
       #Highlighted?
       if ($inbound =~ /$self/) { colorOutput("INCOMING","$inbound",'dark yellow'); }
       else { colorOutput("INCOMING","$inbound",''); }
