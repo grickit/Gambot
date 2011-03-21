@@ -117,10 +117,10 @@ sub message_processor {
 #####----------Subroutines----------#####
 
 sub ACT {
-  if ($_[0] =~ /MESSAGE/) { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
-  elsif ($_[0] =~ /ACTION/) { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
-  elsif ($_[0] =~ /(NOTICE|PART|KICK|INVITE)/) { $output = $output . "$_[0] $_[1] :$_[2]"; }
-  elsif ($_[0] =~ /JOIN/) { $output = $output . "JOIN $_[1]"; }
+  if ($_[0] eq 'MESSAGE') { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
+  elsif ($_[0] eq 'ACTION') { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
+  elsif ($_[0] eq '(NOTICE|PART|KICK|INVITE)') { $output = $output . "$_[0] $_[1] :$_[2]"; }
+  elsif ($_[0] eq 'JOIN') { $output = $output . "JOIN $_[1]"; }
 }
 
 sub CheckAuth {
