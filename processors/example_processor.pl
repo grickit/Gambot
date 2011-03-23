@@ -119,7 +119,7 @@ sub message_processor {
 sub ACT {
   if ($_[0] eq 'MESSAGE') { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
   elsif ($_[0] eq 'ACTION') { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
-  elsif ($_[0] eq '(NOTICE|PART|KICK|INVITE)') { $output = $output . "$_[0] $_[1] :$_[2]"; }
+  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { $output = $output . "$_[0] $_[1] :$_[2]"; }
   elsif ($_[0] eq 'JOIN') { $output = $output . "JOIN $_[1]"; }
 }
 
