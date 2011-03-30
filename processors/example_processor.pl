@@ -55,7 +55,8 @@ sub message_processor {
   if ($incoming_message =~ m/^:([$valid_name_characters]+)!~?([$valid_name_characters]+)@(.+?) ([A-Z]+) ?(#*.+? )?:?(.+?)?$/) {
     ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
     $receiver = $sender;
-    $target =~ s/ $//;
+    $target =~ s/ +$//;
+    $message =~ s/ +$//;
   }
   elsif ($incoming_message =~ /^:(.+?) MODE $self :?\+i/i) { 
 	$output = "JOIN ##Gambot"; }
