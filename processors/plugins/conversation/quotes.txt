@@ -8,7 +8,7 @@
 
 *list
 #1
--http://wesnoth-umc-dev.svn.sourceforge.net/svnroot/wesnoth-umc-dev/branches/irc-bots/Gambot/processors/plugins/conversation/quotes.txt
+-https://github.com/grickit/Gambot/blob/master/processors/plugins/conversation/quotes.txt
 
 *list local
 #1
@@ -21,12 +21,10 @@
 -People we have a… TROPE!
 -NOBODY TOUCH THAT LINK!
 -what do you need a driver's license for? most drivers you need are in the Linux kernel.
--** shadowm_laptop is now known as Shadowmbit
--Gambit: stop quoting me
 -CANNOT UNSEA
 -I don't believe in large genitals being instant win.
--you want me to get violent with you?
 -I have this deep feeling of self-satisfaction whenever I see you bite the dust.
+-◕ ‿‿ ◕
 -highlight me dammit. highlight me all you want. highlight me for decades if you want. just highlight me!
 -COMMAS ARE FOR PUSSIES
 
@@ -116,7 +114,7 @@
 -Only M$ can induce that warm feeling of user-friendliness, and it does this not with coding or documentation but with irresistable social-engineering magic :P
 
 *Gambit
-#7
+#8
 -I've heard it both ways.
 -I will kick you so hard that candy will come out!
 -Interesting.
@@ -209,8 +207,39 @@
 -Don't paste on IRC! Use a pastebin: http://pastebin.com/ http://imagebin.org 
 
 *Dr. Cox
-#4
+#8
 -Unfortunately Radar, I'm fresh out of gold stars.
 -You're having a big day there Susan.
 -You have five seconds to get out of this room. Otherwise I'm going to start whacking you on the nose.
 -If your head explodes, you'll never make it as a doctor.
+-I was just wondering how you comb your hair so the horns don’t show.
+-Everyone, we can all relax now. The planets have been realigned and order shall be returned to the people.
+-Oh, my god. I care so little, I almost passed out.
+-You would hear crickets chirping, but they were just too uncomfortable about how unfunny that actually was.
+-That is both very sad, and yet totally not shocking.
+
+*Turuk
+#2
+-I would imagine they are equipped with either melee or ranged attacks, maybe even a combination of both, and are actively trying to kill each other.
+-The members here suffer from a mild for of posting ADD. They tend to get distracted by the least little... OOH butterfly!
+
+*Murdock
+#1
+-Have you ever seen a hearse go by and think that some day you'll surely die? They put you in a little box, and cover you over with dirt and rocks.
+
+*Ed Reed
+#2
+-I'm hurt dawg!
+-Don't ask me if I'm alright!
+-HELL NAH!
+
+*Gwen Stefani
+#1
+-B-A-N-A-N-A-S
+-This shit is bananas.
+
+*Tim and Eric
+#3
+-I sit down when I pee. There's nothing that crazy 'bout me.
+-I'm just taking a wiz. Mind your own biz. Why is everybody always staring at me?
+-Hey bro. I gotta go. Let me through I gotta go number two.
