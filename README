@@ -97,7 +97,7 @@ processing.
 Print your output just like you normally would, but separate individual
 lines with newlines.
 
-********** vii. Develping Gambot
+********** vii. Developing Gambot
 
 The connection script itself is considered mostly complete at this time.
 Suggestions and patches are welcome however.
