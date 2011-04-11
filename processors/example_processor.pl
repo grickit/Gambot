@@ -27,6 +27,8 @@ use FindBin;
 use lib "$FindBin::Bin";
 my $home_folder = $FindBin::RealBin;
 
+$| = 1;
+
 my ($incoming_message, $self) = @ARGV;
 
 #Messages are sent in a heavily uri_escaped form. We need to undo that before we can parse them.
