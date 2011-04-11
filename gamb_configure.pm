@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
+###This file reads configuration files into variables.
+
 use strict;
 use warnings;
 
@@ -33,7 +35,10 @@ sub read_configuration {
       elsif ($current_line =~ /^\s*log_dir *= *(.+)/) { $main::logdir = $1 }
       elsif ($current_line =~ /^\s*processor *= *(.+)/) { $main::processor_name = $1 }
       elsif ($current_line =~ /^\s*terminal_enabled *= *([0-9]+)/) { $main::term_enabled = $1 }
+      elsif ($current_line =~ /^\s*timer_enabled *= *([0-9]+)/) { $main::timer_enabled = $1 }
       elsif ($current_line =~ /^\s*processor_threads *= *([0-9]+)/) { $main::num_threads = $1 }
+      elsif ($current_line =~ /^\s*regex *= *(.+)/) { $main::timer_regex = $1 }
+      elsif ($current_line =~ /^\s*action *= *(.+)/) { $main::timer_action = $1 }
     }
 
     unless ($main::config_vers == $main::needed_config_vers) {

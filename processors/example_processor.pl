@@ -59,8 +59,9 @@ sub message_processor {
     $message =~ s/ +$//;
   }
   elsif ($incoming_message =~ /^:(.+?) MODE $self :?\+i/i) { 
-	$output = "JOIN ##Gambot"; }
-  elsif ($incoming_message =~ /^PING(.*)$/i) { $output = "PONG$1"; return; }
+    ACT("JOIN","##Gambot",'');
+  }
+  elsif ($incoming_message =~ /^PING(.*)$/i) { print "send>PONG$1"; return; }
   else { return; }
   #}
   
@@ -118,10 +119,12 @@ sub message_processor {
 #####----------Subroutines----------#####
 
 sub ACT {
-  if ($_[0] eq 'MESSAGE') { $output = $output . "PRIVMSG $_[1] :$_[2]"; }
-  elsif ($_[0] eq 'ACTION') { $output = $output . "PRIVMSG $_[1] :ACTION $_[2]"; }
-  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { $output = $output . "$_[0] $_[1] :$_[2]"; }
-  elsif ($_[0] eq 'JOIN') { $output = $output . "JOIN $_[1]"; }
+  if ($_[0] eq 'MESSAGE') { print "send>PRIVMSG $_[1] :$_[2]\n"; }
+  elsif ($_[0] eq 'ACTION') { print "send>PRIVMSG $_[1] :ACTION $_[2]\n"; }
+  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send>$_[0] $_[1] :$_[2]\n"; }
+  elsif ($_[0] eq 'JOIN') { print "send>JOIN $_[1]\n"; }
+  elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
+  $output = 1;
 }
 
 sub CheckAuth {
@@ -167,4 +170,3 @@ sub LoadPlugin {
 }
 
 message_processor();
-print "$output";

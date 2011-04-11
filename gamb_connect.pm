@@ -15,12 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
+###This file connects to the server.
+
 use strict;
 use warnings;
 
 sub connect_to_server { 
   #Create the socket and connect.
-  colorOutput("BOTERROR","I am attempting to connect.",'bold blue');
+  colorOutput("BOTEVENT","I am attempting to connect.",'bold blue');
   use IO::Socket; 
   $main::sock = new IO::Socket::INET( 
     PeerAddr => "$main::server", 
@@ -29,7 +31,7 @@ sub connect_to_server {
     or die "Error while connecting.";
 
   #Login with services.
-  colorOutput("BOTERROR","I am attempting to login.",'bold blue');
+  colorOutput("BOTEVENT","I am attempting to login.",'bold blue');
   ###Uncomment this line below if you have an account.
   print $main::sock "PASS $main::self:$main::pass\x0D\x0A";
   print $main::sock "NICK $main::self\x0D\x0A"; 

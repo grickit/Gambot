@@ -30,8 +30,8 @@ sub ask_question {
 }
 
 my $home_folder = $FindBin::RealBin;
-my $config_file = 'config.txt';
-my $config_vers = 4;
+my $config_file = "$home_folder/config.txt";
+my $config_vers = 5;
 
 my @cmd_args = @ARGV;
 $config_file = "$home_folder/$cmd_args[0]" if @cmd_args;
@@ -44,8 +44,21 @@ my $nick = &ask_question("What should the bot's nick be?");
 my $pass = &ask_question("What password should the bot use? (Leave blank if no password.)");
 my $logdir = &ask_question("Where should the bot's logs be stored?\nEnter a full path. This directory should already exist.");
 my $processor = &ask_question("What processor should the bot use?\nIf you don't know just enter \"example_processor.pl\"");
-my $terminal = &ask_question("Do you want to enable the termianl thread? (Y/N)\nThe terminal thread allows you to enter raw IRC in the terminal.\nThis feature costs ~2MB of extra memory.");
+my $terminal = &ask_question("Do you want to enable the terminal thread? (Y/N)\nThe terminal thread allows you to enter raw IRC in the terminal.\nThis feature costs ~2MB of extra memory.");
 my $num_processors = &ask_question("How many message processing threads do you want? (2-10 recommended)");
+my $timer = &ask_question("Do you want to enable the timer thread? (Y/N)\nThe timer thread allows you to run a script at certain time intervals.\nThis feature costs ~2MB of extra memory.");
+my ($timer_script, $timer_minutes);
+if ($timer =~ /y/i) { 
+  $timer = 1;
+  $timer_regex = &ask_question("Enter a regular expression that will match hours:minutes:seconds signifying when your script should run.\nExample: \"^[0-9]*:[0-9]*0:0*\$\" to run every tenth minute.");
+  $timer_script = &ask_question("What timer script do you want to use?\nIf you don't know you should re-run setup and choose not to enable to the timer thread.");
+}
+else {
+  $timer = 0;
+  $timer_regex = 0;
+  $timer_script = 0;
+}
+
 
 if ($terminal =~ /y/i) { $terminal = 1; }
 else { $terminal = 0; }
@@ -71,8 +84,14 @@ open (CONFIGW, ">$config_file");
 
   [logic]
     terminal_enabled = $terminal
+    timer_enabled = $timer
     processor_threads = $num_processors
   [/logic]
+
+  [timer]
+    regex = $timer_regex
+    action = $timer_script
+  [/timer]
 [/bot]
 ";
 close (CONFIGW);

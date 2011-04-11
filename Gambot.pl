@@ -27,18 +27,20 @@ use URI::Escape;
 use gamb_output;
 use gamb_connect;
 use gamb_terminal;
+use gamb_timer;
+use gamb_parser;
 use gamb_configure;
 
-my $home_folder = $FindBin::RealBin;
+our $home_folder = $FindBin::RealBin;
 
 #Connection variables
 our ($server, $port, $self);
 our $pass = '';
 #Management variables
-our ($logdir, $processor_name, $term_enabled, $num_threads);
+our ($logdir, $processor_name, $term_enabled, $timer_enabled, $timer_regex, $timer_action, $num_threads);
 our $config_file = 'config.txt';
 our $config_vers = 0;
-our $needed_config_vers = 4;
+our $needed_config_vers = 5;
 #Socket connection
 our $sock;
 
@@ -65,14 +67,12 @@ sub process_message {
       my $string = uri_escape($inbound,"A-Za-z0-9\0-\377");
       my $content = `perl $home_folder/processors/$processor_name "$string" "$self" 2>/dev/null`;
     
-      colorOutput("BOTERROR","Couldn't get the page.",'bold blue') unless defined $content;
+      colorOutput("BOTERROR","Couldn't get the page.",'bold red') unless defined $content;
       my @lines = split('\n', $content);
 	
       foreach my $current_line (@lines) {
 	$current_line =~ s/\s+$//;
-	print $sock "$current_line\n";
-	colorOutput("OUTGOING","$current_line",'red');
-	select(undef, undef, undef, 0.5);
+	parse_command($current_line);
       }
     }
   }
@@ -80,6 +80,11 @@ sub process_message {
 
 if ($term_enabled) {
   push(@threads,threads->create(\&terminal_input));
+  $threads[-1]->detach();
+}
+
+if ($timer_enabled) {
+  push(@threads,threads->create(\&timer_clock));
   $threads[-1]->detach();
 }
 

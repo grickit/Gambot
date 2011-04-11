@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
+###This file handles terminal output and logging.
+
 use strict;
 use warnings;
 use Term::ANSIColor;
