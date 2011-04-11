@@ -15,18 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-###This file processes terminal input.
+###This file executes a script at certain time intervals.
 
 use strict;
 use warnings;
 
-sub terminal_input {
-  while(my $term_input = <STDIN>) {
-    chop $term_input;
-    #Make a note of direct administrative input in the logs.
-    colorOutput("TERMINAL","$term_input",'red');
-    parse_command($term_input);
+sub timer_clock {
+  colorOutput("BOTEVENT","Timer started.",'bold blue');
+  while (1) {
+    my ($sec,$min,$hour,undef,undef,undef,undef,undef,undef) = localtime(time);
+    if ("$hour:$min:$sec" =~ /$main::timer_regex/) {
+      timer_action();
+    }
+    else {
+      sleep(1);
+    }
   }
+}
+
+sub timer_action {
+  colorOutput("BOTEVENT","Timer triggered.",'bold blue');
+  open(TIMER, "perl $main::home_folder/processors/timers/$main::timer_action |");
+  while (my $current_line = <TIMER>) {
+    parse_command($current_line);
+  }              
+  close(TIMER);
 }
 
 return 1;

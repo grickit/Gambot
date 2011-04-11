@@ -15,17 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-###This file processes terminal input.
+###This file parses the Gambot API
 
 use strict;
 use warnings;
 
-sub terminal_input {
-  while(my $term_input = <STDIN>) {
-    chop $term_input;
-    #Make a note of direct administrative input in the logs.
-    colorOutput("TERMINAL","$term_input",'red');
-    parse_command($term_input);
+sub parse_command {
+  my $command = shift;
+
+  if ($command =~ /^send>(.+)$/) {
+    print $main::sock "$1\n";
+    colorOutput("OUTGOING","$1",'red');
+    select(undef, undef, undef, 0.5);
+  }
+
+  elsif ($command =~ /^timer>$/) {
+    timer_action();
+  }
+
+  elsif ($command =~ /^quit>$/) {
+    colorOutput("BOTERROR","Shut down by API call.",'bold red');
+    exit;
+  }
+
+  elsif ($command =~ /^log>(.+)$/) {
+    colorOutput("APIEVENT","$1",'bold green');
+  }
+
+  else {
+    colorOutput("BOTERROR","Unknown API call.",'bold red');
+    colorOutput("BOTERROR","$command",'bold red');
   }
 }
 

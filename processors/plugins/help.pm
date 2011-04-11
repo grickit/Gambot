@@ -5,7 +5,7 @@ push (@commands_subs, sub {
     }
     else {
       foreach my $current_help (@commands_helps) {
-	ACT("NOTICE",$target,"$current_help\n"); 
+	ACT("NOTICE",$target,"$current_help"); 
       }
     }
 });

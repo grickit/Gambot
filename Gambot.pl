@@ -61,19 +61,16 @@ sub process_message {
     #Filter MotD spam
     if ($inbound !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $self :.+/) {
       #Highlighted?
-      if ($inbound =~ /$self/) { colorOutput("INCOMING","$inbound",'dark yellow'); }
+      if ($inbound =~ /$self/) { colorOutput("INCOMING","$inbound",'bold yellow'); }
       else { colorOutput("INCOMING","$inbound",''); }
  
       my $string = uri_escape($inbound,"A-Za-z0-9\0-\377");
-      my $content = `perl $home_folder/processors/$processor_name "$string" "$self" 2>/dev/null`;
-    
-      colorOutput("BOTERROR","Couldn't get the page.",'bold red') unless defined $content;
-      my @lines = split('\n', $content);
-	
-      foreach my $current_line (@lines) {
-	$current_line =~ s/\s+$//;
+   
+      open(MESSAGE, "perl $home_folder/processors/$processor_name \"$string\" \"$self\" |");
+      while (my $current_line = <MESSAGE>) {
 	parse_command($current_line);
-      }
+      }              
+      close(MESSAGE);
     }
   }
 }
