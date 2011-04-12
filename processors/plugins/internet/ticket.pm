@@ -1,6 +1,7 @@
 push (@commands_regexes, "$sl !ticket ([0-9]+)");
 push (@commands_helps, "!ticket - Links to project's support tickets.");
 push (@commands_subs, sub {
+  require LWP::Simple;
   $answer = $1; 
   $answer = "http://trac.unknown-horizons.org/t/ticket/$answer" if ($target =~ /#unknown-horizons/);
   $answer = "https://github.com/grickit/Gambot/issues#issue/$answer" if ($target =~ /##Gambot/);

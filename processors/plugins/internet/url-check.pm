@@ -1,5 +1,6 @@
 push (@commands_regexes, "$sl (http:\/\/(.+))\$");
 push (@commands_subs, sub {
+  require LWP::Simple;
   my $url = $1;
   my $request = LWP::UserAgent->new;
   $request->timeout(60);

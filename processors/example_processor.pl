@@ -22,7 +22,6 @@ use warnings;
 
 use URI::Escape;
 use POSIX qw/strftime/;
-use LWP::Simple;
 use FindBin;
 use lib "$FindBin::Bin";
 my $home_folder = $FindBin::RealBin;

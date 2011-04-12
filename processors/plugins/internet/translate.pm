@@ -2,6 +2,7 @@
 push (@commands_regexes, "$sl !translate (.+)\$");
 push (@commands_helps, "!translate - Translates a string to English with the help of Google translate.");
 push (@commands_subs, sub {
+  require LWP::Simple;
   $answer = "$1";
   $answer = uri_escape($answer);
   my $url = "https://www.googleapis.com/language/translate/v2?key=AIzaSyA7oMrml5891LSmnZY0scg7gKLRnvb54Pc&target=en&q=$answer";

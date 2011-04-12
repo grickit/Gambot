@@ -1,5 +1,6 @@
 push (@commands_regexes, "$sl !youtube ([a-zA-Z0-9]+)");
 push (@commands_subs, sub {
+  require LWP::Simple;
   my $vid = $1;
   my $url = "http://gdata.youtube.com/feeds/api/videos/$vid?v=2";
   my $request = LWP::UserAgent->new;

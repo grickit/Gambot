@@ -1,6 +1,7 @@
 #This plugin must be the last one loaded if used.
 push (@commands_regexes, "$sl (.+)\$");
 push (@commands_subs, sub {
+  require LWP::Simple;
   if (($hostname !~ /\/bot\//i) && ($sender !~ /bot$/i) && !($output)) {
     $answer = "$message";
     $answer =~ s/$sl( +)//;
