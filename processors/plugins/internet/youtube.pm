@@ -20,9 +20,9 @@ push (@commands_subs, sub {
     ACT("MESSAGE",$target,"$receiver: The title is \"$title\". It was uploaded by \"$1\".");
 
     $content =~ /<yt:statistics favoriteCount='([0-9]+)' viewCount='([0-9]+)'\/>/;
-    my ($favorites, $views) = ($2, $1);
+    my ($favorites, $views) = ($1, $2);
     $content =~ /<yt:rating numDislikes='([0-9]+)' numLikes='([0-9]+)'\/>/;
-    my ($likes, $dislikes) = ($2, $1);
+    my ($dislikes, $likes) = ($1, $2);
     ACT("MESSAGE",$target,"$receiver: It has $views views, $likes likes, and $dislikes dislikes.");
 
     $content =~ /<yt:duration seconds='([0-9]+)'\/>/;
@@ -32,4 +32,5 @@ push (@commands_subs, sub {
 
     ACT("MESSAGE",$target,"$receiver: It is $length_m minutes and $length_s seconds long.");
   }
+  ACT("MESSAGE",$target,"$receiver: http://www.youtube.com/watch?v=$vid");
 });
