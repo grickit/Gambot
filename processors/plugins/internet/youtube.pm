@@ -32,5 +32,13 @@ push (@commands_subs, sub {
 
     ACT("MESSAGE",$target,"$receiver: It is $length_m minutes and $length_s seconds long.");
   }
+
+  if ($content =~ /<media:restriction type='country'/) {
+    ACT("MESSAGE",$target,"$receiver: This video is unavailable in some regions.");
+  }
+  else {
+    ACT("MESSAGE",$target,"$receiver: This video has no region restrictions.");
+  }
+
   ACT("MESSAGE",$target,"$receiver: http://www.youtube.com/watch?v=$vid");
 });
