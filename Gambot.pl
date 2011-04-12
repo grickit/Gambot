@@ -66,7 +66,7 @@ sub process_message {
  
       my $string = uri_escape($inbound,"A-Za-z0-9\0-\377");
    
-      open(MESSAGE, "perl $home_folder/processors/$processor_name \"$string\" \"$self\" |");
+      open(MESSAGE, "perl $home_folder/processors/$processor_name \"$string\" \"$self\" 2>/dev/null |");
       while (my $current_line = <MESSAGE>) {
 	parse_command($current_line);
       }              
