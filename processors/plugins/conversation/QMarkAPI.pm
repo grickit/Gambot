@@ -9,7 +9,7 @@ push (@commands_subs, sub {
     my $url = "http://aesoft.org/qmark/qmai.php?q=$answer";
     $url =~ s/%0D/ /;
     $url =~ s/%20$//;
-    $answer = get $url;
+    $answer = LWP::Simple::get $url;
     $answer =~ s/\n/ /;
     ($answer) ? ACT("MESSAGE",$target,"$receiver: $answer") : ACT("MESSAGE",$target,"Gambit: Couldn't get the page ^^^");
   }
