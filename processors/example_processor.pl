@@ -60,6 +60,7 @@ sub message_processor {
   }
   elsif ($incoming_message =~ /^:(.+?) MODE $self :?\+i/i) { 
     ACT("JOIN","##Gambot",'');
+    return;
   }
   elsif ($incoming_message =~ /^PING(.*)$/i) { print "send>PONG$1"; return; }
   else { return; }
