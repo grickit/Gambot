@@ -1,4 +1,4 @@
-push (@commands_regexes, "$sl !youtube ([a-zA-Z0-9]+)");
+push (@commands_regexes, "$sl !youtube ([a-zA-Z0-9-_]+)");
 push (@commands_subs, sub {
   require LWP::Simple;
   my $vid = $1;
