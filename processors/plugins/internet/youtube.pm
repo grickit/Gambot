@@ -16,30 +16,27 @@ push (@commands_subs, sub {
   }
 
   elsif ($content =~ /<title>(.+)<\/title>/) {
-    my $title = $1;
+    my ($title, $uploader, $favorites, $views, $dislikes, $likes, $length, $length_m, $length_s, $restricted);
+    $title = $1;
     $content =~ /<name>(.+)<\/name>/;
-    ACT("MESSAGE",$target,"$receiver: The title is \"$title\". It was uploaded by \"$1\".");
-
+    $uploader = $1;
     $content =~ /<yt:statistics favoriteCount='([0-9]+)' viewCount='([0-9]+)'\/>/;
-    my ($favorites, $views) = ($1, $2);
+    ($favorites, $views) = ($1, $2);
     $content =~ /<yt:rating numDislikes='([0-9]+)' numLikes='([0-9]+)'\/>/;
-    my ($dislikes, $likes) = ($1, $2);
-    ACT("MESSAGE",$target,"$receiver: It has $views views, $likes likes, and $dislikes dislikes.");
-
+    ($dislikes, $likes) = ($1, $2);
     $content =~ /<yt:duration seconds='([0-9]+)'\/>/;
-    my $length = $1;
-    my $length_m = int($length / 60);
-    my $length_s = $length % 60;
+    $length = $1;
+    $length_m = int($length / 60);
+    $length_s = $length % 60;
 
-    ACT("MESSAGE",$target,"$receiver: It is $length_m minutes and $length_s seconds long.");
+    if ($content =~ /<media:restriction type='country'/) {
+      $restricted = "(\x0307unavailable in some regions\x0F)";
+    }
+    else {
+      $restricted = "(\x0314no region restrictions\x0F)";
+    }
+    ACT('MESSAGE',$target,"$receiver: http://www.youtube.com/watch?v=$vid");
+    ACT('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
+    ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted");
   }
-
-  if ($content =~ /<media:restriction type='country'/) {
-    ACT("MESSAGE",$target,"$receiver: This video is unavailable in some regions.");
-  }
-  else {
-    ACT("MESSAGE",$target,"$receiver: This video has no region restrictions.");
-  }
-
-  ACT("MESSAGE",$target,"$receiver: http://www.youtube.com/watch?v=$vid");
 });
