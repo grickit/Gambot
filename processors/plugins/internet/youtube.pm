@@ -28,6 +28,7 @@ push (@commands_subs, sub {
     $length = $1;
     $length_m = int($length / 60);
     $length_s = $length % 60;
+    $length_s = "0$length_s" if ($length_s =~ /^[0-9]$/);
 
     if ($content =~ /<media:restriction type='country'/) {
       $restricted = "(\x0307unavailable in some regions\x0F)";
@@ -35,8 +36,7 @@ push (@commands_subs, sub {
     else {
       $restricted = "(\x0314no region restrictions\x0F)";
     }
-    ACT('MESSAGE',$target,"$receiver: http://www.youtube.com/watch?v=$vid");
     ACT('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
-    ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted");
+    ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
   }
 });
