@@ -47,7 +47,7 @@ my $processor = &ask_question("What processor should the bot use?\nIf you don't 
 my $terminal = &ask_question("Do you want to enable the terminal thread? (Y/N)\nThe terminal thread allows you to enter raw IRC in the terminal.\nThis feature costs ~2MB of extra memory.");
 my $num_processors = &ask_question("How many message processing threads do you want? (2-10 recommended)");
 my $timer = &ask_question("Do you want to enable the timer thread? (Y/N)\nThe timer thread allows you to run a script at certain time intervals.\nThis feature costs ~2MB of extra memory.");
-my ($timer_script, $timer_minutes);
+my ($timer_script, $timer_minutes, $timer_regex);
 if ($timer =~ /y/i) { 
   $timer = 1;
   $timer_regex = &ask_question("Enter a regular expression that will match hours:minutes:seconds signifying when your script should run.\nExample: \"^[0-9]*:[0-9]*0:0*\$\" to run every tenth minute.");
