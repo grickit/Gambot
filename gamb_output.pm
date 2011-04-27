@@ -24,7 +24,7 @@ $Term::ANSIColor::AUTORESET = 1;
 
 sub colorOutput {
   #Get the current date and time. This is done every time in case the day changes while the bot is live.
- my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
+  my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
   $mon += 1;
   $year += 1900;
   my $datestamp = "$year-$mon-$mday";

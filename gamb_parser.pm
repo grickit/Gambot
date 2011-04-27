@@ -29,22 +29,26 @@ sub parse_command {
     select(undef, undef, undef, 0.5);
   }
 
-  elsif ($command =~ /^timer>$/) {
-    timer_action();
+  elsif ($command =~ /^quit>(.*)$/) {
+    colorOutput("BOTERROR","Shut down by API call: $1",'bold red');
+    print $main::sock "QUIT :Shut down by API call: $1\n";
+    exit;
   }
 
-  elsif ($command =~ /^quit>$/) {
-    colorOutput("BOTERROR","Shut down by API call.",'bold red');
-    exit;
+  elsif ($command =~ /^timer>$/) {
+    timer_action();
   }
 
   elsif ($command =~ /^log>(.+)$/) {
     colorOutput("APIEVENT","$1",'bold green');
   }
 
+  elsif ($command =~ /^error>(.+)$/) {
+    colorOutput("APIERROR","$1",'bold red');
+  }
+
   else {
-    colorOutput("BOTERROR","Unknown API call.",'bold red');
-    colorOutput("BOTERROR","$command",'bold red');
+    colorOutput("BOTERROR","Unknown API call: $command",'bold red');
   }
 }
 
