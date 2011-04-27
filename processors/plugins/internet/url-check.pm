@@ -1,5 +1,6 @@
 if (($event =~ /message/) && ($message =~ /^$sl (http:\/\/(.+))$/)) {
   require LWP::Simple;
+  require LWP::UserAgent;
   my $url = $1;
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
@@ -12,4 +13,3 @@ if (($event =~ /message/) && ($message =~ /^$sl (http:\/\/(.+))$/)) {
   elsif (defined $content) { ACT('MESSAGE',"$target","$receiver: It doesn't look like that page has a title."); }
   else { ACT('MESSAGE',$target,"$receiver: I can't get that page for some reason."); }
 }
-

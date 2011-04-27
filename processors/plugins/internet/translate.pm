@@ -1,6 +1,7 @@
 #This plugin has dependencies that do not come with Perl 5.10. You need a module that allows LWP to use SSL for HTTPS protocol.
 if (($event =~ /message/) && ($message =~ /^$sl !translate (.+)$/)) {
   require LWP::Simple;
+  require LWP::UserAgent;
   my $answer = $1;
   $answer = uri_escape($answer);
   my $url = "https://www.googleapis.com/language/translate/v2?key=AIzaSyA7oMrml5891LSmnZY0scg7gKLRnvb54Pc&target=en&q=$answer";

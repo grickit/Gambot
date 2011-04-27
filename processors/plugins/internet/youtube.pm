@@ -1,5 +1,6 @@
 if (($event =~ /message/) && ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/)) {
   require LWP::Simple;
+  require LWP::UserAgent;
   my $vid = $1;
   my $url = "http://gdata.youtube.com/feeds/api/videos/$vid?v=2";
   my $request = LWP::UserAgent->new;
