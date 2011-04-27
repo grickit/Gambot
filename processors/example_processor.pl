@@ -203,8 +203,6 @@ $| = 1;
     LoadPlugin("$home_folder/plugins/staff/quiet.pm");
     LoadPlugin("$home_folder/plugins/staff/voice.pm");
 
-    LoadPlugin("$home_folder/plugins/conversation/always-here.pm");
-    LoadPlugin("$home_folder/plugins/conversation/ed-block.pm");
     LoadPlugin("$home_folder/plugins/conversation/quote.pm");
 
     LoadPlugin("$home_folder/plugins/games/dice.pm");
@@ -212,7 +210,6 @@ $| = 1;
     LoadPlugin("$home_folder/plugins/games/reverse.pm");
 
     LoadPlugin("$home_folder/plugins/internet/ticket.pm");
-    LoadPlugin("$home_folder/plugins/internet/translate.pm");
     LoadPlugin("$home_folder/plugins/internet/url-check.pm");
     LoadPlugin("$home_folder/plugins/internet/youtube.pm");
 
