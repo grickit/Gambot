@@ -190,37 +190,35 @@ $| = 1;
 
   #Loads plugins based on $event
   sub Parse {
-    LoadPlugin("$home_folder/plugins_new/about.pm");
-    LoadPlugin("$home_folder/plugins_new/ctcp.pm");
-    LoadPlugin("$home_folder/plugins_new/hug.pm");
-    LoadPlugin("$home_folder/plugins_new/encode.pm");
-    LoadPlugin("$home_folder/plugins_new/version.pm");
-    LoadPlugin("$home_folder/plugins_new/time.pm");
+    LoadPlugin("$home_folder/plugins/about.pm");
+    LoadPlugin("$home_folder/plugins/ctcp.pm");
+    LoadPlugin("$home_folder/plugins/hug.pm");
+    LoadPlugin("$home_folder/plugins/encode.pm");
+    LoadPlugin("$home_folder/plugins/version.pm");
+    LoadPlugin("$home_folder/plugins/time.pm");
 
-    LoadPlugin("$home_folder/plugins_new/staff/joinpart.pm");
-    LoadPlugin("$home_folder/plugins_new/staff/literal.pm");
-    LoadPlugin("$home_folder/plugins_new/staff/op.pm");
-    LoadPlugin("$home_folder/plugins_new/staff/quiet.pm");
-    LoadPlugin("$home_folder/plugins_new/staff/voice.pm");
+    LoadPlugin("$home_folder/plugins/staff/joinpart.pm");
+    LoadPlugin("$home_folder/plugins/staff/literal.pm");
+    LoadPlugin("$home_folder/plugins/staff/op.pm");
+    LoadPlugin("$home_folder/plugins/staff/quiet.pm");
+    LoadPlugin("$home_folder/plugins/staff/voice.pm");
 
-    LoadPlugin("$home_folder/plugins_private/forum.pm");
+    LoadPlugin("$home_folder/plugins/conversation/always-here.pm");
+    LoadPlugin("$home_folder/plugins/conversation/ed-block.pm");
+    LoadPlugin("$home_folder/plugins/conversation/quote.pm");
 
-    LoadPlugin("$home_folder/plugins_new/conversation/always-here.pm");
-    LoadPlugin("$home_folder/plugins_new/conversation/ed-block.pm");
-    LoadPlugin("$home_folder/plugins_new/conversation/quote.pm");
+    LoadPlugin("$home_folder/plugins/games/dice.pm");
+    LoadPlugin("$home_folder/plugins/games/eightball.pm");
+    LoadPlugin("$home_folder/plugins/games/reverse.pm");
 
-    LoadPlugin("$home_folder/plugins_new/games/dice.pm");
-    LoadPlugin("$home_folder/plugins_new/games/eightball.pm");
-    LoadPlugin("$home_folder/plugins_new/games/reverse.pm");
+    LoadPlugin("$home_folder/plugins/internet/ticket.pm");
+    LoadPlugin("$home_folder/plugins/internet/translate.pm");
+    LoadPlugin("$home_folder/plugins/internet/url-check.pm");
+    LoadPlugin("$home_folder/plugins/internet/youtube.pm");
 
-    LoadPlugin("$home_folder/plugins_new/internet/ticket.pm");
-    LoadPlugin("$home_folder/plugins_new/internet/translate.pm");
-    LoadPlugin("$home_folder/plugins_new/internet/url-check.pm");
-    LoadPlugin("$home_folder/plugins_new/internet/youtube.pm");
+    LoadPlugin("$home_folder/plugins/temperature/temp-basic.pm");
 
-    LoadPlugin("$home_folder/plugins_new/temperature/temp-basic.pm");
-
-    LoadPlugin("$home_folder/plugins_new/conversation/QMarkAPI.pm");
+    LoadPlugin("$home_folder/plugins/conversation/QMarkAPI.pm");
     eval($plugin_list);
   }
 
