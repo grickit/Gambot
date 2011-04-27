@@ -1,4 +1,3 @@
-push (@commands_regexes, "encyclopediadramatica\.com");
-push (@commands_subs, sub {
-  ACT("MESSAGE",$target,"\"NOBODY TOUCH THAT LINK\" - shadowmaster"); 
-});
+if (($event =~ /message/) && ($message =~ /encyclopediadramatica\.com/)) {
+  ACT('MESSAGE',$target,"\"NOBODY TOUCH THAT LINK\" - shadowmaster"); 
+}

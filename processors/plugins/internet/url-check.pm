@@ -1,5 +1,4 @@
-push (@commands_regexes, "$sl (http:\/\/(.+))\$");
-push (@commands_subs, sub {
+if (($event =~ /message/) && ($message =~ /^$sl (http:\/\/(.+))$/)) {
   require LWP::Simple;
   my $url = $1;
   my $request = LWP::UserAgent->new;
@@ -9,7 +8,8 @@ push (@commands_subs, sub {
   $request->max_size('1024000');
   my $response = $request->get("$url");
   my $content = $response->decoded_content;
-  if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { $answer="$1"; $answer=~s/(\n|\s|\r|\t)+/ /g; ACT("MESSAGE","$target","$receiver: title: $answer"); }
-  elsif (defined $content) { ACT("MESSAGE","$target","$receiver: It doesn't look like that page has a title."); }
-  else { ACT("MESSAGE",$target,"$receiver: I can't get that page for some reason."); }
-});
+  if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { my $answer="$1"; $answer=~s/(\n|\s|\r|\t)+/ /g; ACT('MESSAGE',"$target","$receiver: title: $answer"); }
+  elsif (defined $content) { ACT('MESSAGE',"$target","$receiver: It doesn't look like that page has a title."); }
+  else { ACT('MESSAGE',$target,"$receiver: I can't get that page for some reason."); }
+}
+

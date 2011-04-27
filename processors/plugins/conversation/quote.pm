@@ -1,6 +1,4 @@
-push (@commands_regexes, "$sl !quote? ?([0-9]+)? ?(.+)");
-push (@commands_helps, "!quote - Recalls a saved quote.");
-push (@commands_subs, sub {
+if (($event =~ /message/) && ($message =~ /^$sl !quote? ?([0-9]+)? ?(.+)$/)) {
   my ($choice, $person, $quotes, $temp_person, $i);
   $choice = $1;
   $person = $2;
@@ -30,6 +28,6 @@ push (@commands_subs, sub {
 
   $choice = int(rand($main::quotes{$person}{'size'})) + 1 if !($choice);
 
-  ACT("MESSAGE",$target,"$receiver: \"$main::quotes{$person}{$choice}\" - $person $choice") if ($main::quotes{$person}{$choice});
-  ACT("MESSAGE",$target,"$sender: I couldn't find any quotes for that person.") if !($main::quotes{$person}{$choice});
-});
+  ACT('MESSAGE',$target,"$receiver: \"$main::quotes{$person}{$choice}\" - $person $choice") if ($main::quotes{$person}{$choice});
+  ACT('MESSAGE',$target,"$sender: I couldn't find any quotes for that person.") if !($main::quotes{$person}{$choice});
+}

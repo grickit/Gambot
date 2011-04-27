@@ -1,5 +1,4 @@
-push (@commands_regexes, "$sl !youtube ([a-zA-Z0-9-_]+)");
-push (@commands_subs, sub {
+if (($event =~ /message/) && ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/)) {
   require LWP::Simple;
   my $vid = $1;
   my $url = "http://gdata.youtube.com/feeds/api/videos/$vid?v=2";
@@ -12,7 +11,7 @@ push (@commands_subs, sub {
   my $content = $response->decoded_content;
 
   if ($content =~ /<error><domain>GData<\/domain><code>InvalidRequestUriException<\/code><internalReason>Invalid id<\/internalReason><\/error>/) {
-    ACT("MESSAGE",$target,"$receiver: That video does not exist.");
+    ACT('MESSAGE',$target,"$receiver: That video does not exist.");
   }
 
   elsif ($content =~ /<title>(.+)<\/title>/) {
@@ -39,4 +38,4 @@ push (@commands_subs, sub {
     ACT('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
     ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
   }
-});
+}

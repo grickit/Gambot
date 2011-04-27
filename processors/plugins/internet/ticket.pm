@@ -1,12 +1,10 @@
-push (@commands_regexes, "$sl !ticket ([0-9]+)");
-push (@commands_helps, "!ticket - Links to project's support tickets.");
-push (@commands_subs, sub {
+if (($event =~ /message/) && ($message =~ /^$sl !ticket ([0-9]+)$/)) {
   require LWP::Simple;
-  $answer = $1; 
+  my $answer = $1; 
   $answer = "http://trac.unknown-horizons.org/t/ticket/$answer" if ($target =~ /#unknown-horizons/);
   $answer = "https://github.com/grickit/Gambot/issues#issue/$answer" if ($target =~ /##Gambot/);
   $answer = "https://gna.org/bugs/index.php?$answer" if ($target =~ /#wesnoth/);
-  ACT("MESSAGE",$target,"$receiver: $answer"); 
+  ACT('MESSAGE',$target,"$receiver: $answer"); 
 
     my $request = LWP::UserAgent->new;
       $request->timeout(120);
@@ -17,6 +15,6 @@ push (@commands_subs, sub {
     if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { 
       $answer = $1;
       $answer=~s/(\n|\s|\r|\t)+/ /g; 
-      ACT("MESSAGE","$target","$receiver: $answer"); 
+      ACT('MESSAGE',"$target","$receiver: $answer"); 
     }
-});
+}
