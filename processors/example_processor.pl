@@ -18,156 +18,214 @@
 use strict;
 use warnings;
 
-#####----------Setup----------#####
-
 use URI::Escape;
 use FindBin;
 use lib "$FindBin::Bin";
 my $home_folder = $FindBin::RealBin;
-
 $| = 1;
 
-my ($incoming_message, $self) = @ARGV;
 
-#Messages are sent in a heavily uri_escaped form. We need to undo that before we can parse them.
-$incoming_message = uri_unescape($incoming_message,"A-Za-z0-9\0-\377");
 
-#general variables
-my $output = '';
-my($sender, $account, $hostname, $command, $target, $message, $receiver, $authed_channels, $answer, $plugin_list);
-my $sl = "^" . $self . "[:,]";
-my $version = "Gambot 0.10 | Example Processor | Perl 5.10.1 | Ubuntu 10.10";
-my $about = "I am an IRC bot developed by Gambit. For more information, try my !help command, or visit my home channel: ##Gambot";
+#####-------------------------Setup Variables-------------------------#####
+  #Variables related to the script input
+    my ($incoming_message, $self) = @ARGV; #Grab the command line arguments
+    $incoming_message = uri_unescape($incoming_message,"A-Za-z0-9\0-\377");
+    $incoming_message =~ s/(\n|\r)+//;
 
-#Sanitize any artificial end-of-message strings in the input
-chop $incoming_message;
+  #Variables related to input parsing
+    my $have_output; #Track if we've printed anything yet.
+    my $valid_nick_characters = 'A-Za-z0-9[\]\\`_^{}|-'; #Valid character for a nick name
+    my $valid_chan_characters = "#$valid_nick_characters"; #Valid characters for a channel name
+    my $valid_human_sender_regex = "([$valid_nick_characters]+)!~?([$valid_nick_characters]+)@(.+?)"; #Matches nick!~user@hostname
+    my $sl = "$self" . '[:,]'; #$sl stands for "start of line". It matches, for example, "bobbot:" or "bobbot,"
 
-#####----------Parsing----------#####
+  #Variables related to the incoming message
+    my ($sender, $account, $hostname, $command, $target, $message); #Basic parts of a typical IRC message
+    my $event; #Based on $command. For example a $command of PRIVMSG could be an $event of public_message or private_message
+    my $receiver; #Feedback will not necessarily highlight $sender. They might want to redirect it.
 
-sub message_processor {
-  my $valid_name_characters = 'A-Za-z0-9[\]\\`_^{}|-';
-  my $valid_chan_characters = '\w#-_|';
-  my @commands_regexes;
-  my @commands_subs;
-  my @commands_helps;
+  #Variables related to plugins
+    my $plugin_list; #A long string of all the plugin code to be eval()uated
+    my @commands_helps;
+    my $version = "Gambot 0.11 | Fancy Processor | Perl 5.10.1 | Ubuntu 10.10";
+    my $about = "I am an IRC bot developed by Gambit. For more information, try my !help command, or visit my home channel: ##Gambot";
 
-  #Pre-pre-parsing{
-  if ($incoming_message =~ m/^:([$valid_name_characters]+)!~?([$valid_name_characters]+)@(.+?) ([A-Z]+) ?(#*.+? )?:?(.+?)?$/) {
-    ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
-    $receiver = $sender;
-    $target =~ s/ +$//;
-    $message =~ s/ +$//;
+  #A container for persistent variables that plugins may useful
+    my %variables;
+
+
+
+#####-------------------------Action Subroutines-------------------------#####
+  #Sends the data back to the connection script in the proper API and/or raw IRC format
+  sub ACT {
+    if ($_[0] eq 'MESSAGE') { print "send>PRIVMSG $_[1] :$_[2]\n"; }
+    elsif ($_[0] eq 'ACTION') { print "send>PRIVMSG $_[1] :ACTION $_[2]\n"; }
+    elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send>$_[0] $_[1] :$_[2]\n"; }
+    elsif ($_[0] eq 'JOIN') { print "send>JOIN $_[1]\n"; }
+    elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
+    $have_output = 1;
   }
-  elsif ($incoming_message =~ /^:(.+?) MODE $self :?\+i/i) { 
-    ACT("JOIN","##Gambot",'');
-    return;
+
+
+
+  #Loads the specified plugin file into the plugin list
+  sub LoadPlugin {
+    my $plugin_name = shift;
+    open(PLUGIN_FILE, $plugin_name) or die ACT('LITERAL',undef,"error>Could not load plugin file: $plugin_name");
+    while(<PLUGIN_FILE>) { $plugin_list .= $_; }
+    close(PLUGIN_FILE);
   }
-  elsif ($incoming_message =~ /^PING(.*)$/i) { print "send>PONG$1"; return; }
-  else { return; }
-  #}
-  
-  #Pre-parsing{
-  if ($command eq 'QUIT') { ($target, $message) = ('undefined', ($target . ' ' . $message)); }
-  elsif ($command eq 'JOIN') { $target =~ s/^://; }
-  elsif (($command eq 'PRIVMSG') && ($target eq $self)) { $target = $sender; $message = "$self: $message"; }
-  elsif (($command eq 'PRIVMSG') && ($target ne $self)) { $command = 'MSG'; }
-  elsif (($command eq 'NOTICE') && ($target eq $self)) { $command = 'PRIVNOTICE'; }
 
-  if ($message =~ /@ ?([$valid_name_characters]+)$/) { $receiver = $1; $message =~ s/ ?@ ?([$valid_name_characters]+)$//; };
-  #}
 
-  if (($command eq 'MSG') || ($command eq 'PRIVMSG')) { 
-    LoadPlugin("$home_folder/plugins/ctcp.pm");
-    LoadPlugin("$home_folder/plugins/version.pm");
-    LoadPlugin("$home_folder/plugins/help.pm");
-    LoadPlugin("$home_folder/plugins/about.pm");
-    LoadPlugin("$home_folder/plugins/time.pm");
-    LoadPlugin("$home_folder/plugins/hug.pm");
-    LoadPlugin("$home_folder/plugins/temperature/temp-basic.pm");
-    LoadPlugin("$home_folder/plugins/internet/translate.pm");
-    LoadPlugin("$home_folder/plugins/internet/url-check.pm");
-    LoadPlugin("$home_folder/plugins/games/dice.pm");
-    LoadPlugin("$home_folder/plugins/games/eightball.pm");
-    LoadPlugin("$home_folder/plugins/encode.pm");
 
-    LoadPlugin("$home_folder/plugins/conversation/always-here.pm");
-    LoadPlugin("$home_folder/plugins/conversation/ed-block.pm");
-    LoadPlugin("$home_folder/plugins/conversation/quote.pm");
+  sub CheckAuth {
+    my $channel = shift;
+    my $subject = shift;
+    my ($channels, $authed);
 
-    LoadPlugin("$home_folder/plugins/staff/joinpart.pm");
-    LoadPlugin("$home_folder/plugins/staff/op.pm");
-    LoadPlugin("$home_folder/plugins/staff/voice.pm");
-    LoadPlugin("$home_folder/plugins/staff/quiet.pm");
-    LoadPlugin("$home_folder/plugins/staff/speak.pm");
-    LoadPlugin("$home_folder/plugins/staff/checkauth.pm");
-    
-    LoadPlugin("$home_folder/plugins/staff/literal.pm");
+    #This list has many different kinds of examples for you to use to create your own permissions lists.
+    #Be warned that these are examples of actual channels and users on freenode. You should change them
+    #to suit your own network/project.
+    if ($subject =~ m!^wesnoth/(developer|artist|forumsith)/.+$!i) { $channels = "(#wesnoth.*)"; }
+    if ($subject =~ m!^wesnoth/developer/crimson_penguin$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
+    if ($subject =~ m!^wesnoth/developer/dave$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
+    if ($subject =~ m!^wesnoth/artist/jetrel$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
+    if ($subject =~ m!^unaffiliated/marcavis$!i) { $channels = "(#frogatto.*)"; }
+    if ($subject =~ m!^unaffiliated/dreadknight$!i) { $channels = "(#AncientBeast.*)"; }
+    if ($subject =~ m!^unaffiliated/gambit/bot/.+$!i) { $channels = ".+"; }
+    if ($subject =~ m!^wesnoth/developer/grickit$!i) { $channels = ".+"; }
+    if ($subject =~ m!^wesnoth/developer/shadowmaster$!i) { $channels = ".+"; }
 
-    LoadPlugin("$home_folder/plugins/conversation/QMarkAPI.pm");
-    eval($plugin_list);
+    if ($channel =~ /^$channels$/i) {
+      $authed = 1; }
+    else {
+      $authed = 0; 
+    }
 
-    my $i = 0;
-    foreach my $current_regex (@commands_regexes) {
-      if ($message =~ /$current_regex/i) {
-	my $command = $commands_subs[$i];
-	&$command;
+    if ($hostname eq "wesnoth/developer/grickit") { $authed = 2; }
+    return $authed;
+  }
+
+
+
+#####-------------------------Parsing Subroutines-------------------------#####
+  #Sets up the various event types and variables.
+  sub Preparse {
+    if ($incoming_message =~ /^PING(.*)$/i) {
+      ACT("LITERAL",undef,"send>PONG$1");
+      ($sender, $account, $hostname, $command, $target, $message) = ('', '', '', '', '', '');
+      $event = 'server_ping';
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (PRIVMSG) ([$valid_chan_characters]+) :(.+)$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
+      if ($target eq $self) { $event = 'private_message'; $target = $sender; $message = "$self: $message"; }
+      else { $event = 'public_message'; }
+      $receiver = $sender;
+      if ($message =~ /@ ?([$valid_nick_characters]+)$/) { 
+	$receiver = $1; 
+	$message =~ s/ ?@ ?([$valid_nick_characters]+)$//;
       }
-      $i++;
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (NOTICE) ([$valid_chan_characters]+) :(.+)$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
+      if ($target eq $self) { $event = 'private_notice'; $target = $sender; $message = "$self: $message"; }
+      else { $event = 'public_notice'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (JOIN) :([$valid_chan_characters]+)$/) {
+      ($sender, $account, $hostname, $command, $target) = ($1, $2, $3, $4, $5);
+      $message = '';
+      if ($sender eq $self) { $event = 'self_join'; }
+      else { $event = 'other_join'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (PART) ([$valid_chan_characters]+) ?:?(.+)?$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
+      $message = '' unless $message;
+      if ($sender eq $self) { $event = 'self_part'; }
+      else { $event = 'other_part'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (QUIT) :(.+)$/) {
+      ($sender, $account, $hostname, $command, $message) = ($1, $2, $3, $4, $5);
+      $target = '';
+      if ($sender eq $self) { $event = 'self_quit'; }
+      else { $event = 'other_quit'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (MODE) ([$valid_chan_characters]+) (.+)$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
+      if ($sender eq $self) { $event = 'self_mode'; }
+      else { $event = 'other_mode'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (NICK) :(.+)$/) {
+      ($sender, $account, $hostname, $command, $message) = ($1, $2, $3, $4, $5);
+      $target = '';
+      if ($sender eq $self) { $event = 'self_nick'; }
+      else { $event = 'other_nick'; }
+    }
+
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (KICK) ([$valid_chan_characters]+) ?:?(.+)?$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $2, $3, $4, $5, $6);
+      $message = '' unless $message;
+      if ($sender eq $self) { $event = 'self_kick'; }
+      else { $event = 'other_kick'; }
+    }
+
+    elsif ($incoming_message =~ /^:(.+?) ([a-zA-Z0-9]+) (.+?) :?(.+)$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ($1, $1, $1, $2, $3, $4);
+      $event = 'server_message';
+    }
+    
+    else {
+      ACT('LITERAL',undef,"error>Message did not match preparser.");
+      ACT('LITERAL',undef,"error>$incoming_message");
     }
   }
-}
- 
-#####----------Subroutines----------#####
 
-sub ACT {
-  if ($_[0] eq 'MESSAGE') { print "send>PRIVMSG $_[1] :$_[2]\n"; }
-  elsif ($_[0] eq 'ACTION') { print "send>PRIVMSG $_[1] :ACTION $_[2]\n"; }
-  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send>$_[0] $_[1] :$_[2]\n"; }
-  elsif ($_[0] eq 'JOIN') { print "send>JOIN $_[1]\n"; }
-  elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
-  $output = 1;
-}
 
-sub CheckAuth {
-  my $channel = shift;
-  my $subject = shift;
-  my ($channels, $authed);
 
-#This list has many different kinds of examples for you to use to create your own permissions lists.
-#Be warned that these are examples of actual channels and users on freenode. You should change them
-#to suit your own network/project.
-if ($subject =~ m!^wesnoth/(developer|artist|forumsith)/.+$!i) { $channels = "(#wesnoth.*)"; }
-if ($subject =~ m!^wesnoth/developer/crimson_penguin$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
-if ($subject =~ m!^wesnoth/developer/dave$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
-if ($subject =~ m!^wesnoth/artist/jetrel$!i) { $channels = "(#frogatto.*)|(#wesnoth.*)"; }
-if ($subject =~ m!^unaffiliated/marcavis$!i) { $channels = "(#frogatto.*)"; }
-if ($subject =~ m!^unaffiliated/dreadknight$!i) { $channels = "(#AncientBeast.*)"; }
-if ($subject =~ m!^unaffiliated/gambit/bot/.+$!i) { $channels = ".+"; }
-if ($subject =~ m!^wesnoth/developer/grickit$!i) { $channels = ".+"; }
-if ($subject =~ m!^wesnoth/developer/shadowmaster$!i) { $channels = ".+"; }
+  #Loads plugins based on $event
+  sub Parse {
+    LoadPlugin("$home_folder/plugins_new/about.pm");
+    LoadPlugin("$home_folder/plugins_new/ctcp.pm");
+    LoadPlugin("$home_folder/plugins_new/hug.pm");
+    LoadPlugin("$home_folder/plugins_new/encode.pm");
+    LoadPlugin("$home_folder/plugins_new/version.pm");
+    LoadPlugin("$home_folder/plugins_new/time.pm");
 
-  if ($channel =~ /^$channels$/i) {
-    $authed = 1; }
-  else {
-    $authed = 0; 
+    LoadPlugin("$home_folder/plugins_new/staff/joinpart.pm");
+    LoadPlugin("$home_folder/plugins_new/staff/literal.pm");
+    LoadPlugin("$home_folder/plugins_new/staff/op.pm");
+    LoadPlugin("$home_folder/plugins_new/staff/quiet.pm");
+    LoadPlugin("$home_folder/plugins_new/staff/voice.pm");
+
+    LoadPlugin("$home_folder/plugins_private/forum.pm");
+
+    LoadPlugin("$home_folder/plugins_new/conversation/always-here.pm");
+    LoadPlugin("$home_folder/plugins_new/conversation/ed-block.pm");
+    LoadPlugin("$home_folder/plugins_new/conversation/quote.pm");
+
+    LoadPlugin("$home_folder/plugins_new/games/dice.pm");
+    LoadPlugin("$home_folder/plugins_new/games/eightball.pm");
+    LoadPlugin("$home_folder/plugins_new/games/reverse.pm");
+
+    LoadPlugin("$home_folder/plugins_new/internet/ticket.pm");
+    LoadPlugin("$home_folder/plugins_new/internet/translate.pm");
+    LoadPlugin("$home_folder/plugins_new/internet/url-check.pm");
+    LoadPlugin("$home_folder/plugins_new/internet/youtube.pm");
+
+    LoadPlugin("$home_folder/plugins_new/temperature/temp-basic.pm");
+
+    LoadPlugin("$home_folder/plugins_new/conversation/QMarkAPI.pm");
+    eval($plugin_list);
   }
 
-  if ($hostname eq "wesnoth/developer/grickit") { $authed = 2; }
-  return $authed;
-}
 
-sub Error {
-  my $channel = shift;
-  ACT("MESSAGE",$target,"$sender: Sorry. You don't have permission to do that in $channel.");
-}
 
-sub LoadPlugin {
-  my $plugin = shift;
-  open(DAT, $plugin) or die "Could not open file plugin file \"$plugin\"";
-  while(<DAT>) {
-    $plugin_list .= $_;
-  }
-  close(DAT);
-}
-
-message_processor();
+#####-------------------------Actual Execution-------------------------#####
+  Preparse();
+  Parse();
