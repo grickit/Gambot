@@ -8,6 +8,7 @@ if (($event =~ /message/) && ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/)) {
   $request->env_proxy;
   $request->agent('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)');
   $request->max_size('1024000');
+  $request->parse_head(0);
   my $response = $request->get("$url");
   my $content = $response->decoded_content;
 
