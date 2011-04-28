@@ -6,7 +6,7 @@ if (($event =~ /message/) && ($message =~ /^$sl !translate (.+)$/)) {
   $answer = uri_escape($answer);
   my $url = "https://www.googleapis.com/language/translate/v2?key=AIzaSyA7oMrml5891LSmnZY0scg7gKLRnvb54Pc&target=en&q=$answer";
 
-  my $request = LWP::UserAgent->new;
+  my $request = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0});
   $request->timeout(60);
   $request->env_proxy;
   $request->agent('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)');
