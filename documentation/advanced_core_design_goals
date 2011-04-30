@@ -1,0 +1,22 @@
+--Advanced Core Design Goals--
+
+With the new advanced_core branch of Gambot, I aim to overcome some major technical limitations of my separate-core-and-processor model.
+A cleanup is also in order. The code is awful.
+
+1. Overcome limits of perl's ithread implementation
+    Threads in perl are actually forks. They share nothing. I need to start using the threads::shared module.
+2. gamb_* modules are terribly written
+    They aren't real modules! They export nothing, import nothing, and must constantly access $main::variable_name
+    Ideally these modules would contain subroutines that have all the information passed to them.
+3. Statefulness
+    Gambot is not stateful because the processors are not persistent, and the core is weak.
+    I need to come up with a good way to store the state in a file so that it can be accessed by processors.
+    However this must be safe against race conditions caused by multiple processors (or even multiple bots).
+    It cannot contain perl code because a previous design goal is that Gambot processors can be written in any programming language.
+4. More configurable
+    No programming experience should be necessary for the example_processor.
+    Everything configurable should be in text files.
+
+Numbers 3 and 4 lead me to believe that a custom configuration langauge will be needed. 
+All plugins with text files (roulette, quote, define, and setdefine) should use a similar syntax.
+A markup language is perferred here.
