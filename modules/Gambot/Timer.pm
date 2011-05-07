@@ -42,4 +42,4 @@ sub timer_action {
   close(TIMER);
 }
 
-return 1;
+1;

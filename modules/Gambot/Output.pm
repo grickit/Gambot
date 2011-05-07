@@ -41,7 +41,7 @@ sub colorOutput {
     print colored ("$prefix $timestamp $message", "$formatting"), "\n";
   }
   #Print the message in the logs.
-  if (!(&get_core_value('silent'))) {
+  if (!(&get_core_value('unlogged'))) {
     open LOGFILE, ">>" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt" 
       or die "unable to open logfile \"" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt\n" &&
       print "Does that directory structure exist?\n";

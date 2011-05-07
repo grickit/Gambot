@@ -29,4 +29,4 @@ sub terminal_input {
   }
 }
 
-return 1;
+1;

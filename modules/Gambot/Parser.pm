@@ -24,7 +24,7 @@ sub parse_command {
   my $command = shift;
 
   if ($command =~ /^send>(.+)$/) {
-    print $main::socket_connection "$1\n";
+    send_server_message($1);
     colorOutput("OUTGOING","$1",'red');
     ##Are they changing their nick?
     if ($1 =~ /^NICK (.+)$/) { set_core_value('nick',$1); }
@@ -33,7 +33,7 @@ sub parse_command {
 
   elsif ($command =~ /^quit>(.*)$/) {
     colorOutput("BOTERROR","Shut down by API call: $1",'bold red');
-    print $main::socket_connection "QUIT :Shut down by API call: $1\n";
+    send_server_message("QUIT :Shut down by API call: $1");
   }
 
   elsif ($command =~ /^timer>$/) {
@@ -63,4 +63,4 @@ sub parse_command {
   }
 }
 
-return 1;
+1;

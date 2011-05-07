@@ -20,7 +20,7 @@
 use strict;
 use warnings;
 
-sub read_configuration {
+sub read_configuration_file {
   my $configuration_file = shift;
   if (-e $configuration_file) {
     open (CONFIGR, $configuration_file);
@@ -58,6 +58,44 @@ sub line_check {
   my ($value, $line) = @_;
   if ($line =~ /^\s*$value *= *(.+)$/) {
     set_config_value($value, $1);
+  }
+}
+
+sub get_command_arguments {
+  for (my $current_arg = 0; $current_arg < @ARGV; $current_arg++) {
+    my $current_arg_value = $ARGV[$current_arg];
+
+    if (($current_arg_value =~ /^-v$/) || ($current_arg_value =~ /^--verbose$/)) {
+      set_core_value('verbose',1);
+    }
+
+    elsif ($current_arg_value =~ /^--unlogged$/) {
+      set_core_value('unlogged',1);
+    }
+
+    elsif ($current_arg_value =~ /^--config$/) {
+      $current_arg++;
+      set_core_value('configuration_file',$ARGV[$current_arg]);
+    }
+
+    elsif ($current_arg_value =~ /^--help$/) {
+      print "Usage: perl Gambot.pl [OPTION]...\n";
+      print "A flexible IRC bot framework that can be updated and fixed while running.\n\n";
+      print "-v, --verbose	Prints all messages to the terminal.\n";
+      print "		perl Gambot.pl --verbose\n\n";
+      print "--unlogged	Disables logging of messages to files.\n";
+      print "		perl Gambot.pl --unlogged\n\n";
+      print "--config	The argument after this specifies the configuration file to use.\n";
+      print "		These are stored in \$script_location/configurations/\n";
+      print "		Only give a file name. Not a path.\n";
+      print "		perl Gambot.pl --config foo.txt\n\n";
+      print "--help		Displays this help.\n";
+      print "		perl Gambot.pl --help\n\n";
+      print "Ordinarily Gambot will not print output to the terminal, but will log everything to log files.\n";
+      print "\$script_location/configurations/config.txt is the default configuration file.\n\n";
+      print "For more help, try our IRC channel: ##Gambot at chat.freenode.net\n";
+      print "<http://webchat.freenode.net/?channels=\%23\%23Gambot>\n";
+    }
   }
 }
 

@@ -20,7 +20,7 @@
 use strict;
 use warnings;
 
-sub connect_to_server {
+sub create_socket_connection {
   my ($server, $port, $nick, $pass) = @_;
   #Create the socket and connect.
   colorOutput("BOTEVENT","I am attempting to connect.",'bold blue');
@@ -28,7 +28,8 @@ sub connect_to_server {
   my $sock = new IO::Socket::INET( 
     PeerAddr => "$server", 
     PeerPort => $port, 
-    Proto => 'tcp') 
+    Proto => 'tcp',
+    timeout => 1)
     or die "Error while connecting to $server:$port";
 
   #Login with services.
