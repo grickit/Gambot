@@ -190,6 +190,7 @@ $| = 1;
 
   #Loads plugins based on $event
   sub Parse {
+    LoadPlugin("$home_folder/plugins/nick_bump.pm");
     LoadPlugin("$home_folder/plugins/about.pm");
     LoadPlugin("$home_folder/plugins/ctcp.pm");
     LoadPlugin("$home_folder/plugins/hug.pm");
