@@ -95,6 +95,7 @@ sub get_command_arguments {
       print "\$script_location/configurations/config.txt is the default configuration file.\n\n";
       print "For more help, try our IRC channel: ##Gambot at chat.freenode.net\n";
       print "<http://webchat.freenode.net/?channels=\%23\%23Gambot>\n";
+      exit;
     }
   }
 }
