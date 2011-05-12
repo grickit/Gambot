@@ -126,9 +126,14 @@ while(defined select(undef,undef,undef,0.1)) {
     if (defined($bytes_read)) {
       if ($bytes_read == 0) {
 	###The connection is dead
-	print "Died!\n";
-	$socket_connection = create_socket_connection($config{'server'}, $config{'port'}, $core{'nick'}, $config{'password'});
-	fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+	print "Connection to IRC server died.\n";
+	if ($core{'staydead'}) {
+	  exit;
+	}
+	else {
+	  $socket_connection = create_socket_connection($config{'server'}, $config{'port'}, $core{'nick'}, $config{'password'});
+	  fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+	}
       }
       else {
 	###We have content

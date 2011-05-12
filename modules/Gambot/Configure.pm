@@ -78,6 +78,11 @@ sub get_command_arguments {
       set_core_value('configuration_file',$ARGV[$current_arg]);
     }
 
+    elsif ($current_arg_value =~ /^--staydead$/) {
+      $current_arg++;
+      set_core_value('staydead',1);
+    }
+
     elsif ($current_arg_value =~ /^--help$/) {
       print "Usage: perl Gambot.pl [OPTION]...\n";
       print "A flexible IRC bot framework that can be updated and fixed while running.\n\n";
@@ -89,6 +94,8 @@ sub get_command_arguments {
       print "		These are stored in \$script_location/configurations/\n";
       print "		Only give a file name. Not a path.\n";
       print "		perl Gambot.pl --config foo.txt\n\n";
+      print "--staydead	The bot will not automatically reconnect.\n";
+      print "		perl Gambot.pl --staydead\n\n";
       print "--help		Displays this help.\n";
       print "		perl Gambot.pl --help\n\n";
       print "Ordinarily Gambot will not print output to the terminal, but will log everything to log files.\n";

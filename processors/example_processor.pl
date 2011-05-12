@@ -179,6 +179,12 @@ $| = 1;
       ($sender, $account, $hostname, $command, $target, $message) = ($1, $1, $1, $2, $3, $4);
       $event = 'server_message';
     }
+
+    elsif ($incoming_message =~ /^ERROR :(.+)$/) {
+      ($sender, $account, $hostname, $command, $target, $message) = ('','','','','','');
+      $event = 'error';
+      ACT('LITERAL',undef,"error>$1");
+    }
     
     else {
       ACT('LITERAL',undef,"error>Message did not match preparser.");
