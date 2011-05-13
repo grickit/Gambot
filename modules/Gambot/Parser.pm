@@ -37,7 +37,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^timer>$/) {
-    timer_action();
+    create_timer_fork();
   }
 
   elsif ($command =~ /^log>(.+)$/) {

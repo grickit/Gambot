@@ -111,6 +111,24 @@ sub create_processing_fork {
   $forks++;
 }
 
+sub create_timer_fork {
+  pipe my $timer_read, my $timer_write;
+  $selector->add($timer_read);
+  unless (my $pid = fork()) {
+
+    ###CHILD PROCESS {
+      my $write_pipe = $timer_write;
+      colorOutput("BOTEVENT","Timer triggered.",'bold blue');
+      open(TIMER, "perl $core{'home_directory'}/timers/$config{'timer_file_name'} |");
+      while (my $current_line = <TIMER>) {
+	print $write_pipe "$current_line\n";
+      }
+      exit;
+    ###CHILD PROCESS }
+  }
+  sleep(1);
+}
+
 get_command_arguments();
 read_configuration_file($core{'home_directory'} . '/configurations/' . $core{'configuration_file'});
 $core{'nick'} = $config{'base_nick'};
@@ -152,16 +170,22 @@ while(defined select(undef,undef,undef,0.1)) {
       ###Read some other time
     }
 
-    while(my $current_line = <STDIN>) {
-      $current_line =~ s/\s+$//g;
-      parse_command($current_line) if ($current_line);
-    }
+  while(my $current_line = <STDIN>) {
+    $current_line =~ s/\s+$//g;
+    parse_command($current_line) if ($current_line);
+  }
 
-    foreach my $current_line (@full_messages) {
-      #print "socket has message. spawning fork.\n";
-      create_processing_fork($current_line) if ($current_line);
+  foreach my $current_line (@full_messages) {
+    #print "socket has message. spawning fork.\n";
+    create_processing_fork($current_line) if ($current_line);
+  }
+
+  if($config{'enable_timer'}) {
+    my ($sec,$min,$hour,undef,undef,undef,undef,undef,undef) = localtime(time);
+    if ("$hour:$min:$sec" =~ /$config{'timer_regex'}/) {
+      create_timer_fork();
     }
-  
+  }
 
   if(my @ready_forks = $selector->can_read(0)) {
     foreach my $current_fork (@ready_forks) {
