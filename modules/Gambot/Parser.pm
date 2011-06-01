@@ -67,11 +67,6 @@ sub parse_command {
     select(undef,undef,undef,$1);
   }
 
-  elsif ($command =~ /^sleep_logged>([0-9.]+)$/) {
-    colorOutput("BOTERROR","API call requested sleep for: $1",'bold red');
-    select(undef,undef,undef,$1);
-  }
-
   else {
     colorOutput("BOTERROR","Unknown API call: $command",'bold red');
   }
