@@ -58,10 +58,10 @@ $| = 1;
 #####-------------------------Action Subroutines-------------------------#####
   #Sends the data back to the connection script in the proper API and/or raw IRC format
   sub ACT {
-    if ($_[0] eq 'MESSAGE') { print "send>PRIVMSG $_[1] :$_[2]\n"; }
-    elsif ($_[0] eq 'ACTION') { print "send>PRIVMSG $_[1] :ACTION $_[2]\n"; }
-    elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send>$_[0] $_[1] :$_[2]\n"; }
-    elsif ($_[0] eq 'JOIN') { print "send>JOIN $_[1]\n"; }
+    if ($_[0] eq 'MESSAGE') { print "send>PRIVMSG $_[1] :$_[2]\nsleep>0.5\n"; }
+    elsif ($_[0] eq 'ACTION') { print "send>PRIVMSG $_[1] :ACTION $_[2]\nsleep>0.5\n"; }
+    elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send>$_[0] $_[1] :$_[2]\nsleep>0.5\n"; }
+    elsif ($_[0] eq 'JOIN') { print "send>JOIN $_[1]\nsleep>0.5\n"; }
     elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
     $have_output = 1;
   }
