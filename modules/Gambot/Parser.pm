@@ -28,7 +28,6 @@ sub parse_command {
     colorOutput("OUTGOING","$1",'red');
     ##Are they changing their nick?
     if ($1 =~ /^NICK (.+)$/) { set_core_value('nick',$1); }
-    select(undef, undef, undef, 0.5);
   }
 
   elsif ($command =~ /^quit>(.*)$/) {
@@ -62,6 +61,11 @@ sub parse_command {
   elsif ($command =~ /^reload_config>$/) {
     read_configuration_file(get_core_value('home_directory') . '/configurations/' . get_core_value('configuration_file'));
     colorOutput("RELOADED","Reloaded configuration file.",'bold green');
+  }
+
+  elsif ($command =~ /^sleep>([0-9.]+)$/) {
+    colorOutput("BOTERROR","API call requested sleep for: $1",'bold red');
+    select(undef,undef,undef,$1);
   }
 
   else {
