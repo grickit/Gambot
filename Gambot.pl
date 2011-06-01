@@ -170,14 +170,16 @@ while(defined select(undef,undef,undef,0.1)) {
       ###Read some other time
     }
 
-  while(my $current_line = <STDIN>) {
-    $current_line =~ s/\s+$//g;
-    parse_command($current_line) if ($current_line);
-  }
-
   foreach my $current_line (@full_messages) {
     #print "socket has message. spawning fork.\n";
     create_processing_fork($current_line) if ($current_line);
+  }
+
+  if($config{'enable_terminal'}) {
+    while(my $current_line = <STDIN>) {
+      $current_line =~ s/\s+$//g;
+      parse_command($current_line) if ($current_line);
+    }
   }
 
   if($config{'enable_timer'}) {

@@ -37,7 +37,8 @@ sub parse_command {
   }
 
   elsif ($command =~ /^timer>$/) {
-    create_timer_fork();
+    if (get_config_value('enable_timer')) { create_timer_fork(); }
+    else { send_server_message("PRIVMSG ##Gambot :Timer not enabled but triggered."); }
   }
 
   elsif ($command =~ /^log>(.+)$/) {
