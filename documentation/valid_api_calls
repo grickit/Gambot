@@ -1,0 +1,34 @@
+When writing a Gambot processor, timer, or other script (perhaps a wrapper that prints into Gambot's STDIN) these are the valid options.
+The code can be found in modules/Gambot/Parser.pm
+
+send>[message]
+	Sends [message] to the IRC server
+
+quit>[message]
+	Quits with the message of [message]
+
+timer>
+	Activates the timer script. 
+	Make sure that you manually triggering it won't interfere with the automatic triggering.
+
+log>[message]
+	Puts [message] in the logs.
+
+error>[message]
+	Puts [message] in the logs, but denotes it as an error.
+
+core_value>[name]>[value]
+	Sets $core{'[name]'} = [value]
+	Valid names are only lowercase letters and underscores
+
+config_value>[name]>[value]
+	Sets $config{'[name]'} = [value]
+	Valid names are only lowercase letters and underscores
+
+reload_config>
+	Reloads the configuration file.
+
+sleep>[number]
+	Sleeps for [number] seconds. 
+	Can be a decimal.
+	A value of 0.5 is recommended for throttling sending of messages.
