@@ -38,7 +38,7 @@ sub parse_command {
 
   elsif ($command =~ /^timer>$/) {
     if (get_config_value('enable_timer')) { create_timer_fork(); }
-    else { send_server_message("PRIVMSG ##Gambot :Timer not enabled but triggered."); }
+    else { colorOutput("BOTERROR","Timer was triggered, but is not enabled. Skipping.",'bold red'); }
   }
 
   elsif ($command =~ /^log>(.+)$/) {
@@ -57,6 +57,11 @@ sub parse_command {
   elsif ($command =~ /^config_value>([a-z_]+)>(.+)$/) {
     set_config_value($1,$2);
     colorOutput("APIVALUE","config $1: $2",'bold blue');
+  }
+
+  elsif ($command =~ /^reload_config>$/) {
+    read_configuration_file(get_core_value('home_directory') . '/configurations/' . get_core_value('configuration_file'));
+    colorOutput("RELOADED","Reloaded configuration file.",'bold green');
   }
 
   else {
