@@ -7,10 +7,6 @@ send>[message]
 quit>[message]
 	Quits with the message of [message]
 
-timer>
-	Activates the timer script. 
-	Make sure that you manually triggering it won't interfere with the automatic triggering.
-
 log>[message]
 	Puts [message] in the logs.
 
@@ -32,3 +28,13 @@ sleep>[number]
 	Sleeps for [number] seconds. 
 	Can be a decimal.
 	A value of 0.5 is recommended for throttling sending of messages.
+
+start_script>[system command]
+	Starts a fork named [name] that executes [system command]
+	YOU SHOULD NEVER EXPOSE THIS TO IRC USERS
+	The output of these commands will be read as Gambot API calls
+	These commands should have Gambot clean up after them with end>
+
+end>
+	This is a dummy call that scripts and processors should print as their last line
+	While not essential, it causes Gambot to clean up information associated with the fork

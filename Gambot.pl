@@ -110,42 +110,20 @@ sub create_processing_fork {
 }
 
 sub create_script_fork {
-  my ($fork_name, $script_filename) = @_;
-  if(!$script_r_pipes{$fork_name}) {
-    pipe $script_r_pipes{$fork_name}, $script_w_pipes{$fork_name};
-    $selector->add($script_r_pipes{$fork_name});
-    unless ($script_pids{$fork_name} = fork()) {
+  my ($script_filename) = @_;
+  pipe my $read_pipe, my $write_pipe;
+  $selector->add($read_pipe);
+  unless (my $pid = fork()) {
 
-      ###CHILD PROCESS {
-	my $write_pipe = $script_w_pipes{$fork_name};
-	open(SCRIPT, "$script_filename |");
-	while (my $current_line = <SCRIPT>) {
-	  print $write_pipe "$current_line\n";
-	}
-	exit;
-      ###CHILD PROCESS }
-    }
-    sleep(1);
+    ###CHILD PROCESS {
+      open(SCRIPT, "$script_filename |");
+      while (my $current_line = <SCRIPT>) {
+	print $write_pipe "$current_line\n";
+      }
+      exit;
+    ###CHILD PROCESS }
   }
-  else {
-    colorOutput("BOTERROR","Can't start \"$fork_name\" because a fork with that name already exists.",'bold red');
-  }
-}
-
-sub kill_script_fork {
-  my $fork_name = shift;
-  if($script_r_pipes{$fork_name}) {
-    $selector->remove($script_r_pipes{$fork_name});
-    close($script_r_pipes{$fork_name});
-    close($script_w_pipes{$fork_name});
-    delete $script_r_pipes{$fork_name};
-    delete $script_w_pipes{$fork_name};
-    kill 1, $script_pids{$fork_name};
-    delete $script_pids{$fork_name};
-  }
-  else {
-    colorOutput("BOTERROR","Can't kill \"$fork_name\" because a fork with that name does not exist.",'bold red');
-  }
+  sleep(1);
 }
 
 get_command_arguments();
