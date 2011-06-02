@@ -30,7 +30,7 @@ sleep>[number]
 	A value of 0.5 is recommended for throttling sending of messages.
 
 start_script>[system command]
-	Starts a fork named [name] that executes [system command]
+	Starts a fork that executes [system command]
 	YOU SHOULD NEVER EXPOSE THIS TO IRC USERS
 	The output of these commands will be read as Gambot API calls
 	These commands should have Gambot clean up after them with end>
