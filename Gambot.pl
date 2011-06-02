@@ -42,10 +42,9 @@ my $forks = 0;
 my %config;
 ###%core will be for things related to the program (where the script is located, special flags and options)
 my %core;
-###%read_pipes is mostly worthless. It stores the pipes that the message forks would theoretically read from.
-my %read_pipes;
-###%write_pipes stores the end of the pipes that the fork will write to, to send messages back to the main process
-my %write_pipes;
+my %script_r_pipes;
+my %script_w_pipes;
+my %script_pids;
 
 my $selector = new IO::Select;
 my $socket_connection = new IO::Select;
@@ -80,12 +79,11 @@ sub send_server_message {
 
 sub create_processing_fork {
   my $inbound_message = shift;
-  pipe $read_pipes{$forks}, $write_pipes{$forks};
-  $selector->add($read_pipes{$forks});
+  pipe my $read_pipe, my $write_pipe;
+  $selector->add($read_pipe);
     unless (my $pid = fork()) {
 
       ###CHILD PROCESS {
-	my $write_pipe = $write_pipes{$forks};
 	#Filter MotD spam
 	if ($inbound_message !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $core{'nick'} :.+/) {
 	  #Highlighted?
@@ -112,21 +110,42 @@ sub create_processing_fork {
 }
 
 sub create_script_fork {
-  pipe my $timer_read, my $timer_write;
-  $selector->add($timer_read);
-  unless (my $pid = fork()) {
+  my ($fork_name, $script_filename) = @_;
+  if(!$script_r_pipes{$fork_name}) {
+    pipe $script_r_pipes{$fork_name}, $script_w_pipes{$fork_name};
+    $selector->add($script_r_pipes{$fork_name});
+    unless ($script_pids{$fork_name} = fork()) {
 
-    ###CHILD PROCESS {
-      my $write_pipe = $timer_write;
-      colorOutput("BOTEVENT","Timer triggered.",'bold blue');
-      open(TIMER, "perl $core{'home_directory'}/timers/$config{'timer_file_name'} |");
-      while (my $current_line = <TIMER>) {
-	print $write_pipe "$current_line\n";
-      }
-      exit;
-    ###CHILD PROCESS }
+      ###CHILD PROCESS {
+	my $write_pipe = $script_w_pipes{$fork_name};
+	open(SCRIPT, "$script_filename |");
+	while (my $current_line = <SCRIPT>) {
+	  print $write_pipe "$current_line\n";
+	}
+	exit;
+      ###CHILD PROCESS }
+    }
+    sleep(1);
   }
-  sleep(1);
+  else {
+    colorOutput("BOTERROR","Can't start \"$fork_name\" because a fork with that name already exists.",'bold red');
+  }
+}
+
+sub kill_script_fork {
+  my $fork_name = shift;
+  if($script_r_pipes{$fork_name}) {
+    $selector->remove($script_r_pipes{$fork_name});
+    close($script_r_pipes{$fork_name});
+    close($script_w_pipes{$fork_name});
+    delete $script_r_pipes{$fork_name};
+    delete $script_w_pipes{$fork_name};
+    kill 1, $script_pids{$fork_name};
+    delete $script_pids{$fork_name};
+  }
+  else {
+    colorOutput("BOTERROR","Can't kill \"$fork_name\" because a fork with that name does not exist.",'bold red');
+  }
 }
 
 get_command_arguments();
