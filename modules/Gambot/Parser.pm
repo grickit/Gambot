@@ -67,6 +67,10 @@ sub parse_command {
     select(undef,undef,undef,$1);
   }
 
+  elsif ($command =~ /^end>$/) {
+    #Dummy call that makrs the end of output
+  }
+
   else {
     colorOutput("BOTERROR","Unknown API call: $command",'bold red');
   }

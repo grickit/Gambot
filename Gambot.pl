@@ -111,7 +111,7 @@ sub create_processing_fork {
   $forks++;
 }
 
-sub create_timer_fork {
+sub create_script_fork {
   pipe my $timer_read, my $timer_write;
   $selector->add($timer_read);
   unless (my $pid = fork()) {
@@ -182,22 +182,39 @@ while(defined select(undef,undef,undef,0.1)) {
     }
   }
 
-  if($config{'enable_timer'}) {
-    my ($sec,$min,$hour,undef,undef,undef,undef,undef,undef) = localtime(time);
-    if ("$hour:$min:$sec" =~ /$config{'timer_regex'}/) {
-      create_timer_fork();
-    }
-  }
-
+  my $buffer = '';
   if(my @ready_forks = $selector->can_read(0)) {
     foreach my $current_fork (@ready_forks) {
       fcntl($current_fork, F_SETFL(), O_NONBLOCK());
-      while(my $current_line = <$current_fork>) {
-	$current_line =~ s/\s+$//g;
-	parse_command($current_line) if ($current_line);
+      while(1) {
+	my $bytes_read = sysread($current_fork, $buffer, 1024, length($buffer));
+	if(defined $bytes_read) {
+	  if($bytes_read == 0) {
+	    #This fork died (not possible?).
+	    $selector->remove($current_fork);
+	    close($current_fork);
+	    last;
+	  }
+	  elsif($buffer =~ /end>[\r\n]*$/) {
+	    #This fork has ended gracefully.
+	    $buffer =~ s/end>[\r\n]*$//; #Remove the EoF marker so that we don't waste time parsing it later.
+	    $selector->remove($current_fork);
+	    close($current_fork);
+	    last;
+	  }
+	  else {
+	    #We got something
+	  }
+	}
+	else {
+	  #Read later
+	  last;
+	}
       }
-      $selector->remove($current_fork);
-      close($current_fork);
+    }
+    my @full_commands = split(/[\n\r]+/, $buffer);
+    foreach my $current_command (@full_commands) {
+      parse_command($current_command) if ($current_command);
     }
   }
 }

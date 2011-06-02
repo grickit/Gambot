@@ -47,7 +47,7 @@ $| = 1;
   #Variables related to plugins
     my $plugin_list; #A long string of all the plugin code to be eval()uated
     my @commands_helps;
-    my $version = "Gambot 0.11 | Fancy Processor | Perl 5.10.1 | Ubuntu 10.10";
+    my $version = "Gambot 0.12 | Example Processor | Perl 5.10.1 | Ubuntu 11.04";
     my $about = "I am an IRC bot developed by Gambit. For more information, try my !help command, or visit my home channel: ##Gambot";
 
   #A container for persistent variables that plugins may useful
@@ -231,3 +231,4 @@ $| = 1;
 #####-------------------------Actual Execution-------------------------#####
   Preparse();
   Parse();
+  print "end>\n";
