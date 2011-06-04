@@ -135,7 +135,7 @@ fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 
 my $buffer = '';
-while(defined select(undef,undef,undef,0.1)) {
+while(defined select(undef,undef,undef,0.2)) {
   my @full_messages = ();
   my $bytes_read = sysread($socket_connection, $buffer, 1024, length($buffer));
     if (defined($bytes_read)) {
