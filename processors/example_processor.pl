@@ -122,9 +122,9 @@ $| = 1;
       if ($target eq $self) { $event = 'private_message'; $target = $sender; $message = "$self: $message"; }
       else { $event = 'public_message'; }
       $receiver = $sender;
-      if ($message =~ /@ ?([$valid_nick_characters]+)$/) { 
+      if ($message =~ /@ ?([, $valid_nick_characters]+)$/) { 
 	$receiver = $1; 
-	$message =~ s/ ?@ ?([$valid_nick_characters]+)$//;
+	$message =~ s/ ?@ ?([, $valid_nick_characters]+)$//;
       }
     }
 
