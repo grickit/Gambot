@@ -42,6 +42,7 @@ my $forks = 0;
 my %config;
 ###%core will be for things related to the program (where the script is located, special flags and options)
 my %core;
+###These two hashes will store information about started scripts
 my %script_pipes;
 my %script_pids;
 
@@ -78,36 +79,17 @@ sub send_server_message {
 
 sub create_processing_fork {
   my $inbound_message = shift;
-  pipe my $read_pipe, my $write_pipe;
-  $selector->add($read_pipe);
-    unless (my $pid = fork()) {
+  
+  #Filter MotD spam
+  if ($inbound_message !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $core{'nick'} :.+/) {
+    #Highlighted?
+    if ($inbound_message =~ /$core{'nick'}/) { colorOutput("INCOMING","$inbound_message",'bold yellow'); }
+    else { colorOutput("INCOMING","$inbound_message",''); }
+    my $encoded_string = uri_escape($inbound_message,"A-Za-z0-9\0-\377");
 
-      ###CHILD PROCESS {
-	#Filter MotD spam
-	if ($inbound_message !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $core{'nick'} :.+/) {
-	  #Highlighted?
-	  if ($inbound_message =~ /$core{'nick'}/) {
-	    colorOutput("INCOMING","$inbound_message",'bold yellow');
-	  }
-	  else {
-	    colorOutput("INCOMING","$inbound_message",'');
-	  }
-      
-	  my $encoded_string = uri_escape($inbound_message,"A-Za-z0-9\0-\377");
-	
-	  open(RESPONSE, "perl $core{'home_directory'}/processors/$config{'processor_file_name'} \"$encoded_string\" \"$core{'nick'}\" |");
-	  while (my $current_line = <RESPONSE>) {
-	    $current_line =~ s/[\r\n]+$//;
-	    syswrite($write_pipe,"$current_line\n");
-	  }              
-	  close(RESPONSE);
-	}
-	exit;
-      ###CHILD PROCESS }
-
-    }
-  close($write_pipe);
-  $forks++;
+    open(my $response, "perl $core{'home_directory'}/processors/$config{'processor_file_name'} \"$encoded_string\" \"$core{'nick'}\" |");
+    $selector->add($response);
+  }
 }
 
 sub create_script_fork {
