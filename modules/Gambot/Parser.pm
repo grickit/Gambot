@@ -35,8 +35,12 @@ sub parse_command {
     send_server_message("QUIT :Shut down by API call: $1");
   }
 
-  elsif ($command =~ /^start_script>(.+)$/) {
-    create_script_fork($1);
+  elsif ($command =~ /^start_script>([a-zA-Z0-9_-]+)>(.+)$/) {
+    create_script_fork($1,$2);
+  }
+
+  elsif ($command =~ /^end_script>([a-zA-Z0-9_-]+)$/) {
+    end_script_fork($1);
   }
 
   elsif ($command =~ /^log>(.+)$/) {

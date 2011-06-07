@@ -42,8 +42,7 @@ my $forks = 0;
 my %config;
 ###%core will be for things related to the program (where the script is located, special flags and options)
 my %core;
-my %script_r_pipes;
-my %script_w_pipes;
+my %script_pipes;
 my %script_pids;
 
 my $selector = new IO::Select;
@@ -98,7 +97,8 @@ sub create_processing_fork {
 	
 	  open(RESPONSE, "perl $core{'home_directory'}/processors/$config{'processor_file_name'} \"$encoded_string\" \"$core{'nick'}\" |");
 	  while (my $current_line = <RESPONSE>) {
-	    print $write_pipe "$current_line\n";
+	    $current_line =~ s/[\r\n]+$//;
+	    syswrite($write_pipe,"$current_line\n");
 	  }              
 	  close(RESPONSE);
 	}
@@ -106,24 +106,33 @@ sub create_processing_fork {
       ###CHILD PROCESS }
 
     }
+  close($write_pipe);
   $forks++;
 }
 
 sub create_script_fork {
-  my ($script_filename) = @_;
-  pipe my $read_pipe, my $write_pipe;
-  $selector->add($read_pipe);
-  unless (my $pid = fork()) {
-
-    ###CHILD PROCESS {
-      open(SCRIPT, "$script_filename |");
-      while (my $current_line = <SCRIPT>) {
-	print $write_pipe "$current_line\n";
-      }
-      exit;
-    ###CHILD PROCESS }
+  my ($script_name, $script_filename) = @_;
+  unless($script_pids{$script_name}) {
+    $script_pids{$script_name} = open($script_pipes{$script_name}, "$script_filename |");
+    $selector->add($script_pipes{$script_name});
   }
-  sleep(1);
+  else {
+    colorOutput("BOTERROR","Attempted to start script with a taken name: $script_name",'bold red');
+  }
+}
+
+sub end_script_fork {
+  my $script_name = shift;
+  if($script_pids{$script_name}) {
+    $selector->remove($script_pipes{$script_name});
+    kill 1, $script_pids{$script_name};
+    close($script_pipes{$script_name});
+    delete $script_pipes{$script_name};
+    delete $script_pids{$script_name};
+  }
+  else {
+    colorOutput("BOTERROR","Attempted to terminate nonexistant script: $script_name",'bold red');
+  }
 }
 
 get_command_arguments();
@@ -134,10 +143,10 @@ $socket_connection = create_socket_connection($config{'server'}, $config{'port'}
 fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 
-my $buffer = '';
+my $socket_buffer = '';
 while(defined select(undef,undef,undef,0.2)) {
   my @full_messages = ();
-  my $bytes_read = sysread($socket_connection, $buffer, 1024, length($buffer));
+  my $bytes_read = sysread($socket_connection, $socket_buffer, 1024, length($socket_buffer));
     if (defined($bytes_read)) {
       if ($bytes_read == 0) {
 	###The connection is dead
@@ -152,15 +161,12 @@ while(defined select(undef,undef,undef,0.2)) {
       }
       else {
 	###We have content
-	my @buffered_lines = split(/\x0D\x0A/,$buffer);
-	foreach my $buffed_line (@buffered_lines) {
-	  push(@full_messages,$buffed_line);
-	}
-	if ($buffer !~ /\x0D\x0A$/) {
-	  $buffer = $buffered_lines[-1];
+	@full_messages = split(/\x0D\x0A/,$socket_buffer);
+	if ($socket_buffer !~ /\x0D\x0A$/) {
+	  $socket_buffer = $full_messages[-1];
 	  pop(@full_messages);
 	}
-	else { $buffer = ''; }
+	else { $socket_buffer = ''; }
       }
     }
     else {
@@ -179,38 +185,27 @@ while(defined select(undef,undef,undef,0.2)) {
     }
   }
 
-  my $buffer = '';
-  if(my @ready_forks = $selector->can_read(0)) {
-    foreach my $current_fork (@ready_forks) {
-      fcntl($current_fork, F_SETFL(), O_NONBLOCK());
-      while(1) {
-	my $bytes_read = sysread($current_fork, $buffer, 1024, length($buffer));
-	if(defined $bytes_read) {
-	  if($bytes_read == 0) {
-	    #This fork died (not possible?).
-	    $selector->remove($current_fork);
-	    close($current_fork);
-	    last;
-	  }
-	  elsif($buffer =~ /end>[\r\n]*$/) {
-	    #This fork has ended gracefully.
-	    $buffer =~ s/end>[\r\n]*$//; #Remove the EoF marker so that we don't waste time parsing it later.
-	    $selector->remove($current_fork);
-	    close($current_fork);
-	    last;
-	  }
-	  else {
-	    #We got something
-	  }
-	}
+  my @ready_forks = $selector->handles();
+  foreach my $current_fork (@ready_forks) {
+    my $fork_buffer = '';
+    fcntl($current_fork, F_SETFL(), O_NONBLOCK());
+    while(1) {
+      my $bytes_read = sysread($current_fork, $fork_buffer, 1024, length($fork_buffer));
+      if(defined $bytes_read) {
+	if($bytes_read == 0) { last; }
 	else {
-	  #Read later
-	  last;
+	  #We have content
 	}
       }
+      else { last; }
     }
-    my @full_commands = split(/[\n\r]+/, $buffer);
+    my @full_commands = split(/[\r\n]+/,$fork_buffer);
     foreach my $current_command (@full_commands) {
+      if($current_command =~ /^end>/) {
+	$selector->remove($current_fork);
+	close($current_fork);
+	$current_command = 0;
+      }
       parse_command($current_command) if ($current_command);
     }
   }
