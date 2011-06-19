@@ -32,19 +32,18 @@ sub colorOutput {
   $sec = sprintf("%02d", $sec);
   my $datestamp = "$year-$mon-$mday";
   my $timestamp = "$hour:$min:$sec";
-  
+
   #Grab the parameters.
   my ($prefix, $message, $formatting) = @_;
- 
+
   #Print the message to the terminal output.
   if (&get_core_value('verbose')) {
     print colored ("$prefix $timestamp $message", "$formatting"), "\n";
   }
   #Print the message in the logs.
   if (!(&get_core_value('unlogged'))) {
-    open LOGFILE, ">>" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt" 
-      or die "unable to open logfile \"" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt\n" &&
-      print "Does that directory structure exist?\n";
+    open LOGFILE, ">>" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt"
+      or die "unable to open logfile \"" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt\n" . "Does that directory structure exist?\n";
     print LOGFILE "$prefix $timestamp $message\n";
     close LOGFILE;
   }
