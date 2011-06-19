@@ -19,15 +19,16 @@
 
 use strict;
 use warnings;
+use IO::Socket;
 
 sub create_socket_connection {
   my ($server, $port, $nick, $pass) = @_;
   #Create the socket and connect.
   colorOutput("BOTEVENT","I am attempting to connect.",'bold blue');
-  use IO::Socket; 
-  my $sock = new IO::Socket::INET( 
-    PeerAddr => "$server", 
-    PeerPort => $port, 
+  use IO::Socket;
+  my $sock = new IO::Socket::INET(
+    PeerAddr => "$server",
+    PeerPort => $port,
     Proto => 'tcp',
     timeout => 1)
     or die "Error while connecting to $server:$port";
@@ -35,7 +36,7 @@ sub create_socket_connection {
   #Login with services.
   colorOutput("BOTEVENT","I am attempting to login.",'bold blue');
   print $sock "PASS $nick:$pass\x0D\x0A";
-  print $sock "NICK $nick\x0D\x0A"; 
+  print $sock "NICK $nick\x0D\x0A";
   print $sock "USER Gambot 8 * :Perl Gambot\x0D\x0A";
 
   return $sock;
