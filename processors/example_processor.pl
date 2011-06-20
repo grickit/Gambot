@@ -99,11 +99,18 @@ $| = 1;
     if ($channel =~ /^$channels$/i) {
       $authed = 1; }
     else {
-      $authed = 0; 
+      $authed = 0;
     }
 
-    if ($hostname eq "wesnoth/developer/grickit") { $authed = 2; }
+    if ($subject eq "wesnoth/developer/grickit") { $authed = 2; }
     return $authed;
+  }
+
+
+
+  sub Error {
+    my $place = shift;
+    ACT('MESSAGE',$target,"$sender: Sorry. You don't have permission to do that in $place");
   }
 
 
@@ -122,8 +129,8 @@ $| = 1;
       if ($target eq $self) { $event = 'private_message'; $target = $sender; $message = "$self: $message"; }
       else { $event = 'public_message'; }
       $receiver = $sender;
-      if ($message =~ /@ ?([, $valid_nick_characters]+)$/) { 
-	$receiver = $1; 
+      if ($message =~ /@ ?([, $valid_nick_characters]+)$/) {
+	$receiver = $1;
 	$message =~ s/ ?@ ?([, $valid_nick_characters]+)$//;
       }
     }
@@ -185,7 +192,7 @@ $| = 1;
       $event = 'error';
       ACT('LITERAL',undef,"error>$1");
     }
-    
+
     else {
       ACT('LITERAL',undef,"error>Message did not match preparser.");
       ACT('LITERAL',undef,"error>$incoming_message");
@@ -204,6 +211,7 @@ $| = 1;
     LoadPlugin("$home_folder/plugins/version.pm");
     LoadPlugin("$home_folder/plugins/time.pm");
 
+    LoadPlugin("$home_folder/plugins/staff/checkauth.pm");
     LoadPlugin("$home_folder/plugins/staff/joinpart.pm");
     LoadPlugin("$home_folder/plugins/staff/literal.pm");
     LoadPlugin("$home_folder/plugins/staff/op.pm");
