@@ -60,7 +60,7 @@ open (CONFIGW, ">$config_file");
   [/account]
 
   [local]
-    log_dir = $logdir
+    log_directory = $logdir
     processor = $processor
   [/local]
 [/bot]
