@@ -79,7 +79,7 @@ sub send_server_message {
 
 sub create_processing_fork {
   my $inbound_message = shift;
-  
+
   #Filter MotD spam
   if ($inbound_message !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $core{'nick'} :.+/) {
     #Highlighted?
@@ -87,7 +87,7 @@ sub create_processing_fork {
     else { colorOutput("INCOMING","$inbound_message",''); }
     my $encoded_string = uri_escape($inbound_message,"A-Za-z0-9\0-\377");
 
-    open(my $response, "perl $core{'home_directory'}/processors/$config{'processor_file_name'} \"$encoded_string\" \"$core{'nick'}\" |");
+    open(my $response, "$config{'processor'} \"$encoded_string\" \"$core{'nick'}\" |");
     $selector->add($response);
   }
 }
@@ -160,11 +160,9 @@ while(defined select(undef,undef,undef,0.2)) {
     create_processing_fork($current_line) if ($current_line);
   }
 
-  if($config{'enable_terminal'}) {
-    while(my $current_line = <STDIN>) {
-      $current_line =~ s/\s+$//g;
-      parse_command($current_line) if ($current_line);
-    }
+  while(my $current_line = <STDIN>) {
+    $current_line =~ s/\s+$//g;
+    parse_command($current_line) if ($current_line);
   }
 
   my @ready_forks = $selector->handles();

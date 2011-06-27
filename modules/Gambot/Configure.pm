@@ -34,12 +34,7 @@ sub read_configuration_file {
       line_check('base_nick', $current_line);
       line_check('password', $current_line);
       line_check('log_directory', $current_line);
-      line_check('processor_file_name', $current_line);
-      line_check('number_of_processors', $current_line);
-      line_check('enable_terminal', $current_line);
-      line_check('enable_timer', $current_line);
-      line_check('timer_regex', $current_line);
-      line_check('timer_file_name', $current_line);
+      line_check('processor', $current_line);
     }
 
     unless (get_config_value('configuration_version') == 6) {
