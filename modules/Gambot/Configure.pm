@@ -39,7 +39,7 @@ sub read_configuration_file {
 
     unless (get_config_value('configuration_version') == 6) {
       print "Wrong configuation version in \"$configuration_file\". Run setup.pl\n";
-      print $main::core{'home_directory'} . "\n";
+      print get_core_value('home_directory') . "\n";
       exit;
     }
   }

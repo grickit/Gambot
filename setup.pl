@@ -47,7 +47,7 @@ my $processor = &ask_question("What command should the bot run when it receives 
 
 open (CONFIGW, ">$config_file");
   print CONFIGW "[bot]
-  config_version = $config_vers
+  configuration_version = $config_vers
 
   [server]
     server = $server
@@ -55,7 +55,7 @@ open (CONFIGW, ">$config_file");
   [/server]
 
   [account]
-    nick = $nick
+    base_nick = $nick
     password = $pass
   [/account]
 
