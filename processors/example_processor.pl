@@ -196,7 +196,8 @@ $| = 1;
     else {
       ACT('LITERAL',undef,"error>Message did not match preparser.");
       ACT('LITERAL',undef,"error>$incoming_message");
-      die();
+      print "end>\n";
+      exit();
     }
   }
 
