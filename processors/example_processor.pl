@@ -36,7 +36,7 @@ $| = 1;
     my $have_output; #Track if we've printed anything yet.
     my $valid_nick_characters = 'A-Za-z0-9[\]\\`_^{}|-'; #Valid character for a nick name
     my $valid_chan_characters = "#$valid_nick_characters"; #Valid characters for a channel name
-    my $valid_human_sender_regex = "([.$valid_nick_characters]+)!~?([$valid_nick_characters]+)@(.+?)"; #Matches nick!~user@hostname
+    my $valid_human_sender_regex = "([.$valid_nick_characters]+)!~?([.$valid_nick_characters]+)@(.+?)"; #Matches nick!~user@hostname
     my $sl = "$self" . '[:,]'; #$sl stands for "start of line". It matches, for example, "bobbot:" or "bobbot,"
 
   #Variables related to the incoming message
