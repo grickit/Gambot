@@ -155,7 +155,7 @@ $| = 1;
       else { $event = 'other_part'; }
     }
 
-    elsif ($incoming_message =~ /^:$valid_human_sender_regex (QUIT) :(.+)$/) {
+    elsif ($incoming_message =~ /^:$valid_human_sender_regex (QUIT) :(.+)?$/) {
       ($sender, $account, $hostname, $command, $message) = ($1, $2, $3, $4, $5);
       $target = '';
       if ($sender eq $self) { $event = 'self_quit'; }
