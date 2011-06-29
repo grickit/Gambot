@@ -204,7 +204,7 @@
 
 *shikadibot
 #1
--Don't paste on IRC! Use a pastebin: http://pastebin.com/ http://imagebin.org 
+-Don't paste on IRC! Use a pastebin: http://pastebin.com/ http://imagebin.org
 
 *Dr. Cox
 #8
@@ -243,3 +243,7 @@
 -I sit down when I pee. There's nothing that crazy 'bout me.
 -I'm just taking a wiz. Mind your own biz. Why is everybody always staring at me?
 -Hey bro. I gotta go. Let me through I gotta go number two.
+
+*atomicbomb
+#1
+-[referring to homosexuals] Someday, they will probably dominate the world and I don't like that
