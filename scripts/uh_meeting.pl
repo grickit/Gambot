@@ -23,7 +23,7 @@ while(defined sleep(1)) {
     print "send>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02today\x02 in \x02$time_left hours\x02!\n";
   }
 
-  elsif (($wday == 0) && ($hour == 17) && (($min == 30) || ($min == 50)) && ($sec == 0)) {
+  elsif (($wday == 0) && ($hour == 16) && (($min == 30) || ($min == 50)) && ($sec == 0)) {
     my $time_left = 60 - $min;
     print "send>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02today\x02 in \x02$time_left minutes\x02!\n";
   }
