@@ -5,9 +5,9 @@ $| = 1;
 
 while(defined sleep(1)) {
   my ($sec,$min,$hour,undef,undef,undef,$wday,undef,undef) = gmtime(time);
-  $hour = sprintf ("%02d", $hour);
-  $min = sprintf ("%02d", $min);
-  $sec = sprintf ("%02d", $sec);
+  #$hour = sprintf ("%02d", $hour);
+  #$min = sprintf ("%02d", $min);
+  #$sec = sprintf ("%02d", $sec);
   my @days = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
 
   if (($wday < 6) && ($wday > 0) && ($hour == 17) && ($min == 0) && ($sec == 0)) {
