@@ -95,6 +95,7 @@ sub create_processing_fork {
 sub create_script_fork {
   my ($script_name, $script_filename) = @_;
   unless($script_pids{$script_name}) {
+    colorOutput("STTSCRPT","Starting script: $script_name with command: $script_filename",'bold green');
     $script_pids{$script_name} = open($script_pipes{$script_name}, "$script_filename |");
     $selector->add($script_pipes{$script_name});
   }
@@ -111,6 +112,7 @@ sub end_script_fork {
     close($script_pipes{$script_name});
     delete $script_pipes{$script_name};
     delete $script_pids{$script_name};
+    colorOutput("ENDSCRPT","Ended script: $script_name",'bold green');
   }
   else {
     colorOutput("BOTERROR","Attempted to terminate nonexistant script: $script_name",'bold red');
