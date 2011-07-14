@@ -21,9 +21,8 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/modules/";
 use URI::Escape;
-use IO::Select;
 use Fcntl qw(F_SETFL O_NONBLOCK);
-use Errno qw( EAGAIN EINTR );
+use IO::Select;
 use Term::ANSIColor;
 
 use Gambot::Output;
@@ -46,8 +45,8 @@ my %core;
 my %script_pipes;
 my %script_pids;
 
+my $socket_connection;
 my $selector = new IO::Select;
-my $socket_connection = new IO::Select;
 
 ###This stores the script location and the default name of the configuration file.
 $core{'home_directory'} = $FindBin::Bin;
