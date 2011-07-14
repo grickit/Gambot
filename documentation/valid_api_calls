@@ -1,0 +1,40 @@
+When writing a Gambot processor, timer, or other script (perhaps a wrapper that prints into Gambot's STDIN) these are the valid options.
+The code can be found in modules/Gambot/Parser.pm
+
+send>[message]
+	Sends [message] to the IRC server
+
+quit>[message]
+	Quits with the message of [message]
+
+log>[message]
+	Puts [message] in the logs.
+
+error>[message]
+	Puts [message] in the logs, but denotes it as an error.
+
+core_value>[name]>[value]
+	Sets $core{'[name]'} = [value]
+	Valid names are only lowercase letters and underscores
+
+config_value>[name]>[value]
+	Sets $config{'[name]'} = [value]
+	Valid names are only lowercase letters and underscores
+
+reload_config>
+	Reloads the configuration file.
+
+sleep>[number]
+	Sleeps for [number] seconds. 
+	Can be a decimal.
+	A value of 0.5 is recommended for throttling sending of messages.
+
+start_script>[system command]
+	Starts a fork that executes [system command]
+	YOU SHOULD NEVER EXPOSE THIS TO IRC USERS
+	The output of these commands will be read as Gambot API calls
+	These commands should have Gambot clean up after them with end>
+
+end>
+	This is a dummy call that scripts and processors should print as their last line
+	While not essential, it causes Gambot to clean up information associated with the fork

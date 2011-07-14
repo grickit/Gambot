@@ -1,0 +1,29 @@
+[bot]
+  configuration_version = 6
+
+  [server]
+    server = chat.freenode.net
+    port = 6667
+  [/server]
+
+  [account]
+    base_nick = Gambfoobarbot
+    password = 
+  [/account]
+
+  [local]
+    log_directory = /home/username/source/Gambot/logs/Gambfoobarbot
+    processor_file_name = example_processor.pl
+  [/local]
+
+  [logic]
+    enable_terminal = 1
+    enable_timer = 0
+    number_of_processors = 2
+  [/logic]
+
+  [timer]
+    timer_regex = 0
+    timer_file_name = 0
+  [/timer]
+[/bot]

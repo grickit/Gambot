@@ -27,19 +27,26 @@ sub colorOutput {
   my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
   $mon += 1;
   $year += 1900;
+  $hour = sprintf("%02d", $hour);
+  $min = sprintf("%02d", $min);
+  $sec = sprintf("%02d", $sec);
   my $datestamp = "$year-$mon-$mday";
   my $timestamp = "$hour:$min:$sec";
-  
+
   #Grab the parameters.
   my ($prefix, $message, $formatting) = @_;
- 
+
   #Print the message to the terminal output.
-  print colored ("$prefix $timestamp $message", "$formatting"), "\n";
+  if (&get_core_value('verbose')) {
+    print colored ("$prefix $timestamp $message", "$formatting"), "\n";
+  }
   #Print the message in the logs.
-  open FILE, ">>$main::logdir/$datestamp-$main::self.txt" 
-    or die "unable to open logfile \"$main::logdir/$datestamp-$main::self.txt\"\n Does that directory structure exist?\n";
-  print FILE "$prefix $timestamp $message\n";
-  close FILE;
+  if (!(&get_core_value('unlogged'))) {
+    open LOGFILE, ">>" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt"
+      or die "unable to open logfile \"" . &get_config_value('log_directory') . "/" . &get_config_value('base_nick') . "-$datestamp.txt\n" . "Does that directory structure exist?\n";
+    print LOGFILE "$prefix $timestamp $message\n";
+    close LOGFILE;
+  }
 }
 
-return 1;
+1;

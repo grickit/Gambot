@@ -24,19 +24,23 @@ sub parse_command {
   my $command = shift;
 
   if ($command =~ /^send>(.+)$/) {
-    print $main::sock "$1\n";
+    send_server_message($1);
     colorOutput("OUTGOING","$1",'red');
-    select(undef, undef, undef, 0.5);
+    ##Are they changing their nick?
+    if ($1 =~ /^NICK (.+)$/) { set_core_value('nick',$1); }
   }
 
   elsif ($command =~ /^quit>(.*)$/) {
     colorOutput("BOTERROR","Shut down by API call: $1",'bold red');
-    print $main::sock "QUIT :Shut down by API call: $1\n";
-    exit;
+    send_server_message("QUIT :Shut down by API call: $1");
   }
 
-  elsif ($command =~ /^timer>$/) {
-    timer_action();
+  elsif ($command =~ /^start_script>([a-zA-Z0-9_-]+)>(.+)$/) {
+    create_script_fork($1,$2);
+  }
+
+  elsif ($command =~ /^end_script>([a-zA-Z0-9_-]+)$/) {
+    end_script_fork($1);
   }
 
   elsif ($command =~ /^log>(.+)$/) {
@@ -47,9 +51,32 @@ sub parse_command {
     colorOutput("APIERROR","$1",'bold red');
   }
 
+  elsif ($command =~ /^core_value>([a-z_]+)>(.+)$/) {
+    set_core_value($1,$2);
+    colorOutput("APIVALUE","core $1: $2",'bold blue');
+  }
+
+  elsif ($command =~ /^config_value>([a-z_]+)>(.+)$/) {
+    set_config_value($1,$2);
+    colorOutput("APIVALUE","config $1: $2",'bold blue');
+  }
+
+  elsif ($command =~ /^reload_config>$/) {
+    read_configuration_file(get_core_value('home_directory') . '/configurations/' . get_core_value('configuration_file'));
+    colorOutput("RELOADED","Reloaded configuration file.",'bold green');
+  }
+
+  elsif ($command =~ /^sleep>([0-9.]+)$/) {
+    select(undef,undef,undef,$1);
+  }
+
+  elsif ($command =~ /^end>$/) {
+    #Dummy call that makrs the end of output
+  }
+
   else {
     colorOutput("BOTERROR","Unknown API call: $command",'bold red');
   }
 }
 
-return 1;
+1;

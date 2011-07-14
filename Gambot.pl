@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
 # Copyright (C) 2010-2011 by Derek Hoagland <grickit@gmail.com>
 # This file is part of Gambot.
 #
@@ -18,79 +18,177 @@
 use strict;
 use warnings;
 
-use threads;
-use Thread::Queue;
 use FindBin;
-use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/modules/";
 use URI::Escape;
+use Fcntl qw(F_SETFL O_NONBLOCK);
+use IO::Select;
+use Term::ANSIColor;
 
-use gamb_output;
-use gamb_connect;
-use gamb_terminal;
-use gamb_timer;
-use gamb_parser;
-use gamb_configure;
+use Gambot::Output;
+use Gambot::Connect;
+use Gambot::Parser;
+use Gambot::Configure;
 
-our $home_folder = $FindBin::RealBin;
+$| = 1;
+my $main = $$;
+$SIG{CHLD} = 'IGNORE';
+$Term::ANSIColor::AUTORESET = 1;
 
-#Connection variables
-our ($server, $port, $self);
-our $pass = '';
-#Management variables
-our ($logdir, $processor_name, $term_enabled, $timer_enabled, $timer_regex, $timer_action, $num_threads);
-our $config_file = 'config.txt';
-our $config_vers = 0;
-our $needed_config_vers = 5;
-#Socket connection
-our $sock;
+###$forks tracks the number of message processing forks that have been spawned
+my $forks = 0;
+###%config will be for variables specifically related to the configuration files (server, nick, password, log location, and so on)
+my %config;
+###%core will be for things related to the program (where the script is located, special flags and options)
+my %core;
+###These two hashes will store information about started scripts
+my %script_pipes;
+my %script_pids;
 
-my @cmd_args = @ARGV;
-$config_file = $cmd_args[0] if @cmd_args;
-$config_file = "$home_folder/$config_file" if defined $home_folder;
+my $socket_connection;
+my $selector = new IO::Select;
 
-my $sockqueue = Thread::Queue->new();
-my @threads = ();
+###This stores the script location and the default name of the configuration file.
+$core{'home_directory'} = $FindBin::Bin;
+$core{'configuration_file'} = 'config.txt';
 
-&read_configuration();
-&connect_to_server();
+sub get_config_value {
+  my $name = shift;
+  return $config{$name};
+}
 
-sub process_message {
-  while (my $inbound = $sockqueue->dequeue()) {
-    chop $inbound; 
+sub set_config_value {
+  my ($name, $value) = @_;
+  $config{$name} = $value;
+}
 
-    #Filter MotD spam
-    if ($inbound !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $self :.+/) {
-      #Highlighted?
-      if ($inbound =~ /$self/) { colorOutput("INCOMING","$inbound",'bold yellow'); }
-      else { colorOutput("INCOMING","$inbound",''); }
- 
-      my $string = uri_escape($inbound,"A-Za-z0-9\0-\377");
-   
-      open(MESSAGE, "perl $home_folder/processors/$processor_name \"$string\" \"$self\" |");
-      while (my $current_line = <MESSAGE>) {
-	parse_command($current_line);
-      }              
-      close(MESSAGE);
-    }
+sub get_core_value {
+  my $name = shift;
+  return $core{$name};
+}
+
+sub set_core_value {
+  my ($name, $value) = @_;
+  $core{$name} = $value;
+}
+
+sub send_server_message {
+  print $socket_connection "$_[0]\n";
+}
+
+sub create_processing_fork {
+  my $inbound_message = shift;
+
+  #Filter MotD spam
+  if ($inbound_message !~ /^:([a-zA-Z0-9-_\w]+\.)+(net|com|org|gov|edu) (372|375|376) $core{'nick'} :.+/) {
+    #Highlighted?
+    if ($inbound_message =~ /$core{'nick'}/) { colorOutput("INCOMING","$inbound_message",'bold yellow'); }
+    else { colorOutput("INCOMING","$inbound_message",''); }
+    my $encoded_string = uri_escape($inbound_message,"A-Za-z0-9\0-\377");
+
+    open(my $response, "$config{'processor'} \"$encoded_string\" \"$core{'nick'}\" |");
+    $selector->add($response);
   }
 }
 
-if ($term_enabled) {
-  push(@threads,threads->create(\&terminal_input));
-  $threads[-1]->detach();
+sub create_script_fork {
+  my ($script_name, $script_filename) = @_;
+  unless($script_pids{$script_name}) {
+    colorOutput("STTSCRPT","Starting script: $script_name with command: $script_filename",'bold green');
+    $script_pids{$script_name} = open($script_pipes{$script_name}, "$script_filename |");
+    $selector->add($script_pipes{$script_name});
+  }
+  else {
+    colorOutput("BOTERROR","Attempted to start script with a taken name: $script_name",'bold red');
+  }
 }
 
-if ($timer_enabled) {
-  push(@threads,threads->create(\&timer_clock));
-  $threads[-1]->detach();
+sub end_script_fork {
+  my $script_name = shift;
+  if($script_pids{$script_name}) {
+    $selector->remove($script_pipes{$script_name});
+    kill 1, $script_pids{$script_name};
+    close($script_pipes{$script_name});
+    delete $script_pipes{$script_name};
+    delete $script_pids{$script_name};
+    colorOutput("ENDSCRPT","Ended script: $script_name",'bold green');
+  }
+  else {
+    colorOutput("BOTERROR","Attempted to terminate nonexistant script: $script_name",'bold red');
+  }
 }
 
-for my $i (1..$num_threads) {
-  push(@threads,threads->create(\&process_message));
-  $threads[-1]->detach();
-}
+get_command_arguments();
+read_configuration_file($core{'home_directory'} . '/configurations/' . $core{'configuration_file'});
+$core{'nick'} = $config{'base_nick'};
 
-#Grab socket input
-while(my $incoming_message = <$sock>) { 
-  $sockqueue->enqueue($incoming_message);
+$socket_connection = create_socket_connection($config{'server'}, $config{'port'}, $core{'nick'}, $config{'password'});
+fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
+
+my $socket_buffer = '';
+while(defined select(undef,undef,undef,0.2)) {
+  my @full_messages = ();
+  my $bytes_read = sysread($socket_connection, $socket_buffer, 1024, length($socket_buffer));
+    if (defined($bytes_read)) {
+      if ($bytes_read == 0) {
+	###The connection is dead
+	print "Connection to IRC server died.\n";
+	if ($core{'staydead'}) {
+	  exit;
+	}
+	else {
+	  $socket_connection = create_socket_connection($config{'server'}, $config{'port'}, $core{'nick'}, $config{'password'});
+	  fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+	}
+      }
+      else {
+	###We have content
+	@full_messages = split(/\x0D\x0A/,$socket_buffer);
+	if ($socket_buffer !~ /\x0D\x0A$/) {
+	  $socket_buffer = $full_messages[-1];
+	  pop(@full_messages);
+	}
+	else { $socket_buffer = ''; }
+      }
+    }
+    else {
+      ###Read some other time
+    }
+
+  foreach my $current_line (@full_messages) {
+    #print "socket has message. spawning fork.\n";
+    create_processing_fork($current_line) if ($current_line);
+  }
+
+  while(my $current_line = <STDIN>) {
+    $current_line =~ s/\s+$//g;
+    parse_command($current_line) if ($current_line);
+  }
+
+  my @ready_forks = $selector->handles();
+  foreach my $current_fork (@ready_forks) {
+    my $fork_buffer = '';
+    fcntl($current_fork, F_SETFL(), O_NONBLOCK());
+    while(1) {
+      my $bytes_read = sysread($current_fork, $fork_buffer, 1024, length($fork_buffer));
+      if(defined $bytes_read) {
+	if($bytes_read == 0) { last; }
+	else {
+	  #We have content
+	}
+      }
+      else { last; }
+    }
+    my @full_commands = split(/[\r\n]+/,$fork_buffer);
+    foreach my $current_command (@full_commands) {
+      if($current_command =~ /^end>/) {
+	$selector->remove($current_fork);
+	close($current_fork);
+	$current_command = 0;
+      }
+      parse_command($current_command) if ($current_command);
+    }
+  }
 }
+print "Done\n";

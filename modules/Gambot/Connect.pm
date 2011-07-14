@@ -15,31 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-###This file executes a script at certain time intervals.
+###This file connects to the server.
 
 use strict;
 use warnings;
+use IO::Socket;
 
-sub timer_clock {
-  colorOutput("BOTEVENT","Timer started.",'bold blue');
-  while (1) {
-    my ($sec,$min,$hour,undef,undef,undef,undef,undef,undef) = localtime(time);
-    if ("$hour:$min:$sec" =~ /$main::timer_regex/) {
-      timer_action();
-    }
-    else {
-      sleep(1);
-    }
-  }
+sub create_socket_connection {
+  my ($server, $port, $nick, $pass) = @_;
+  #Create the socket and connect.
+  colorOutput("BOTEVENT","I am attempting to connect.",'bold blue');
+  use IO::Socket;
+  my $sock = new IO::Socket::INET(
+    PeerAddr => "$server",
+    PeerPort => $port,
+    Proto => 'tcp',
+    timeout => 1)
+    or die "Error while connecting to $server:$port";
+
+  #Login with services.
+  colorOutput("BOTEVENT","I am attempting to login.",'bold blue');
+  print $sock "PASS $nick:$pass\x0D\x0A";
+  print $sock "NICK $nick\x0D\x0A";
+  print $sock "USER Gambot 8 * :Perl Gambot\x0D\x0A";
+
+  return $sock;
 }
 
-sub timer_action {
-  colorOutput("BOTEVENT","Timer triggered.",'bold blue');
-  open(TIMER, "perl $main::home_folder/processors/timers/$main::timer_action |");
-  while (my $current_line = <TIMER>) {
-    parse_command($current_line);
-  }              
-  close(TIMER);
-}
-
-return 1;
+1;
