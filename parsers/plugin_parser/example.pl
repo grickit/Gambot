@@ -17,6 +17,7 @@
 
 use strict;
 use warnings;
+use URI::Escape;
 use FindBin;
 use lib $FindBin::Bin;
 use plugin_parse;
