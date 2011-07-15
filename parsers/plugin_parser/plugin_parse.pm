@@ -56,6 +56,11 @@ sub CheckAuth {
   return 0;
 }
 
+sub AuthError {
+  my ($sender, $target, $location) = @_;
+  ACT('MESSAGE',$target,"$sender: Sorry. You don't have permission to do that in $location.");
+}
+
 sub have_output {
   return $have_output;
 }
