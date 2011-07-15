@@ -1,0 +1,8 @@
+Gambot now allows arbitrary system commands to be executed. It is assumed that these commands will output GAPIL (see: gambot_api_language documentation).
+
+They can be as simple as a text file full of commands (run cat on the text file) that are used as a macro, or as advanced as some sort of state manager or web front end.
+You are able to keep commands running constantly.
+
+They will receive one message in STDIN at startup. This is the "pipe id" of your command
+It is sent in case you want to be able to identify yourself to other pipes when using send_pipe_message>
+If you plan to receieve messages later on STDIN, you should make sure to read this one out first.

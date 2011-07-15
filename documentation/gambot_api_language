@@ -1,0 +1,100 @@
+The Gambot API Language is just a series of commands that message parsers and scripts/commands can output to manipulate the bot.
+They are as follows.
+
+--- Sending Messages ---
+  send_server_message>[message]
+    Makes the bot send [message] to the IRC server. Should be valid IRC as per RFC 1459.
+
+  send_pipe_message>[pipe id]>[message]
+    Sends [message] to the pipe named [pipe id].
+    Use the id "main" to send messages to STDOUT.
+
+
+--- Checking Variables ---
+  get_core_value>[variable]
+    This will cause the value of $core{[variable]} to be printed to STDIN of the calling script.
+    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+
+  get_config_value>[variable]
+    This will cause the value of $config{[variable]} to be printed to STDIN of the calling script.
+    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+
+  get_variable_value>[variable]
+    This will cause the value of $variable{[variable]} to be printed to STDIN of the calling script.
+    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+
+
+--- Setting Variables ---
+  set_core_value>[variable]>[value]
+    This will set the value of $core{[variable]} to equal [value].
+
+  set_config_value>[variable]>[value]
+    This will set the value of $config{[variable]} to equal [value].
+
+  set_variable_value>[variable]>[value]
+    This will set the value of $variable{[variable]} to equal [value].
+
+
+--- Pipe Management ---
+  check_pipe_exists>[pipe id]
+    If the pipe named [pipe id] exists, the calling script will receive a "1" in its STDIN.
+    Otherwise it will receive a "0"
+
+  kill_pipe>[pipe id]
+    This abruptly kills and cleans up variables related to the pipe named [pipe id].
+    This can lead to data loss if that pipe isn't already finished running.
+    Never use on "main" or you will corrupt the running bot.
+
+  run_command>[pipe id]>[command]
+    This will start a new child pipe named [pipe id].
+    It will run the system command: [command]
+    Be careful about combining this with user input.
+    We recommend only running commands that you have explicitly typed out, and passing user input to them with send_pipe_message>
+
+
+--- Bot Management ---
+  sleep>[number]
+    This will cause the bot to sleep for [number] seconds.
+    Can be a float because we actually use the four argument version of select() for this.
+
+  shutdown>
+    Shuts the bot down.
+
+  reconnect>
+    The bot will disconnect from IRC and then reconnect.
+
+  reload_config>
+    The bot will reread its configuration file and re-set %config values.
+
+  log>[prefix]>[message]
+    This will use the normal_output() function to log in the form: [prefix] timestamp [message]
+    It looks like: BOTEVENT 11:00:00 I am attempting to connect.
+
+
+--- Persistent Variables ---
+  get_persistent_value>[domain]>[variable]
+    This will cause the value of $persistent{[domain]}{[variable]} to be printed to STDIN of the calling script.
+    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+
+  set_persistent_value>[domain]>[variable]>[value]
+    This will set the value of $persistent{[domain]}{[variable]} to equal [value].
+
+  del_persistent_value>[domain]>[variable]
+    This will delete $persistent{[domain]}{[variable]}
+
+  read_persistence_file>[domain]
+    This will read the file "/persistence/[domain]" into $persistent{[domain]}
+
+  save_persistence_file>[domain]
+    This will dump $persistent{[domain]} into the file "/persistence/[domain]"
+
+  save_all_persistence_files>
+    This will dump all persistent variables into their respective domain files.
+
+
+--- Notes ---
+  All pipe ids and variable names must match: ([a-zA-Z0-9_-]+)
+
+  %core contains information that the bot requires to run.
+  %config contains any values set in the configuration file.
+  %variable contains nothing by default. Message parsers and commands are able to store data here.

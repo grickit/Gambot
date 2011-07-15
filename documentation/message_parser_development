@@ -1,0 +1,26 @@
+The job of a message parser is very simple.
+
+1. Start.
+2. Receive message.
+3. Chop up message.
+4. React to the message (see: gambot_api_language documentation).
+5. Stop.
+
+As soon as the message parser starts it should read three lines from STDIN. Respectively those are:
+
+1. The "pipe id" of this message parser.
+  The first message after a new connection (including reconnects) will be "fork0".
+  We recommend executing auto-join lists on forks after at least 10. This way you know the connection was successful.
+  You can also use this to do certain setup stuff on the bot.
+2. The nickname the bot is currently using.
+3. The incoming message.
+
+All of those should have their new-lines and carriage-returns chopped off of the end.
+
+The incoming message will be raw IRC as per RFC 1459.
+
+Next you should parse the message however you want (regular expressions are nice) and react to it.
+
+You can, at any time, output GAPIL commands to STDOUT (see: gambot_api_language documentation).
+
+Make sure your message parser exits. They are not meant to stay running. Otherwise you will collect several thousand running processes.
