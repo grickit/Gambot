@@ -1,0 +1,22 @@
+[bot]
+  [server]
+    #What server the bot connects to
+    server = "chat.freenode.net"
+    #What port the bot connects on
+    port = "6667"
+  [/server]
+
+  [account]
+    #The first nick it should try
+    base_nick = "aGambot"
+    #The password it should try to login with
+    password = ""
+  [/account]
+
+  [local]
+    #Where to store logs?
+    log_directory = "/home/username/source/Gambot/logs/"
+    #What command to run when a new message is received
+    processor = "perl /home/username/source/Gambot/parsers/plugin_parser/example.pl"
+  [/local]
+[/bot]
