@@ -1,4 +1,4 @@
-if (($event eq 'public_message') && ($message =~ /^$sl (.+)$/) && !($have_output)) {
+if (($event eq 'public_message') && ($message =~ /^$sl (.+)$/) && !(&have_output())) {
   require LWP::Simple;
   if (($hostname !~ /\/bot\//i) && ($sender !~ /bot$/i)) {
     my $answer = $message;
