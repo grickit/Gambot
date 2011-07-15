@@ -93,6 +93,13 @@ $| = 1;
     ACT('MESSAGE',$target,"$sender: Sorry. You don't have permission to do that in $location.");
   }
 
+  sub CheckAdmin {
+    if ($hostname =~ /^wesnoth\/developer\/grickit$/) {
+      return 1;
+    }
+    return 0;
+  }
+
 ####-----#----- Action Subroutines -----#-----####
   #Sends the data back to the connection script in the proper API and/or raw IRC format
   sub ACT {
@@ -233,6 +240,8 @@ $| = 1;
       LoadPlugin("$home_folder/plugins/staff/op.pm");
       LoadPlugin("$home_folder/plugins/staff/voice.pm");
       LoadPlugin("$home_folder/plugins/staff/quiet.pm");
+
+      LoadPlugin("$home_folder/plugins/staff/literal.pm");
 
       LoadPlugin("$home_folder/plugins/conversation/quote.pm");
       LoadPlugin("$home_folder/plugins/conversation/dictionary.pm");
