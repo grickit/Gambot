@@ -14,16 +14,16 @@ while(defined sleep(1)) {
     print "send_server_message>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02Sunday\x02 at \x0217:00 UTC\x02! For reference, it is currently $hour:$min UTC on $days[$wday].\n";
   }
 
-  elsif (($wday == 6) && (($hour == 12) || ($hour == 14) || ($hour == 16) || ($hour == 18) || ($hour == 20) || ($hour == 22)) && ($min == 0) && ($sec == 0)) {
+  elsif (($wday == 6) && (($hour == 12) || ($hour == 16) || ($hour == 20)) && ($min == 0) && ($sec == 0)) {
     print "send_server_message>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02tomorrrow\x02 at \x0217:00 UTC\x02! For reference, it is currently $hour:$min UTC.\n";
   }
 
-  elsif (($wday == 0) && ($hour < 16) && ($min == 0) && ($sec == 0)) {
+  elsif (($wday == 0) && (($hour == 0) || ($hour == 3) || ($hour == 6) || ($hour == 9) || ($hour == 12) || ($hour == 15)) && ($min == 0) && ($sec == 0)) {
     my $time_left = 17 - $hour;
     print "send_server_message>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02today\x02 in \x02$time_left hours\x02!\n";
   }
 
-  elsif (($wday == 0) && ($hour == 16) && (($min == 30) || ($min == 50)) && ($sec == 0)) {
+  elsif (($wday == 0) && ($hour == 16) && (($min == 0) || ($min == 30) || ($min == 50)) && ($sec == 0)) {
     my $time_left = 60 - $min;
     print "send_server_message>PRIVMSG #unknown-horizons :Don't forget about the meeting \x02today\x02 in \x02$time_left minutes\x02!\n";
   }
