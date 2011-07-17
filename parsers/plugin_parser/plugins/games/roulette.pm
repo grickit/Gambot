@@ -15,15 +15,14 @@ if ($message =~ /^$sl !roulette$/) {
   $index =~ s/[\r\n\t\s]+$//;
 
   my $chamberstring = $index;
-  ACT('MESSAGE',$target,"Pulling the trigger on chamber $chamberstring…");
-  sleep(2);
+  ACT('MESSAGE',$target,"Pulling the trigger on chamber $chamberstring.");
   if ($chamber == $index) {
-    ACT('MESSAGE',$target,"*BANG* $sender is dead.");
+    ACT('MESSAGE',$target,"BANG! $sender is dead.");
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'chamber>1');
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'index>1');
   }
   else {
-    ACT('MESSAGE',$target,"*Click* $sender lives this time.");
+    ACT('MESSAGE',$target,"Click. $sender lives this time.");
     $index++;
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'index>'.$index);
   }
