@@ -77,8 +77,6 @@ sub on_public_message {
   &load_plugin("$home_folder/plugins/staff/voice.pm");
   &load_plugin("$home_folder/plugins/staff/quiet.pm");
 
-  &load_plugin("$home_folder/plugins/staff/literal.pm");
-
   &load_plugin("$home_folder/plugins/conversation/quote.pm");
   &load_plugin("$home_folder/plugins/conversation/dictionary.pm");
 
