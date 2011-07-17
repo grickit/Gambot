@@ -46,12 +46,14 @@ sub startup_variables {
 }
 
 sub CheckAuth {
+  my $chanmask = $_[0];
+  my $hostmask = $_[1];
   while (my ($hostreg, $chanreg) = each %permissions) {
     $hostreg =~ s/\*/.*/;
     $chanreg =~ s/\*/.*/;
     $hostreg = qr/$hostreg/;
     $chanreg = qr/$chanreg/;
-    if (($_[1] =~ /^$hostreg$/) && ($_[0] =~ /^$chanreg$/)) { return 1; }
+    if (($hostmask =~ /^$hostreg$/) && ($chanmask =~ /^$chanreg$/)) { return 1; }
   }
   return 0;
 }
