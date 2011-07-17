@@ -16,7 +16,7 @@ if ($message =~ /^$sl !roulette$/) {
 
   my $chamberstring = $index;
   ACT('MESSAGE',$target,"Pulling the trigger on chamber $chamberstring…");
-  sleep(3);
+  sleep(2);
   if ($chamber == $index) {
     ACT('MESSAGE',$target,"*BANG* $sender is dead.");
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'chamber>1');
