@@ -14,13 +14,14 @@ if ($message =~ /^$sl !roulette$/) {
   my $index = <STDIN>;
   $index =~ s/[\r\n\t\s]+$//;
 
+  my $chamberstring = $index;
   if ($chamber == $index) {
-    ACT('MESSAGE',$target,"BANG! $sender is dead.");
+    ACT('MESSAGE',$target,"Chamber number $chamberstring. BANG! $sender is dead.");
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'chamber>1');
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'index>1');
   }
   else {
-    ACT('MESSAGE',$target,"Click. $sender lives this time.");
+    ACT('MESSAGE',$target,"Chamber number $chamberstring. Click. $sender lives this time.");
     $index++;
     ACT('LITERAL',undef,'set_variable_value>roulette'.$target.'index>'.$index);
   }
