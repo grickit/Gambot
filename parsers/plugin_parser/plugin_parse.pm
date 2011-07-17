@@ -16,6 +16,7 @@ $permissions{'unaffiliated/marcavis*'}	 		= '#frogatto*';
 $permissions{'unaffiliated/dreadknight'} 		= '#AncientBeast';
 
 $permissions{'unaffiliated/gambit/bot/*'} 		= '##Gambot*';
+$permissions{'unaffiliated/gambit/bot/*'} 		= '#wesnoth-offtopic';
 $permissions{'wesnoth/developer/grickit'}	 	= '*';
 $permissions{'wesnoth/developer/shadowmaster*'} 	= '*';
 
