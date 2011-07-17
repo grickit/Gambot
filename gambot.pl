@@ -61,6 +61,10 @@ my %write_pipes;
 my $socket_connection;
 my $socket_buffer;
 
+my @pending_outgoing;
+my $last_second = time;
+my $messages_this_second = 0;
+
 
 ####-----#----- Subroutines -----#-----####
 sub get_config_value { return $config{$_[0]}; }
@@ -72,9 +76,7 @@ sub set_core_value { $core{$_[0]} = $_[1]; }
 sub set_variable_value { $variables{$_[0]} = $_[1]; }
 
 sub send_server_message {
-  my $message = shift;
-  normal_output('OUTGOING',$message);
-  print $socket_connection $message . "\015\012";
+  push(@pending_outgoing,$_[0]);
 }
 sub send_pipe_message {
   my ($pipeid, $message) = @_;
@@ -82,11 +84,9 @@ sub send_pipe_message {
     debug_output("Sending \"$message\" to a pipe named $pipeid.");
     my $write_pipe = $write_pipes{$pipeid};
     print $write_pipe $message."\n";
-    return 1;
   }
   else {
     error_output("Tried to send a message to a pipe named $pipeid, but it doesn't exist.");
-    return 0;
   }
 }
 
@@ -103,11 +103,9 @@ sub kill_pipe {
     delete $pid_pipes{$pipeid};
     delete $read_pipes{$pipeid};
     delete $write_pipes{$pipeid};
-    return 1;
   }
   else {
     error_output("Tried to kill a pipe named $pipeid, but it doesn't exist.");
-    return 0;
   }
 }
 
@@ -115,13 +113,11 @@ sub run_command {
   my ($pipeid, $command) = @_;
   if(&check_pipe_exists($pipeid)) {
     error_output("Tried to start a pipe named $pipeid, but one already exists.");
-    return 0;
   }
   else {
     debug_output("Starting a pipe named $pipeid with the command: $command");
     $pid_pipes{$pipeid} = open2($read_pipes{$pipeid},$write_pipes{$pipeid},$command);
     &send_pipe_message($pipeid,$pipeid);
-    return 1;
   }
 }
 
@@ -227,6 +223,16 @@ while(defined select(undef,undef,undef,$config{'delay'})) {
 	parse_command($current_command,$id) if $current_command;
       }
     }
+  }
+
+  ####-----#----- Send outgoing messages -----#-----####
+  for (1; ($messages_this_second < 3) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
+    normal_output('OUTGOING',$message);
+    print $socket_connection $message . "\015\012";
+  }
+  if ($messages_this_second >= 3 && $last_second != time) {
+    $messages_this_second = 0;
+    $last_second = time;
   }
 }
 

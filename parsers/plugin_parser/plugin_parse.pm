@@ -69,11 +69,11 @@ sub have_output {
 }
 
 sub ACT {
-  if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $_[1] :$_[2]\nsleep>0.25\n"; }
-  elsif ($_[0] eq 'ACTION') { print "send_server_message>PRIVMSG $_[1] :ACTION $_[2]\nsleep>0.25\n"; }
-  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send_server_message>$_[0] $_[1] :$_[2]\nsleep>0.25\n"; }
-  elsif ($_[0] eq 'JOIN') { print "send_server_message>JOIN $_[1]\nsleep>0.25\n"; }
-  elsif ($_[0] eq 'MODE') { print "send_server_message>MODE $_[1] $_[2]\nsleep>0.25\n"; }
+  if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $_[1] :$_[2]\n"; }
+  elsif ($_[0] eq 'ACTION') { print "send_server_message>PRIVMSG $_[1] :ACTION $_[2]\n"; }
+  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send_server_message>$_[0] $_[1] :$_[2]\n"; }
+  elsif ($_[0] eq 'JOIN') { print "send_server_message>JOIN $_[1]\n"; }
+  elsif ($_[0] eq 'MODE') { print "send_server_message>MODE $_[1] $_[2]\n"; }
   elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
   $have_output = 1;
 }
