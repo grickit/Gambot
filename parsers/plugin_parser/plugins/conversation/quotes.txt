@@ -8,7 +8,7 @@
 
 *list
 #1
--https://github.com/grickit/Gambot/blob/advanced_core/processors/plugins/conversation/quotes.txt
+-https://github.com/grickit/Gambot/blob/master/parsers/plugin_parser/plugins/conversation/quotes.txt
 
 *shadowmaster
 #9
