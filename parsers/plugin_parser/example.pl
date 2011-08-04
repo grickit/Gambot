@@ -45,8 +45,8 @@ sub load_plugin {
 
 $sl = $self . '[:,]'; #$sl stands for "start of line". For example: "janebot:"
 $cm = '!'; #$cm stands for "command marker".
-$version = "Gambot 1.0 | Example Parser | Perl 5.10.1 | Ubuntu 11.04";
-$about = "I am a Gambot IRC Bot. For more information, visit my home channel ##Gambot.";
+$version = "Gambot 1.0 | Example Parser | Perl 5.10.1 | Ubuntu 11.04 | http://bit.ly/GithubGambot";
+$about = "I am a Gambot IRC Bot. Visit my home channel ##Gambot for more information. Report bugs at https://github.com/grickit/Gambot/issues";
 
 if ($script_id eq 'fork20') {
   ACT('JOIN','##Gambot',undef);
