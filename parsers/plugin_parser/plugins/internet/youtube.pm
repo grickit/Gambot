@@ -39,7 +39,7 @@ if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/) {
     }
     ACT('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
     ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
-    if ($receiver != $sender) {
+    if ($receiver ne $sender) {
       ACT('MESSAGE',$target,"$receiver ^^^");
     }
   }
