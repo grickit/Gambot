@@ -28,5 +28,6 @@ if ($message =~ /^$sl !set-define ([a-zA-Z0-9_#-]+) (.+)$/) {
   if (!$dictloaded) { ACT('LITERAL',undef,"load_persistence_file>dictionary"); }
 
   ACT('LITERAL',undef,"set_persistent_value>dictionary>$word>$definition");
+  ACT('LITERAL',undef,"save_persistence_file>dictionary");
   ACT('MESSAGE',$target,"$receiver: Done.");
 }
