@@ -69,12 +69,18 @@ sub have_output {
 }
 
 sub ACT {
-  if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $_[1] :$_[2]\n"; }
-  elsif ($_[0] eq 'ACTION') { print "send_server_message>PRIVMSG $_[1] :ACTION $_[2]\n"; }
-  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send_server_message>$_[0] $_[1] :$_[2]\n"; }
-  elsif ($_[0] eq 'JOIN') { print "send_server_message>JOIN $_[1]\n"; }
-  elsif ($_[0] eq 'MODE') { print "send_server_message>MODE $_[1] $_[2]\n"; }
-  elsif ($_[0] eq 'LITERAL') { print "$_[2]\n"; }
+  my @unsafeargs = @_;
+  my @args;
+  foreach my $current_arg (@unsafeargs) {
+    $current_arg =~ s/[\r\n]+/ /;
+    push (@args,$current_arg);
+  }
+  if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; }
+  elsif ($_[0] eq 'ACTION') { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; }
+  elsif (($_[0] eq 'NOTICE') || ($_[0] eq 'PART') || ($_[0] eq 'KICK') || ($_[0] eq 'INVITE')) { print "send_server_message>$args[0] $args[1] :$args[2]\n"; }
+  elsif ($_[0] eq 'JOIN') { print "send_server_message>JOIN $args[1]\n"; }
+  elsif ($_[0] eq 'MODE') { print "send_server_message>MODE $args[1] $args[2]\n"; }
+  elsif ($_[0] eq 'LITERAL') { print "$args[2]\n"; }
   $have_output = 1;
 }
 
