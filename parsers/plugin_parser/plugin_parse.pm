@@ -72,8 +72,10 @@ sub ACT {
   my @unsafeargs = @_;
   my @args;
   foreach my $current_arg (@unsafeargs) {
-    $current_arg =~ s/[\r\n]+/ /;
-    push (@args,$current_arg);
+    if ($current_arg) {
+      $current_arg =~ s/[\r\n]+/ /;
+      push (@args,$current_arg);
+    }
   }
   if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; }
   elsif ($_[0] eq 'ACTION') { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; }
