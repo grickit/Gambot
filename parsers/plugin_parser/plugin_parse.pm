@@ -72,7 +72,7 @@ sub ACT {
   my @unsafeargs = @_;
   my @args;
   foreach my $current_arg (@unsafeargs) {
-    $current_arg =~ s/[\r\n]+/ /;
+    $current_arg =~ s/[\r\n]+/ / if ($current_arg);
     push (@args,$current_arg);
   }
   if ($_[0] eq 'MESSAGE') { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; }
@@ -101,7 +101,7 @@ sub parse_message {
   my $receiver;
 
   if ($incoming_message =~ /^PING(.*)$/i) {
-    ACT("LITERAL",undef,"send_server_message>PONG$1");
+    ACT('LITERAL',undef,"send_server_message>PONG$1");
     ($sender, $account, $hostname, $command, $target, $message) = ('', '', '', '', '', '');
     $event = 'server_ping';
   }
