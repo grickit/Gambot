@@ -259,3 +259,7 @@
 
 *Cartman
 >Eric Cartman
+
+*VurtualRuler98
+#1
+-We could make our own burger stands in new york, with GPL'd burger designs and we'll call it OpenSesame.
