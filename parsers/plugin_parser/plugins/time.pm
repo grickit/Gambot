@@ -10,6 +10,15 @@ if ($message =~ /^$sl !time-utc$/) {
   ACT('MESSAGE',$target,"$receiver: $timestamp");
 }
 
+if ($message =~ /^$sl !time ([+-][0-9]+)$/) {
+  my $offset = $1;
+  my $hours = POSIX::strftime('%H',gmtime(time));
+  my $minsec = POSIX::strftime('%M:%S',gmtime(time));
+  $hours += $offset;
+  my $timestamp = $hours.':'.$minsec;
+  ACT('MESSAGE',$target,"$receiver: $timestamp");
+}
+
 if ($message =~ /^$sl !time-internet$/) {
   my @time_struct = gmtime(time);
   my $seconds_into_day = ($time_struct[2] * 3600 + $time_struct[1] * 60 + $time_struct[0] + 3600) % 86400; # + 3600 because 'BMT' = UTC+1
