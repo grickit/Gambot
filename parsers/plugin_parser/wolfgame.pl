@@ -136,7 +136,7 @@ sub on_nick {
 sub on_kick { }
 
 sub on_server_message {
-  LoadPlugin("$home_folder/plugins/basic/nick_bump.pm");
+  &load_plugin("$home_folder/plugins/basic/nick_bump.pm");
 }
 
 sub on_error {
