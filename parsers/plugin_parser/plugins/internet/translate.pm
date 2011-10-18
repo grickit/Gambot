@@ -19,6 +19,6 @@ if ($message =~ /^$sl !translate (.+)$/) {
   else {
     $answer = 0;
   }
-  $answer =~ s/\\"/"/;
+  $answer =~ s/\\"/"/g;
   ($answer) ? ACT('MESSAGE',$target,"$receiver: $answer") : ACT('MESSAGE',$target,"$sender: Translation was unsuccessful.");
 }
