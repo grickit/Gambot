@@ -41,7 +41,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"$value");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
   elsif ($command =~ /^get_config_value>([a-zA-Z0-9_#-]+)$/) {
@@ -49,7 +49,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"$value");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
   elsif ($command =~ /^get_variable_value>([a-zA-Z0-9_#-]+)$/) {
@@ -57,7 +57,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"$value");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
 
@@ -80,7 +80,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"1");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
   elsif ($command =~ /^kill_pipe>([a-zA-Z0-9_#-]+)$/) {
@@ -116,7 +116,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"$value");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
   elsif ($command =~ /^set_persistent_value>([a-zA-Z0-9_#-]+)>([a-zA-Z0-9_#-]+)>(.+)$/) {
@@ -142,7 +142,7 @@ sub parse_command {
       &send_pipe_message($pipeid,"1");
     }
     else {
-      &send_pipe_message($pipeid,"0");
+      &send_pipe_message($pipeid,"");
     }
   }
 
