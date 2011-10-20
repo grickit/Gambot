@@ -79,7 +79,6 @@ sub load_switches {
     }
 
     elsif ($current_arg_value =~ /^--staydead$/) {
-      $current_arg++;
       set_core_value('staydead',1);
     }
 
