@@ -33,7 +33,7 @@ sub create_socket_connection {
     or die "Error while connecting to $server:$port";
 
   &event_output('I am attempting to login.');
-  print $sock "PASS $nick:$pass\015\012";
+  print $sock "PASS $nick:$pass\015\012" if($pass);
   print $sock "NICK $nick\015\012";
   print $sock "USER Gambot 8 * :Perl Gambot\015\012";
 
