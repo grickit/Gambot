@@ -61,28 +61,28 @@ sub load_switches {
   for (my $current_arg = 0; $current_arg < @ARGV; $current_arg++) {
     my $current_arg_value = $ARGV[$current_arg];
 
-    if (($current_arg_value =~ /^-v$/) || ($current_arg_value =~ /^--verbose$/)) {
+    if (($current_arg_value eq "-v") || ($current_arg_value eq "--verbose")) {
       set_core_value('verbose',1);
     }
 
-    elsif ($current_arg_value =~ /^--debug$/) {
+    elsif ($current_arg_value eq "--debug") {
       set_core_value('debug',1);
     }
 
-    elsif ($current_arg_value =~ /^--unlogged$/) {
+    elsif ($current_arg_value eq "--unlogged") {
       set_core_value('unlogged',1);
     }
 
-    elsif ($current_arg_value =~ /^--config$/) {
+    elsif ($current_arg_value eq "--config") {
       $current_arg++;
       set_core_value('configuration_file',$ARGV[$current_arg]);
     }
 
-    elsif ($current_arg_value =~ /^--staydead$/) {
+    elsif ($current_arg_value eq "--staydead") {
       set_core_value('staydead',1);
     }
 
-    elsif ($current_arg_value =~ /^--help$/) {
+    elsif ($current_arg_value eq "--help") {
       print "Usage: perl Gambot.pl [OPTION]...\n";
       print "A flexible IRC bot framework that can be updated and fixed while running.\n\n";
       print "-v, --verbose	Prints all messages to the terminal.\n";
