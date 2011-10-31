@@ -5,7 +5,7 @@ if ($message =~ /^$sl !time-local$/) {
     ACT('MESSAGE',$target,"$receiver: $timestamp");
 }
 
-if ($message =~ /^$sl !time-utc$/) {
+if ($message =~ /^$sl !time(-utc)?$/) {
   my $timestamp = POSIX::strftime('%H:%M:%S',gmtime(time));
   ACT('MESSAGE',$target,"$receiver: $timestamp");
 }
