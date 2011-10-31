@@ -15,6 +15,7 @@ if ($message =~ /^$sl !time ([+-][0-9]+)$/) {
   my $hours = POSIX::strftime('%H',gmtime(time));
   my $minsec = POSIX::strftime('%M:%S',gmtime(time));
   $hours += $offset;
+  if($hours > 23 || $hours < 0) { $hours = ($hours % 24); }
   my $timestamp = $hours.':'.$minsec;
   ACT('MESSAGE',$target,"$receiver: $timestamp");
 }
