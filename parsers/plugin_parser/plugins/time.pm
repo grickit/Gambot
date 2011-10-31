@@ -9,6 +9,10 @@ if ($message =~ /^$sl !time-utc$/) {
   my $timestamp = POSIX::strftime('%H:%M:%S',gmtime(time));
   ACT('MESSAGE',$target,"$receiver: $timestamp");
 }
+if ($message =~ /^$sl !time-unix$/) {
+  my $timestamp = time;
+  ACT('MESSAGE',$target,"$receiver: $timestamp");
+}
 
 if ($message =~ /^$sl !time ([+-][0-9]+)$/) {
   my $offset = $1;
