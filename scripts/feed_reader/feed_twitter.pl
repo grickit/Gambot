@@ -1,3 +1,4 @@
+#!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
 use strict;
 use warnings;
 use Benchmark;
@@ -55,11 +56,13 @@ foreach my $current_feed (@feed_array) {
       foreach my $current_subscriber (@subscribers_array) {
 	if($current_subscriber eq '#minecraft') {
 	  if($data_title !~ /\@[a-zA-Z0-9_-]+/) {
-	    print "send_server_message>PRIVMSG $current_subscriber :\x0303$data_author\x0F: $data_title [ $shortened_link ]\n";
+	    print "send_server_message>PRIVMSG $current_subscriber :\x0303\@$data_author\x0F: $data_title [ $shortened_link ]\n";
+	    print "sleep>0.5\n";
 	  }
 	}
 	else {
-	  print "send_server_message>PRIVMSG $current_subscriber :\x02Twitter\x02: \x0303$data_author\x0F: $data_title [ \x0314$data_date $data_time\x0F ] [ $shortened_link ]\n";
+	  print "send_server_message>PRIVMSG $current_subscriber :\x02Twitter\x02: \x0303\@$data_author\x0F: $data_title [ \x0314$data_date $data_time\x0F ] [ $shortened_link ]\n";
+	  print "sleep>0.5\n";
 	}
       }
     }

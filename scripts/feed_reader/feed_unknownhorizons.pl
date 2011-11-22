@@ -1,3 +1,4 @@
+#!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
 use strict;
 use warnings;
 use Benchmark;
@@ -46,8 +47,10 @@ foreach my $current_feed (@feed_array) {
     unless(&check_existence($db_connection, $current_feed, $data_link)) {
       &commit_entry($db_connection, $data_site, $current_feed, $data_link, $data_title, $data_author, $data_date, $data_time);
       #print "send_server_message>PRIVMSG ##Gambot-forum :\x02Unknown Horizons Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]\n";
+      #print "sleep>0.5\n";
       foreach my $current_subscriber (@subscribers_array) {
 	print "send_server_message>PRIVMSG $current_subscriber :\x02Unknown Horizons Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]\n";
+	print "sleep>0.5\n";
       }
     }
   }

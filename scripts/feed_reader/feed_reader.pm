@@ -1,15 +1,14 @@
+#!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
 use strict;
 use warnings;
 use LWP::UserAgent;
 use HTML::Entities;
 use DBI;
 
-  my $db_user = 'foo'
-  my $db_pass = 'bar';
-  my $user_agent = 'franbot/3.0 (Ubuntu 11.04; Perl 5.10)';
-
 sub connect_to_database {
-  my $db_connection = DBI->connect('dbi:mysql:gambot',$db_user,$db_pass) or die "Database connection error: $DBI::errstr\n";
+  my $db_user = "foo";
+  my $db_pass = "bar";
+  my $db_connection = DBI->connect('dbi:mysql:Gambot',$db_user,$db_pass) or die "Database connection error: $DBI::errstr\n";
   return $db_connection;
 }
 
@@ -19,7 +18,7 @@ sub url_to_entries {
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
   $request->env_proxy;
-  $request->agent($user_agent);
+  $request->agent('franbot/3.0 (Ubuntu 11.04; Perl 5.10)');
   my $response = $request->get($url);
   my $content = $response->decoded_content;
 
@@ -60,7 +59,7 @@ sub shorten_url {
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
   $request->env_proxy;
-  $request->agent($user_agent);
+  $request->agent('franbot/3.0 (Ubuntu 11.04; Perl 5.10)');
   my $response = $request->get($url);
   my $content = $response->decoded_content;
   $content =~ s/[\r\n]*//;

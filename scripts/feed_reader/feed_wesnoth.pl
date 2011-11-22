@@ -1,3 +1,4 @@
+#!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
 use strict;
 use warnings;
 use Benchmark;
