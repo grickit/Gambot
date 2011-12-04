@@ -82,9 +82,10 @@
 -We lookin fo you. We goon find you!
 
 *David White
-#2
+#3
 -I didn't do any of those rigorous things that good software engineers do like actually reproduce the problem myself, code a fix, then show it's not reproducing anymore.
 -shhhh pipe down. You'll start an argument with a horde of Python fanatics. Us cool coders are just meant to quietly Get Stuff Done(tm) in the languages that are actually good for hacking in and let the Python illuminati live in their delighted smugness that their language is all powerful.
+-The main barrier would be the whole re-writing the entire engine thing.
 
 *Sirp
 >David White
