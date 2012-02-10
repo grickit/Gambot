@@ -11,7 +11,7 @@
 -https://github.com/grickit/Gambot/blob/master/parsers/plugin_parser/plugins/conversation/quotes.txt
 
 *shadowmaster
-#9
+#10
 -I don't care.
 -you… FOOL!
 -People we have a… TROPE!
@@ -21,6 +21,7 @@
 -I don't believe in large genitals being instant win.
 -I have this deep feeling of self-satisfaction whenever I see you bite the dust.
 -◕ ‿‿ ◕
+-There needs to be a Smokey-like figure teaching about the dangers of rm -rf
 -highlight me dammit. highlight me all you want. highlight me for decades if you want. just highlight me!
 -COMMAS ARE FOR PUSSIES
 -I'm pretty much wasted right now. weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
