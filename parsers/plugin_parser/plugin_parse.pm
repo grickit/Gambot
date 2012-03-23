@@ -123,7 +123,7 @@ sub parse_message {
     else { $event = 'public_notice'; }
   }
 
-  elsif ($incoming_message =~ /^:$valid_human_sender_regex (JOIN) ([$valid_chan_characters]+)$/) {
+  elsif ($incoming_message =~ /^:$valid_human_sender_regex (JOIN) :?([$valid_chan_characters]+)$/) {
     ($sender, $account, $hostname, $command, $target) = ($1, $2, $3, $4, $5);
     $message = '';
     $event = 'join';
