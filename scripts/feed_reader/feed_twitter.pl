@@ -29,6 +29,7 @@ push(@feed_array, '269224038'); #uhorizonstech
 push(@feed_array, '292527834'); #WesnothOrg
 push(@feed_array, '63485337'); #Notch
 push(@feed_array, '24166202'); #jeb_
+push(@feed_array, 'Dinnerbone'); #Dinnerbone
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
 
@@ -55,7 +56,10 @@ foreach my $current_feed (@feed_array) {
       #print "sleep>0.5\n";
       foreach my $current_subscriber (@subscribers_array) {
 	if($current_subscriber eq '#minecraft') {
-	  if($data_title !~ /\@[a-zA-Z0-9_-]+/) {
+	  if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit)/) {
+	    next;
+	  }
+	  else {
 	    print "send_server_message>PRIVMSG $current_subscriber :\x0303\@$data_author\x0F: $data_title [ $shortened_link ]\n";
 	    print "sleep>0.5\n";
 	  }
