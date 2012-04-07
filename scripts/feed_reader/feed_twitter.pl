@@ -25,7 +25,7 @@ push(@feed_array, 'Grickit');
 push(@feed_array, 'AncientBeast');
 push(@feed_array, 'TheFreezingMoon');
 push(@feed_array, 'uhorizons');
-push(@feed_array, 'uhorizonstech')
+push(@feed_array, 'uhorizonstech');
 push(@feed_array, 'Wesnoth');
 push(@feed_array, 'Notch');
 push(@feed_array, 'jeb_');
