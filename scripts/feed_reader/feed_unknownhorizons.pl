@@ -21,11 +21,10 @@ my $data_site = 'UnknownHorizons';
 
 my @feed_array;
 push(@feed_array, '7'); #Common
-push(@feed_array, '27'); #Development
-  push(@feed_array, '31'); #Suggestions
-  push(@feed_array, '29'); #Bugs
+push(@feed_array, '31'); #Suggestions
+push(@feed_array, '29'); #Bugs
+push(@feed_array, '38'); #Development
 push(@feed_array, '33'); #Off-Topic
-
 push(@feed_array, '34'); #GSoC
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
