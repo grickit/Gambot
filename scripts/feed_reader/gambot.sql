@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.10deb1
+-- version 3.4.5deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Nov 17, 2011 at 07:48 AM
--- Server version: 5.1.54
--- PHP Version: 5.3.5-1ubuntu7.3
+-- Generation Time: Apr 07, 2012 at 04:30 PM
+-- Server version: 5.1.61
+-- PHP Version: 5.3.6-13ubuntu3.6
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -16,7 +17,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `gambot`
+-- Database: `Gambot`
 --
 
 -- --------------------------------------------------------
@@ -27,15 +28,17 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 CREATE TABLE IF NOT EXISTS `feed_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `site_name` text NOT NULL,
-  `feed_id` text NOT NULL,
-  `link` text NOT NULL,
+  `site_name` varchar(60) NOT NULL,
+  `feed_id` varchar(60) NOT NULL,
+  `link` varchar(200) NOT NULL,
   `title` text NOT NULL,
-  `author` text NOT NULL,
-  `date` text NOT NULL,
-  `time` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1737 ;
+  `author` varchar(60) NOT NULL,
+  `date` varchar(50) NOT NULL,
+  `time` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `feed_id` (`feed_id`),
+  KEY `link` (`link`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1883 ;
 
 -- --------------------------------------------------------
 
@@ -45,7 +48,13 @@ CREATE TABLE IF NOT EXISTS `feed_items` (
 
 CREATE TABLE IF NOT EXISTS `feed_subscriptions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text NOT NULL,
-  `feed_id` text NOT NULL,
-  PRIMARY KEY (`id`)
+  `name` varchar(60) NOT NULL,
+  `feed_id` varchar(60) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `feed_id` (`feed_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
