@@ -21,15 +21,15 @@ my $date_regex = qr/\n<pubDate>(.+)<\/pubDate>\n/;
 my $data_site = 'Twitter';
 
 my @feed_array;
-push(@feed_array, '165895839'); #Grickit
-push(@feed_array, '138969596'); #AncientBeast
-push(@feed_array, '130422289'); #TheFreezingMoon
-push(@feed_array, '116289965'); #uhorizons
-push(@feed_array, '269224038'); #uhorizonstech
-push(@feed_array, '292527834'); #WesnothOrg
-push(@feed_array, '63485337'); #Notch
-push(@feed_array, '24166202'); #jeb_
-push(@feed_array, 'Dinnerbone'); #Dinnerbone
+push(@feed_array, 'Grickit');
+push(@feed_array, 'AncientBeast');
+push(@feed_array, 'TheFreezingMoon');
+push(@feed_array, 'uhorizons');
+push(@feed_array, 'uhorizonstech')
+push(@feed_array, 'Wesnoth');
+push(@feed_array, 'Notch');
+push(@feed_array, 'jeb_');
+push(@feed_array, 'Dinnerbone');
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
 
