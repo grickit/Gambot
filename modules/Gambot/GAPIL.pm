@@ -146,6 +146,20 @@ sub parse_command {
     }
   }
 
+  elsif ($command =~ /^event_lock>([a-zA-Z0-9_#-]+)$/) {
+    event_lock($pipeid,$1);
+  }
+  elsif ($command =~ /^event_unlock>([a-zA-Z0-9_#-]+)$/) {
+    event_unlock($1);
+  }
+  elsif ($command =~ /^check_event_lock_exists>([a-zA-Z0-9_#-]+)$/) {
+    if (&check_event_lock_exists($1)) {
+      &send_pipe_message($pipeid,"1");
+    }
+    else {
+      &send_pipe_message($pipeid,"");
+    }
+  }
 
   else {
     &error_output("Unknown API call: $command");

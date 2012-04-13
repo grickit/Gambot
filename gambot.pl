@@ -40,10 +40,12 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 ##%core stores other core data.
 ##%variables allows message processors to store strings
 ##%persistent is just like variables, but is saved to disk on shutdown>
+##%locks is for the event-like system. It allows children to block for certain input.
 my %config;
 my %core;
 my %variables;
 my %persistent;
+my %locks;
 
 $core{'home_directory'} = $FindBin::Bin;
 $core{'configuration_file'} = 'config.txt';
@@ -168,6 +170,24 @@ sub save_all_persistence_files {
 sub check_persistence_domain_exists {
   my $domain = shift;
   return defined $persistent{$domain};
+}
+
+sub event_lock {
+  my ($pipeid, $lock) = @_;
+  if(!defined $locks{$lock}) { $locks{$lock} = (); }
+  push(@{$locks{$lock}},$pipeid);
+}
+sub event_unlock {
+  my $lock = shift;
+  debug_output("Unlocking $lock.");
+  foreach my $pipeid (@{$locks{$lock}}) {
+    send_pipe_message($pipeid,$lock);
+  }
+  delete $locks{$lock};
+}
+sub check_event_lock_exists {
+  my $lock = shift;
+  return defined $locks{$lock};
 }
 
 ####-----#----- Actual Work -----#-----####
