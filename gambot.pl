@@ -43,12 +43,12 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 ##%persistent is just like variables, but is saved to disk on shutdown>
 ##%locks is for the event-like system. It allows children to block for certain input.
 ##%refs contains references to all of these
-my %config;
-my %core;
-my %variables;
 my %persistent;
 my %locks;
-my %refs = ('config',\%config,'core',\%core,'variables',\%variables,'persistent',\%persistent);
+my %dicts;
+$dicts{'core'} = {};
+$dicts{'config'} = {};
+$dicts{'variables'} = {};
 
 set_core_value('home_directory',$FindBin::Bin);
 set_core_value('configuration_file','config.txt');
@@ -72,13 +72,13 @@ my $messages_this_second = 0;
 
 
 ####-----#----- Subroutines -----#-----####
-sub get_config_value { return $config{$_[0]}; }
-sub get_core_value { return $core{$_[0]}; }
-sub get_variable_value { return $variables{$_[0]}; }
+sub get_config_value { return $dicts{'config'}{$_[0]}; }
+sub get_core_value { return $dicts{'core'}{$_[0]}; }
+sub get_variable_value { return $dicts{'variables'}{$_[0]}; }
 
-sub set_config_value { $config{$_[0]} = $_[1]; }
-sub set_core_value { $core{$_[0]} = $_[1]; }
-sub set_variable_value { $variables{$_[0]} = $_[1]; }
+sub set_config_value { $dicts{'config'}{$_[0]} = $_[1]; }
+sub set_core_value { $dicts{'core'}{$_[0]} = $_[1]; }
+sub set_variable_value { $dicts{'variables'}{$_[0]} = $_[1]; }
 
 sub send_server_message {
   push(@pending_outgoing,$_[0]);
