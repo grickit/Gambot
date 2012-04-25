@@ -75,6 +75,36 @@ sub dict_exists {
   return exists $dicts{$dict};
 }
 
+sub save_dict {
+  my $dict = shift;
+  open(my $file, '>' . get_core_value('home_directory') . '/persistent/' . $dict);
+  while (my ($key, $value) = each %{$dicts{$dict}}) {
+    print $file "$key = \"$value\"\n";
+  }
+  close($file);
+}
+
+sub load_dict {
+  my $dict = shift;
+  my $filename = get_core_value('home_directory') . '/persistent/' . $dict;
+  if (-e $filename) {
+    open (my $file, $filename);
+    my @lines = <$file>;
+
+    foreach my $current_line (@lines) {
+      $current_line =~ s/[\r\n\s]+$//;
+      $current_line =~ s/^[\t\s]+//;
+      if ($current_line =~ /^([a-zA-Z0-9_-]+) = "(.+)"$/) {
+	&debug_output("Loaded $2 into $1 from dict: $dict.");
+	&value_set($dict,$1,$2);
+      }
+    }
+  }
+  else {
+    error_output("Tried to load persistence file \"$filename\", but it doesn't exist.");
+  }
+}
+
 sub value_exists {
   my ($dict,$key) = @_;
   return (dict_exists($dict) && exists $dicts{$dict}{$key}) ;
