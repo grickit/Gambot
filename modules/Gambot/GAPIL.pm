@@ -30,7 +30,7 @@ sub parse_command {
 
   if ($command =~ /^send_server_message>(.+)$/) {
     send_server_message($1);
-    if ($1 =~ /^NICK (.+)$/) { set_core_value('nick',$1); }
+    if ($1 =~ /^NICK (.+)$/) { value_set('core','nick',$1); }
   }
   elsif ($command =~ /^send_pipe_message>($validkey)>(.+)$/) {
     send_pipe_message($1,$2);
@@ -39,7 +39,7 @@ sub parse_command {
 
 
   elsif ($command =~ /^get_core_value>($validkey)$/) {
-    if (my $value = &get_core_value($1)) {
+    if (my $value = &value_get('core',$1)) {
       &send_pipe_message($pipeid,"$value");
     }
     else {
@@ -47,7 +47,7 @@ sub parse_command {
     }
   }
   elsif ($command =~ /^get_config_value>($validkey)$/) {
-    if (my $value = &get_config_value($1)) {
+    if (my $value = &value_get('config',$1)) {
       &send_pipe_message($pipeid,"$value");
     }
     else {
@@ -55,7 +55,7 @@ sub parse_command {
     }
   }
   elsif ($command =~ /^get_variable_value>($validkey)$/) {
-    if (my $value = &get_variable_value($1)) {
+    if (my $value = &value_get('variables',$1)) {
       &send_pipe_message($pipeid,"$value");
     }
     else {
@@ -66,13 +66,13 @@ sub parse_command {
 
 
   elsif ($command =~ /^set_core_value>($validkey)>(.+)$/) {
-    &set_core_value($1,$2);
+    &value_set('core',$1,$2);
   }
   elsif ($command =~ /^set_config_value>($validkey)>(.+)$/) {
-    &set_config_value($1,$2);
+    &value_set('config',$1,$2);
   }
   elsif ($command =~ /^set_variable_value>($validkey)>(.+)$/) {
-    &set_variable_value($1,$2);
+    &value_set('variables',$1,$2);
   }
 
 
@@ -114,7 +114,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^get_persistent_value>($validkey)>($validkey)$/) {
-    if (my $value = &get_persistent_value($1,$2)) {
+    if (my $value = &value_get($1,$2)) {
       &send_pipe_message($pipeid,"$value");
     }
     else {
@@ -122,22 +122,22 @@ sub parse_command {
     }
   }
   elsif ($command =~ /^set_persistent_value>($validkey)>($validkey)>(.+)$/) {
-    &set_persistent_value($1,$2,$3);
+    &value_set($1,$2,$3);
   }
   elsif ($command =~ /^del_persistent_value>($validkey)>($validkey)$/) {
-    &del_persistent_value($1,$2);
+    &value_delete($1,$2);
   }
   elsif ($command =~ /^read_persistence_file>($validkey)$/) {
-    &read_persistence_file($1);
+    &load_dict($1);
   }
   elsif ($command =~ /^save_persistence_file>($validkey)$/) {
-    &save_persistence_file($1);
+    &save_dict($1);
   }
   elsif ($command =~ /^save_all_persistence_files>$/) {
     &save_all_persistence_files();
   }
   elsif ($command =~ /^check_persistence_domain_exists>($validkey)$/) {
-    if (&check_persistence_domain_exists($1)) {
+    if (&dict_exists($1)) {
       &send_pipe_message($pipeid,"1");
     }
     else {

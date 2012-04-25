@@ -30,18 +30,18 @@ sub read_configuration_file {
       $current_line =~ s/[\r\n\s]+$//;
       $current_line =~ s/^[\t\s]+//;
       if ($current_line =~ /^([a-zA-Z0-9_-]+) = "(.+)"$/) {
-	&set_config_value($1,$2);
+	&value_set('config',$1,$2);
       }
     }
   }
   else {
-    set_core_value('unlogged',1);
-    set_config_value('server','chat.freenode.net');
-    set_config_value('port',6667);
-    set_config_value('base_nick','aGambot');
-    set_config_value('password','');
-    set_config_value('log_directory',&get_core_value('home_directory'));
-    set_config_value('processor',"perl " . &get_core_value('home_directory') . "/parsers/plugin_parser/example.pl");
+    value_set('core','unlogged',1);
+    value_set('config','server','chat.freenode.net');
+    value_set('config','port',6667);
+    value_set('config','base_nick','aGambot');
+    value_set('config','password','');
+    value_set('config','log_directory',&value_get('config','home_directory'));
+    value_set('config','processor',"perl " . &value_get('config','home_directory') . '/parsers/plugin_parser/example.pl');
     error_output("Config file \"$filename\" does not exist.");
     error_output("I am filling it with sample values.");
     error_output("Edit it later to suit your needs.");
@@ -52,8 +52,8 @@ sub read_configuration_file {
     print $config "port = \"6667\"\015\012";
     print $config "base_nick = \"aGambot\"\015\012";
     print $config "password = \"\"\015\012";
-    print $config "log_directory = \"" . &get_core_value('home_directory') . "\"\015\012";
-    print $config "processor = \"perl " . &get_core_value('home_directory') . "/parsers/plugin_parser/example.pl\"\015\012";
+    print $config "log_directory = \"" . &value_get('core','home_directory') . "\"\015\012";
+    print $config "processor = \"perl " . &value_get('core','home_directory') . "/parsers/plugin_parser/example.pl\"\015\012";
   }
 }
 
@@ -62,24 +62,24 @@ sub load_switches {
     my $current_arg_value = $ARGV[$current_arg];
 
     if (($current_arg_value eq "-v") || ($current_arg_value eq "--verbose")) {
-      set_core_value('verbose',1);
+      value_set('core','verbose',1);
     }
 
     elsif ($current_arg_value eq "--debug") {
-      set_core_value('debug',1);
+      value_set('core','debug',1);
     }
 
     elsif ($current_arg_value eq "--unlogged") {
-      set_core_value('unlogged',1);
+      value_set('core','unlogged',1);
     }
 
     elsif ($current_arg_value eq "--config") {
       $current_arg++;
-      set_core_value('configuration_file',$ARGV[$current_arg]);
+      value_set('core','configuration_file',$ARGV[$current_arg]);
     }
 
     elsif ($current_arg_value eq "--staydead") {
-      set_core_value('staydead',1);
+      value_set('core','staydead',1);
     }
 
     elsif ($current_arg_value eq "--help") {

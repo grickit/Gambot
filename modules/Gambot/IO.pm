@@ -71,8 +71,8 @@ sub generate_timestamps {
 sub log_output {
   my ($prefix, $datestamp, $timestamp, $message) = @_;
 
-  unless (&get_core_value('unlogged')) {
-    my $filename = &get_config_value('log_directory') . '/' . &get_config_value('base_nick') . "-$datestamp.txt";
+  unless (&value_get('core','unlogged')) {
+    my $filename = &value_get('config','log_directory') . '/' . &value_get('config','base_nick') . "-$datestamp.txt";
     open my $logfile, '>>' . $filename
       or print 'Unable to open logfile "' . $filename . "\".\n" . "Does that directory structure exist?\n";
     print $logfile "$prefix $timestamp $message\015\012";
@@ -107,7 +107,7 @@ sub normal_output {
   my ($prefix,$message) = @_;
   my ($datestamp, $timestamp) = &generate_timestamps();
   log_output($prefix,$datestamp,$timestamp,$message);
-  if (&get_core_value('verbose')) {
+  if (&value_get('core','verbose')) {
     stdout_output($prefix,$timestamp,$message);
   }
 }
@@ -116,9 +116,9 @@ sub normal_output {
 sub debug_output {
   my $message = shift;
   my ($datestamp, $timestamp) = &generate_timestamps();
-  if (&get_core_value('debug')) {
+  if (&value_get('core','debug')) {
     log_output('BOTDEBUG',$datestamp,$timestamp,$message);
-    if(&get_core_value('verbose')) {
+    if(&value_get('core','verbose')) {
       stdout_output('BOTDEBUG',$timestamp,$message);
     }
   }

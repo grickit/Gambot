@@ -48,10 +48,10 @@ $dicts{'core'} = {};
 $dicts{'config'} = {};
 $dicts{'variables'} = {};
 
-set_core_value('home_directory',$FindBin::Bin);
-set_core_value('configuration_file','config.txt');
-set_core_value('message_count',0);
-set_config_value('delay',0.1);
+value_set('core','home_directory',$FindBin::Bin);
+value_set('core','configuration_file','config.txt');
+value_set('core','message_count',0);
+value_set('config','delay',0.1);
 
 ##%pid_pipes store the process ids of processors and scripts
 ##%read_pipes are for getting data from processors and scripts
@@ -77,7 +77,7 @@ sub dict_exists {
 
 sub save_dict {
   my $dict = shift;
-  open(my $file, '>' . get_core_value('home_directory') . '/persistent/' . $dict);
+  open(my $file, '>' .value_get('core','home_directory') . '/persistent/' . $dict);
   while (my ($key, $value) = each %{$dicts{$dict}}) {
     print $file "$key = \"$value\"\n";
   }
@@ -86,7 +86,7 @@ sub save_dict {
 
 sub load_dict {
   my $dict = shift;
-  my $filename = get_core_value('home_directory') . '/persistent/' . $dict;
+  my $filename = value_get('core','home_directory') . '/persistent/' . $dict;
   if (-e $filename) {
     open (my $file, $filename);
     my @lines = <$file>;
@@ -148,7 +148,7 @@ sub value_prepend {
 sub value_increment {
   my ($dict,$key,$value) = @_;
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
-    if($dicts{$dict}{$key} =~ /^[0-9]+$/ && $dicts{$dict}{$key} >= $value) { $dicts{$dict}{$key} += $value; }
+    if($dicts{$dict}{$key} =~ /^[0-9]+$/) { $dicts{$dict}{$key} += $value; }
     else { $dicts{$dict}{$key} = 0; }
     return $dicts{$dict}{$key};
   }
@@ -170,15 +170,6 @@ sub value_delete {
   if(value_exists($dict,$key)) { my $value = $dicts{$dict}{$key}; delete $dicts{$dict}{$key}; return $value; }
   else { return ''; }
 }
-
-
-sub get_config_value { return $dicts{'config'}{$_[0]}; }
-sub get_core_value { return $dicts{'core'}{$_[0]}; }
-sub get_variable_value { return $dicts{'variables'}{$_[0]}; }
-
-sub set_config_value { $dicts{'config'}{$_[0]} = $_[1]; }
-sub set_core_value { $dicts{'core'}{$_[0]} = $_[1]; }
-sub set_variable_value { $dicts{'variables'}{$_[0]} = $_[1]; }
 
 sub send_server_message {
   push(@pending_outgoing,$_[0]);
@@ -229,50 +220,9 @@ sub run_command {
 sub reconnect {
   $socket_connection->close();
   event_output('Reconnecting.');
-  $socket_connection = &create_socket_connection(get_config_value('server'),get_config_value('port'),get_core_value('nick'),get_config_value('password'));
+  $socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
   fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
-  set_core_value('message_count',0);
-}
-
-sub get_persistent_value { return $persistent{$_[0]}{$_[1]}; }
-sub set_persistent_value { $persistent{$_[0]}{$_[1]} = $_[2]; }
-sub del_persistent_value { delete $persistent{$_[0]}{$_[1]}; }
-sub read_persistence_file {
-  my $domain = shift;
-  my $filename = get_core_value('home_directory') . '/persistent/' . $domain;
-  if (-e $filename) {
-    open (my $file, $filename);
-    my @lines = <$file>;
-
-    foreach my $current_line (@lines) {
-      $current_line =~ s/[\r\n\s]+$//;
-      $current_line =~ s/^[\t\s]+//;
-      if ($current_line =~ /^([a-zA-Z0-9_-]+) = "(.+)"$/) {
-	&debug_output("Loaded $2 into $1 from domain: $domain.");
-	&set_persistent_value($domain,$1,$2);
-      }
-    }
-  }
-  else {
-    error_output("Tried to load persistence file \"$filename\", but it doesn't exist.");
-  }
-}
-sub save_persistence_file {
-  my $domain = shift;
-  open(my $persist, '>' . get_core_value('home_directory') . '/persistent/' . $domain);
-  while (my ($key, $value) = each %{$persistent{$domain}}) {
-    print $persist "$key = \"$value\"\n";
-  }
-  close($persist);
-}
-sub save_all_persistence_files {
-  while (my ($key, $value) = each %persistent) {
-    save_persistence_file($key);
-  }
-}
-sub check_persistence_domain_exists {
-  my $domain = shift;
-  return defined $persistent{$domain};
+  value_set('core','message_count',0);
 }
 
 sub event_lock {
@@ -295,9 +245,9 @@ sub check_event_lock_exists {
 
 ####-----#----- Actual Work -----#-----####
 &load_switches();
-&read_configuration_file(get_core_value('home_directory') . '/configurations/' . get_core_value('configuration_file'));
-set_core_value('nick',get_config_value('base_nick'));
-$socket_connection = &create_socket_connection(get_config_value('server'),get_config_value('port'),get_core_value('nick'),get_config_value('password'));
+&read_configuration_file(value_get('core','home_directory') . '/configurations/' . value_get('core','configuration_file'));
+value_set('core','nick',value_get('config','base_nick'));
+$socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
 
@@ -307,13 +257,13 @@ $pid_pipes{'main'} = 1;
 $read_pipes{'main'} = \*STDIN;
 $write_pipes{'main'} = \*STDOUT;
 
-while(defined select(undef,undef,undef,get_config_value('delay'))) {
+while(defined select(undef,undef,undef,value_get('config','delay'))) {
   ####-----#----- Read from the socket -----#-----####
   my $socket_status = &pipe_status($socket_connection);
 
   if ($socket_status eq 'dead') {
     error_output('IRC connection died.');
-    if(&get_core_value('staydead')) {
+    if(&value_get('core','staydead')) {
       exit;
     }
     else {
@@ -325,11 +275,11 @@ while(defined select(undef,undef,undef,get_config_value('delay'))) {
     my @messages = read_lines($socket_connection, $socket_status);
     foreach my $current_message (@messages) {
       normal_output('INCOMING',$current_message);
-      my $id = 'fork'.get_core_value('message_count');
-      &run_command($id,get_config_value('processor'));
-      &send_pipe_message($id,get_core_value('nick'));
+      my $id = 'fork'.value_get('core','message_count');
+      &run_command($id,value_get('config','processor'));
+      &send_pipe_message($id,value_get('core','nick'));
       &send_pipe_message($id,$current_message);
-      set_core_value('message_count',get_core_value('message_count')+1);
+      value_increment('core','message_count',1);
     }
   }
 
