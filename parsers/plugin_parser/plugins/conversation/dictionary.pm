@@ -5,7 +5,7 @@ if ($message =~ /^$sl !define ([a-zA-Z0-9_#-]+)$/) {
   ACT('LITERAL',undef,"check_persistence_domain_exists>dictionary");
   my $dictloaded = <STDIN>;
   $dictloaded =~ s/[\r\n\t\s]+$//;
-  if (!$dictloaded) { ACT('LITERAL',undef,"load_persistence_file>dictionary"); }
+  if (!$dictloaded) { ACT('LITERAL',undef,"read_persistence_file>dictionary"); }
 
   ACT('LITERAL',undef,"get_persistent_value>dictionary>$upper");
   my $definition = <STDIN>;
@@ -25,7 +25,7 @@ if ($message =~ /^$sl !set-define ([a-zA-Z0-9_#-]+) (.+)$/) {
   ACT('LITERAL',undef,"check_persistence_domain_exists>dictionary");
   my $dictloaded = <STDIN>;
   $dictloaded =~ s/[\r\n\t\s]+$//;
-  if (!$dictloaded) { ACT('LITERAL',undef,"load_persistence_file>dictionary"); }
+  if (!$dictloaded) { ACT('LITERAL',undef,"read_persistence_file>dictionary"); }
 
   ACT('LITERAL',undef,"set_persistent_value>dictionary>$word>$definition");
   ACT('LITERAL',undef,"save_persistence_file>dictionary");
