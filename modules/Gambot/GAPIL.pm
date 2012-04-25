@@ -128,9 +128,6 @@ sub parse_command {
   elsif ($command =~ /^read_persistence_file>([a-zA-Z0-9_#-]+)$/) {
     &read_persistence_file($1);
   }
-  elsif ($command =~ /^load_persistence_file>([a-zA-Z0-9_#-]+)$/) {
-    &read_persistence_file($1);
-  }
   elsif ($command =~ /^save_persistence_file>([a-zA-Z0-9_#-]+)$/) {
     &save_persistence_file($1);
   }
