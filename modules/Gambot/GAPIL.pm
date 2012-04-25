@@ -52,7 +52,7 @@ sub parse_command {
     my $result = value_add($2,$3,$4);
     send_pipe_message($pipeid,$result) if($1);
   }
-  elsif($command =~ /^(return )?value_add>($validkey)>($validkey)>(.+)$/) {
+  elsif($command =~ /^(return )?value_replace>($validkey)>($validkey)>(.+)$/) {
     my $result = value_replace($2,$3,$4);
     send_pipe_message($pipeid,$result) if($1);
   }

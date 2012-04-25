@@ -158,7 +158,7 @@ sub value_increment {
 sub value_decrement {
   my ($dict,$key,$value) = @_;
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
-    if($dicts{$dict}{$key} =~ /^[0-9]+$/ && $dicts{$dict}{$key} >= $value) { $dicts{$dict}{$key} -= $value; }
+    if($dicts{$dict}{$key} =~ /^[0-9]+$/) { $dicts{$dict}{$key} -= $value; }
     else { $dicts{$dict}{$key} = 0; }
     return $dicts{$dict}{$key};
   }
