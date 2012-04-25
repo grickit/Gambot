@@ -27,6 +27,7 @@ use Gambot::IO;
 use Gambot::Configure;
 use Gambot::Connect;
 use Gambot::GAPIL;
+use Gambot::Storage;
 
 
 ####-----#----- Setup -----#-----####
@@ -41,16 +42,18 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 ##%variables allows message processors to store strings
 ##%persistent is just like variables, but is saved to disk on shutdown>
 ##%locks is for the event-like system. It allows children to block for certain input.
+##%refs contains references to all of these
 my %config;
 my %core;
 my %variables;
 my %persistent;
 my %locks;
+my %refs = ('config',\%config,'core',\%core,'variables',\%variables,'persistent',\%persistent);
 
-$core{'home_directory'} = $FindBin::Bin;
-$core{'configuration_file'} = 'config.txt';
-$core{'message_count'} = 0;
-$config{'delay'} = 0.1;
+set_core_value('home_directory',$FindBin::Bin);
+set_core_value('configuration_file','config.txt');
+set_core_value('message_count',0);
+set_config_value('delay',0.1);
 
 ##%pid_pipes store the process ids of processors and scripts
 ##%read_pipes are for getting data from processors and scripts
@@ -126,9 +129,9 @@ sub run_command {
 sub reconnect {
   $socket_connection->close();
   event_output('Reconnecting.');
-  $socket_connection = &create_socket_connection($config{'server'},$config{'port'},$core{'nick'},$config{'password'});
+  $socket_connection = &create_socket_connection(get_config_value('server'),get_config_value('port'),get_core_value('nick'),get_config_value('password'));
   fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
-  $core{'message_count'} = 0;
+  set_core_value('message_count',0);
 }
 
 sub get_persistent_value { return $persistent{$_[0]}{$_[1]}; }
@@ -192,9 +195,9 @@ sub check_event_lock_exists {
 
 ####-----#----- Actual Work -----#-----####
 &load_switches();
-&read_configuration_file($core{'home_directory'} . '/configurations/' . $core{'configuration_file'});
-$core{'nick'} = $config{'base_nick'};
-$socket_connection = &create_socket_connection($config{'server'},$config{'port'},$core{'nick'},$config{'password'});
+&read_configuration_file(get_core_value('home_directory') . '/configurations/' . get_core_value('configuration_file'));
+set_core_value('nick',get_config_value('base_nick'));
+$socket_connection = &create_socket_connection(get_config_value('server'),get_config_value('port'),get_core_value('nick'),get_config_value('password'));
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
 
@@ -204,7 +207,7 @@ $pid_pipes{'main'} = 1;
 $read_pipes{'main'} = \*STDIN;
 $write_pipes{'main'} = \*STDOUT;
 
-while(defined select(undef,undef,undef,$config{'delay'})) {
+while(defined select(undef,undef,undef,get_config_value('delay'))) {
   ####-----#----- Read from the socket -----#-----####
   my $socket_status = &pipe_status($socket_connection);
 
@@ -222,11 +225,11 @@ while(defined select(undef,undef,undef,$config{'delay'})) {
     my @messages = read_lines($socket_connection, $socket_status);
     foreach my $current_message (@messages) {
       normal_output('INCOMING',$current_message);
-      my $id = "fork$core{'message_count'}";
-      &run_command($id,$config{'processor'});
-      &send_pipe_message($id,$core{'nick'});
+      my $id = 'fork'.get_core_value('message_count');
+      &run_command($id,get_config_value('processor'));
+      &send_pipe_message($id,get_core_value('nick'));
       &send_pipe_message($id,$current_message);
-      $core{'message_count'}++;
+      set_core_value('message_count',get_core_value('message_count')+1);
     }
   }
 
