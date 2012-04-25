@@ -10,29 +10,54 @@ They are as follows.
     Use the id "main" to send messages to STDOUT.
 
 
---- Checking Variables ---
-  get_core_value>[variable]
-    This will cause the value of $core{[variable]} to be printed to STDIN of the calling script.
-    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+--- Variable storage ---
+  dict_exists>[dict]
+    If $dicts{[dict]} exists, the calling script will receive a "1" in its STDIN.
+    Otherwise it will receive a blank line.
 
-  get_config_value>[variable]
-    This will cause the value of $config{[variable]} to be printed to STDIN of the calling script.
-    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+  dict_save>[dict]
+    $dicts{[dict]} will be dumped into a file named [dict]
 
-  get_variable_value>[variable]
-    This will cause the value of $variable{[variable]} to be printed to STDIN of the calling script.
-    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
+  dict_load>[dict]
+    A file named [dict] will be read into $dicts{[dict]}
 
+  value_get>[dict]>[key]
+    $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
+    Prints a blank line if the key does not exist.
 
---- Setting Variables ---
-  set_core_value>[variable]>[value]
-    This will set the value of $core{[variable]} to equal [value].
+  (return) value_add>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} does not already exist, it will be set to [value].
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
 
-  set_config_value>[variable]>[value]
-    This will set the value of $config{[variable]} to equal [value].
+  (return) value_replace>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} already exists, it will be set to [value].
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
 
-  set_variable_value>[variable]>[value]
-    This will set the value of $variable{[variable]} to equal [value].
+  (return) value_set>[dict]>[key]>[value]
+    $dicts{[dict]}{[key]} will be set to [value]
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+
+ (return) value_append>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} already exists, [value] will be appended to it.
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+
+ (return) value_prepend>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} already exists, [value] will be prepended to it.
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+
+ (return) value_increment>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} already exists and is an integer, [value] will be added to it.
+    If $dicts{[dict]}{[key]} existed, but was not an integer, it will be set to 0.
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+
+ (return) value_decrement>[dict]>[key]>[value]
+    If $dicts{[dict]}{[key]} already exists and is an integer, [value] will be subtracted from it.
+    If $dicts{[dict]}{[key]} existed, but was not an integer, it will be set to 0.
+    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+
+ (return) value_delete>[dict]>[key]
+    If $dicts{[dict]}{[key]} exists, it will be deleted
+    If (return) is present, the calling script will receive the old value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
 
 
 --- Pipe Management ---
@@ -69,27 +94,6 @@ They are as follows.
   log>[prefix]>[message]
     This will use the normal_output() function to log in the form: [prefix] timestamp [message]
     It looks like: BOTEVENT 11:00:00 I am attempting to connect.
-
-
---- Persistent Variables ---
-  get_persistent_value>[domain]>[variable]
-    This will cause the value of $persistent{[domain]}{[variable]} to be printed to STDIN of the calling script.
-    If called from the terminal of the bot, the value will be printed to STDOUT. This is useful for debugging.
-
-  set_persistent_value>[domain]>[variable]>[value]
-    This will set the value of $persistent{[domain]}{[variable]} to equal [value].
-
-  del_persistent_value>[domain]>[variable]
-    This will delete $persistent{[domain]}{[variable]}
-
-  read_persistence_file>[domain]
-    This will read the file "/persistence/[domain]" into $persistent{[domain]}
-
-  save_persistence_file>[domain]
-    This will dump $persistent{[domain]} into the file "/persistence/[domain]"
-
-  save_all_persistence_files>
-    This will dump all persistent variables into their respective domain files.
 
 
 --- Notes ---
