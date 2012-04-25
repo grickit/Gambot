@@ -75,7 +75,7 @@ sub dict_exists {
   return exists $dicts{$dict};
 }
 
-sub save_dict {
+sub dict_save {
   my $dict = shift;
   open(my $file, '>' .value_get('core','home_directory') . '/persistent/' . $dict);
   while (my ($key, $value) = each %{$dicts{$dict}}) {
@@ -84,7 +84,7 @@ sub save_dict {
   close($file);
 }
 
-sub load_dict {
+sub dict_load {
   my $dict = shift;
   my $filename = value_get('core','home_directory') . '/persistent/' . $dict;
   if (-e $filename) {

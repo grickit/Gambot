@@ -36,6 +36,51 @@ sub parse_command {
     send_pipe_message($1,$2);
   }
 
+  elsif($command =~ /^dict_exists>($validkey)$/) {
+    send_pipe_message($pipeid,dict_exists($1));
+  }
+  elsif($command =~ /^dict_save>($validkey)$/) {
+    dict_save($1);
+  }
+  elsif($command =~ /^dict_load>($validkey)$/) {
+    dict_load($1);
+  }
+  elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
+    send_pipe_message($pipeid,value_get($1,$2));
+  }
+  elsif($command =~ /^(return )?value_add>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_add($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_add>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_replace($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_set>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_set($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_append>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_append($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_prepend>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_prepend($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_increment>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_increment($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_decrement>($validkey)>($validkey)>(.+)$/) {
+    my $result = value_decrement($2,$3,$4);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+  elsif($command =~ /^(return )?value_delete>($validkey)>($validkey)$/) {
+    my $result = value_delete($2,$3);
+    send_pipe_message($pipeid,$result) if($1);
+  }
+
 
 
   elsif ($command =~ /^get_core_value>($validkey)$/) {
@@ -62,9 +107,6 @@ sub parse_command {
       &send_pipe_message($pipeid,"");
     }
   }
-
-
-
   elsif ($command =~ /^set_core_value>($validkey)>(.+)$/) {
     &value_set('core',$1,$2);
   }
@@ -128,10 +170,10 @@ sub parse_command {
     &value_delete($1,$2);
   }
   elsif ($command =~ /^read_persistence_file>($validkey)$/) {
-    &load_dict($1);
+    &dict_load($1);
   }
   elsif ($command =~ /^save_persistence_file>($validkey)$/) {
-    &save_dict($1);
+    &dict_save($1);
   }
   elsif ($command =~ /^save_all_persistence_files>$/) {
     &save_all_persistence_files();
