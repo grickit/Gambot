@@ -27,8 +27,6 @@ use Gambot::IO;
 use Gambot::Configure;
 use Gambot::Connect;
 use Gambot::GAPIL;
-use Gambot::Storage;
-
 
 ####-----#----- Setup -----#-----####
 $| = 1;
@@ -72,6 +70,78 @@ my $messages_this_second = 0;
 
 
 ####-----#----- Subroutines -----#-----####
+sub dict_exists {
+  my $dict = shift;
+  return exists $dicts{$dict};
+}
+
+sub value_exists {
+  my ($dict,$key) = @_;
+  return (dict_exists($dict) && exists $dicts{$dict}{$key}) ;
+}
+
+sub value_get {
+  my ($dict,$key) = @_;
+  if(value_exists($dict,$key)) { return $dicts{$dict}{$key}; }
+  else { return ''; }
+}
+
+sub value_add {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key)) { return ''; }
+  else { $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key}; }
+}
+
+sub value_replace {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key)) { $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key}; }
+  else { return ''; }
+}
+
+sub value_set {
+  my ($dict,$key,$value) = @_;
+  $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key};
+}
+
+sub value_append {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key)) { $dicts{$dict}{$key} .= $value; return $dicts{$dict}{$key}; }
+  else { return ''; }
+}
+
+sub value_prepend {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key)) { $dicts{$dict}{$key} = $value . $dicts{$dict}{$key}; return $dicts{$dict}{$key}; }
+  else { return ''; }
+}
+
+sub value_increment {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
+    if($dicts{$dict}{$key} =~ /^[0-9]+$/ && $dicts{$dict}{$key} >= $value) { $dicts{$dict}{$key} += $value; }
+    else { $dicts{$dict}{$key} = 0; }
+    return $dicts{$dict}{$key};
+  }
+  else { return ''; }
+}
+
+sub value_decrement {
+  my ($dict,$key,$value) = @_;
+  if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
+    if($dicts{$dict}{$key} =~ /^[0-9]+$/ && $dicts{$dict}{$key} >= $value) { $dicts{$dict}{$key} -= $value; }
+    else { $dicts{$dict}{$key} = 0; }
+    return $dicts{$dict}{$key};
+  }
+  else { return ''; }
+}
+
+sub value_delete {
+  my ($dict,$key) = @_;
+  if(value_exists($dict,$key)) { my $value = $dicts{$dict}{$key}; delete $dicts{$dict}{$key}; return $value; }
+  else { return ''; }
+}
+
+
 sub get_config_value { return $dicts{'config'}{$_[0]}; }
 sub get_core_value { return $dicts{'core'}{$_[0]}; }
 sub get_variable_value { return $dicts{'variables'}{$_[0]}; }
