@@ -81,50 +81,6 @@ sub parse_command {
     send_pipe_message($pipeid,$result) if($1);
   }
 
-
-
-  elsif ($command =~ /^get_core_value>($validkey)$/) {
-    error_output('get_core_value is deprecated and will be removed. Switch to value_get.');
-    if (my $value = &value_get('core',$1)) {
-      &send_pipe_message($pipeid,"$value");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
-  }
-  elsif ($command =~ /^get_config_value>($validkey)$/) {
-    error_output('get_config_value is deprecated and will be removed. Switch to value_get.');
-    if (my $value = &value_get('config',$1)) {
-      &send_pipe_message($pipeid,"$value");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
-  }
-  elsif ($command =~ /^get_variable_value>($validkey)$/) {
-    error_output('get_variable_value is deprecated and will be removed. Switch to value_get.');
-    if (my $value = &value_get('variables',$1)) {
-      &send_pipe_message($pipeid,"$value");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
-  }
-  elsif ($command =~ /^set_core_value>($validkey)>(.+)$/) {
-    error_output('set_core_value is deprecated and will be removed. Switch to value_set.');
-    &value_set('core',$1,$2);
-  }
-  elsif ($command =~ /^set_config_value>($validkey)>(.+)$/) {
-    error_output('set_config_value is deprecated and will be removed. Switch to value_set.');
-    &value_set('config',$1,$2);
-  }
-  elsif ($command =~ /^set_variable_value>($validkey)>(.+)$/) {
-    error_output('set_variable_value is deprecated and will be removed. Switch to value_set.');
-    &value_set('variables',$1,$2);
-  }
-
-
-
   elsif ($command =~ /^check_pipe_exists>($validkey)$/) {
     if (&check_pipe_exists($1)) {
       &send_pipe_message($pipeid,"1");
@@ -139,8 +95,6 @@ sub parse_command {
   elsif ($command =~ /^run_command>($validkey)>(.+)$/) {
     &run_command($1,$2);
   }
-
-
 
   elsif ($command =~ /^sleep>([0-9.]+)$/) {
     select(undef,undef,undef,$1);
@@ -159,44 +113,6 @@ sub parse_command {
   }
   elsif ($command =~ /^log>($validkey)>(.+)$/) {
     &normal_output($1,$2);
-  }
-
-  elsif ($command =~ /^get_persistent_value>($validkey)>($validkey)$/) {
-    error_output('get_persistent_value is deprecated and will be removed. Switch to value_get.');
-    if (my $value = &value_get($1,$2)) {
-      &send_pipe_message($pipeid,"$value");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
-  }
-  elsif ($command =~ /^set_persistent_value>($validkey)>($validkey)>(.+)$/) {
-    error_output('set_persistent_value is deprecated and will be removed. Switch to value_set.');
-    &value_set($1,$2,$3);
-  }
-  elsif ($command =~ /^del_persistent_value>($validkey)>($validkey)$/) {
-    error_output('del_persistent_value is deprecated and will be removed. Switch to value_delete.');
-    &value_delete($1,$2);
-  }
-  elsif ($command =~ /^read_persistence_file>($validkey)$/) {
-    error_output('read_persistence_file is deprecated and will be removed. Switch to dict_load.');
-    &dict_load($1);
-  }
-  elsif ($command =~ /^save_persistence_file>($validkey)$/) {
-    error_output('save_persistence_file is deprecated and will be removed. Switch to dict_save.');
-    &dict_save($1);
-  }
-  elsif ($command =~ /^save_all_persistence_files>$/) {
-    &save_all_persistence_files();
-  }
-  elsif ($command =~ /^check_persistence_domain_exists>($validkey)$/) {
-    error_output('check_persistence_domain_exists is deprecated and will be removed. Switch to dict_exists.');
-    if (&dict_exists($1)) {
-      &send_pipe_message($pipeid,"1");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
   }
 
   elsif ($command =~ /^event_lock>($validkey)$/) {
