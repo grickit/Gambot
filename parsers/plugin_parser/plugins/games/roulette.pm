@@ -5,7 +5,8 @@ if ($message =~ /^$sl !roulette$/) {
 
   if (!$chamber) {
     ACT('MESSAGE',$target,'Starting new game of Russian Roulette for this channel.');
-    ACT('LITERAL',undef,'value_set>roulette>'.$target.'chamber>'.(int(rand(6))+1));
+    $chamber = int(rand(6))+1;
+    ACT('LITERAL',undef,'value_set>roulette>'.$target.'chamber>'.$chamber);
     ACT('LITERAL',undef,'value_set>roulette>'.$target.'index>0');
   }
 
