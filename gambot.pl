@@ -182,7 +182,7 @@ sub send_server_message {
 }
 sub send_pipe_message {
   my ($pipeid, $message) = @_;
-  if(&check_pipe_exists($pipeid)) {
+  if(&check_pipe_exists($pipeid) && pipe_status($read_pipes{$pipeid}) ne 'dead') {
     debug_output("Sending \"$message\" to a pipe named $pipeid.");
     my $write_pipe = $write_pipes{$pipeid};
     print $write_pipe $message."\n";
@@ -194,7 +194,7 @@ sub send_pipe_message {
 
 sub check_pipe_exists {
   my $pipeid = shift;
-  return defined $pid_pipes{$pipeid};
+  return (defined $pid_pipes{$pipeid});
 }
 
 sub kill_pipe {
@@ -294,7 +294,7 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
     }
   }
 
-  elsif (length($socket_status) == 1) {
+  elsif ($socket_status eq 'ready') {
     my @messages = read_lines($socket_connection, $socket_status);
     foreach my $current_message (@messages) {
       normal_output('INCOMING',$current_message);
@@ -313,8 +313,8 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
     if ($pipe_status eq 'dead') {
       kill_pipe($id);
     }
-    elsif (length($pipe_status) == 1) {
-      my @commands = read_lines($pipe,$pipe_status);
+    elsif ($pipe_status eq 'ready') {
+      my @commands = read_lines($pipe);
       foreach my $current_command (@commands) {
 	parse_command($current_command,$id) if $current_command;
       }

@@ -23,6 +23,7 @@ use warnings;
 my %back_buffers;
 
 sub pipe_status {
+  no warnings 'unopened';
   my $pipe = shift;
   fcntl($pipe, F_SETFL(), O_NONBLOCK());
   my $bytes_read = sysread($pipe,my $buffer,1,0);
@@ -30,7 +31,11 @@ sub pipe_status {
     if ($bytes_read == 0) {
       return 'dead';
     }
-    else { return $buffer; }
+    else {
+      if(defined $back_buffers{$pipe}) { $back_buffers{$pipe} = $buffer . $back_buffers{$pipe}; }
+      else { $back_buffers{$pipe} = $buffer; }
+      return 'ready';
+    }
   }
   else {
     return 'later';
@@ -38,11 +43,11 @@ sub pipe_status {
 }
 
 sub read_lines {
-  my ($pipe, $buffer) = @_;
+  my ($pipe, $buffer) = (shift,'');
   fcntl($pipe, F_SETFL(), O_NONBLOCK());
 
   if($back_buffers{$pipe}) {
-    $buffer = $back_buffers{$pipe} . $buffer;
+    $buffer = $back_buffers{$pipe};
   }
 
   while(my $bytes_read = sysread($pipe,$buffer,1024,length($buffer))) { 1; }
