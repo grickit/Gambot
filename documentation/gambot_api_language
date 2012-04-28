@@ -95,6 +95,16 @@ They are as follows.
     This will use the normal_output() function to log in the form: [prefix] timestamp [message]
     It looks like: BOTEVENT 11:00:00 I am attempting to connect.
 
+--- Events ---
+  schedule_event>[name]>[GAPIL]
+    This schedules [GAPIL] to be parsed as a Gambot API call when event [name] is fired.
+
+  fire_event>[name]
+    This fires event [name]
+
+  check_event_exists>[name]
+    If event [name] exists, you will receive [name] in STDIN, otherwise you receive a blank line.
+
 
 --- Notes ---
   All pipe ids and variable names must match: ([a-zA-Z0-9_-]+)

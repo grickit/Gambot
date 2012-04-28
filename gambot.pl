@@ -235,7 +235,8 @@ sub fire_event {
 }
 sub check_event_exists {
   my $name = shift;
-  return defined $events{$name};
+  if(defined $events{$name}) { return $name; }
+  else { return ''; }
 }
 
 ####-----#----- Actual Work -----#-----####
