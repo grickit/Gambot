@@ -39,11 +39,13 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 ##%dict{core} stores other core data.
 ##%events allows children to schedule GAPIL calls to be run when an event is fired
 ##%delays allows children to schedule GAPIL calls to be run a certain number of seconds in the future
+##%autosave contains a list of all manually saved and loaded members of %dict to be autosaved at shutdown
 my %dicts;
 $dicts{'core'} = {};
 $dicts{'config'} = {};
 my %events;
 my %delays;
+my %autosave;
 
 value_set('core','home_directory',$FindBin::Bin);
 value_set('core','configuration_file','config.txt');
@@ -79,6 +81,7 @@ sub dict_save {
     print $file "$key = \"$value\"\n";
   }
   close($file);
+  $autosave{$dict} = 1;
 }
 
 sub dict_load {
@@ -92,13 +95,19 @@ sub dict_load {
       $current_line =~ s/[\r\n\s]+$//;
       $current_line =~ s/^[\t\s]+//;
       if ($current_line =~ /^([a-zA-Z0-9_-]+) = "(.+)"$/) {
-	&debug_output("Loaded $2 into $1 from dict: $dict.");
 	&value_set($dict,$1,$2);
       }
     }
+    $autosave{$dict} = 1;
   }
   else {
     error_output("Tried to load persistence file \"$filename\", but it doesn't exist.");
+  }
+}
+
+sub dict_save_all {
+  while(my ($dict, $bool) = each %autosave) {
+    if($bool) { dict_save($dict); }
   }
 }
 
@@ -331,7 +340,7 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
 }
 
 END {
-  &event_output("Saving persistent variables.");
-  &save_all_persistence_files();
+  &event_output("Saving persistent dicts.");
+  &dict_save_all();
   &event_output("Shutting down.");
 }

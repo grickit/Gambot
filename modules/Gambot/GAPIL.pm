@@ -45,6 +45,9 @@ sub parse_command {
   elsif($command =~ /^dict_load>($validkey)$/) {
     dict_load($1);
   }
+  elsif($command =~ /^dict_save_all>$/) {
+    dict_save_all();
+  }
   elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
     send_pipe_message($pipeid,value_get($1,$2));
   }
