@@ -105,6 +105,13 @@ They are as follows.
   check_event_exists>[name]
     If event [name] exists, you will receive [name] in STDIN, otherwise you receive a blank line.
 
+  schedule_delay>[seconds]>[GAPIL]
+    Schedules [GAPIL] to be run at least [seconds] seconds in the future.
+    It may not be exactly on time if the core is congested, but it usually will be.
+
+  fire_delay>[timestamp]
+    Fires a delay early; any calls that were scheduled for the given timestamp.
+
 
 --- Notes ---
   All pipe ids and variable names must match: ([a-zA-Z0-9_-]+)

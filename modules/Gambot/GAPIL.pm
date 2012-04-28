@@ -124,6 +124,12 @@ sub parse_command {
   elsif ($command =~ /^check_event_exists>($validkey)$/) {
     send_pipe_message($pipeid,check_event_exists($1));
   }
+  elsif ($command =~ /^schedule_delay>([0-9]{1,6})>(.+)$/) {
+    schedule_delay($1,$2);
+  }
+  elsif ($command =~ /^fire_delay>([0-9]+)$/) {
+    fire_delay($1);
+  }
 
   else {
     &error_output("Unknown API call: $command");

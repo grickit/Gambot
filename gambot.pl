@@ -38,10 +38,12 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 ##%dict{config} stores stuff from the config file.
 ##%dict{core} stores other core data.
 ##%events allows children to schedule GAPIL calls to be run when an event is fired
+##%delays allows children to schedule GAPIL calls to be run a certain number of seconds in the future
 my %dicts;
 $dicts{'core'} = {};
 $dicts{'config'} = {};
 my %events;
+my %delays;
 
 value_set('core','home_directory',$FindBin::Bin);
 value_set('core','configuration_file','config.txt');
@@ -222,6 +224,7 @@ sub reconnect {
 
 sub schedule_event {
   my ($name, $call) = @_;
+  debug_output("Scheduling a call for $name.");
   if(!defined $events{$name}) { $events{$name} = (); }
   push(@{$events{$name}},$call);
 }
@@ -237,6 +240,21 @@ sub check_event_exists {
   my $name = shift;
   if(defined $events{$name}) { return $name; }
   else { return ''; }
+}
+sub schedule_delay {
+  my ($delay, $call) = @_;
+  my $time = time + $delay;
+  debug_output("Scheduling a a call at $time.");
+  if(!defined $delays{$time}) { $delays{$time} = (); }
+  push(@{$delays{$time}},$call);
+}
+sub fire_delay {
+  my $time = shift;
+  debug_output("Firing delay $time at ".time."; ".(time-$time)." seconds late.");
+  foreach my $call (@{$delays{$time}}) {
+    parse_command($call);
+  }
+  delete $delays{$time};
 }
 
 ####-----#----- Actual Work -----#-----####
@@ -291,6 +309,13 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
       foreach my $current_command (@commands) {
 	parse_command($current_command,$id) if $current_command;
       }
+    }
+  }
+
+  ####-----#----- Check delay events -----#-----####
+  while(my ($time, $array) = each %delays) {
+    if(time >= $time) {
+      fire_delay($time);
     }
   }
 
