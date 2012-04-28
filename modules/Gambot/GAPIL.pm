@@ -115,19 +115,14 @@ sub parse_command {
     &normal_output($1,$2);
   }
 
-  elsif ($command =~ /^event_lock>($validkey)$/) {
-    event_lock($pipeid,$1);
+  elsif ($command =~ /^schedule_event>($validkey)>(.+)$/) {
+    schedule_event($1,$2);
   }
-  elsif ($command =~ /^event_unlock>($validkey)$/) {
-    event_unlock($1);
+  elsif ($command =~ /^fire_event>($validkey)$/) {
+    fire_event($1);
   }
-  elsif ($command =~ /^check_event_lock_exists>($validkey)$/) {
-    if (&check_event_lock_exists($1)) {
-      &send_pipe_message($pipeid,"1");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
+  elsif ($command =~ /^check_event_exists>($validkey)$/) {
+    send_pipe_message($pipeid,check_event_exists($1));
   }
 
   else {

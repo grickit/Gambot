@@ -35,18 +35,13 @@ $SIG{INT} = sub { exit; }; #Exit gracefully and save data on SIGINT
 $SIG{HUP} = sub { exit; }; #Exit gracefully and save data on SIGHUP
 $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 
-##%config stores stuff from the config file.
-##%core stores other core data.
-##%variables allows message processors to store strings
-##%persistent is just like variables, but is saved to disk on shutdown>
-##%locks is for the event-like system. It allows children to block for certain input.
-##%refs contains references to all of these
-my %persistent;
-my %locks;
+##%dict{config} stores stuff from the config file.
+##%dict{core} stores other core data.
+##%events allows children to schedule GAPIL calls to be run when an event is fired
 my %dicts;
 $dicts{'core'} = {};
 $dicts{'config'} = {};
-$dicts{'variables'} = {};
+my %events;
 
 value_set('core','home_directory',$FindBin::Bin);
 value_set('core','configuration_file','config.txt');
@@ -225,22 +220,22 @@ sub reconnect {
   value_set('core','message_count',0);
 }
 
-sub event_lock {
-  my ($pipeid, $lock) = @_;
-  if(!defined $locks{$lock}) { $locks{$lock} = (); }
-  push(@{$locks{$lock}},$pipeid);
+sub schedule_event {
+  my ($name, $call) = @_;
+  if(!defined $events{$name}) { $events{$name} = (); }
+  push(@{$events{$name}},$call);
 }
-sub event_unlock {
-  my $lock = shift;
-  debug_output("Unlocking $lock.");
-  foreach my $pipeid (@{$locks{$lock}}) {
-    send_pipe_message($pipeid,$lock);
+sub fire_event {
+  my $name = shift;
+  debug_output("Firing event: $name.");
+  foreach my $call (@{$events{$name}}) {
+    parse_command($call);
   }
-  delete $locks{$lock};
+  delete $events{$name};
 }
-sub check_event_lock_exists {
-  my $lock = shift;
-  return defined $locks{$lock};
+sub check_event_exists {
+  my $name = shift;
+  return defined $events{$name};
 }
 
 ####-----#----- Actual Work -----#-----####
