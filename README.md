@@ -1,11 +1,5 @@
 This README was last updated April 29 2012
 
-## Table of Contents ##
-  1. About Gambot
-  2. Setting up
-  3. Coding for Gambot
-  4. Contact
-
 ## About Gambot ##
   Gambot is an IRC bot framework. It is written in perl.
 
