@@ -35,11 +35,11 @@ $SIG{INT} = sub { exit; }; #Exit gracefully and save data on SIGINT
 $SIG{HUP} = sub { exit; }; #Exit gracefully and save data on SIGHUP
 $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 
-##%dict{config} stores stuff from the config file.
-##%dict{core} stores other core data.
-##%events allows children to schedule GAPIL calls to be run when an event is fired
-##%delays allows children to schedule GAPIL calls to be run a certain number of seconds in the future
-##%autosave contains a list of all manually saved and loaded members of %dict to be autosaved at shutdown
+## %dict{config} stores stuff from the config file.
+## %dict{core} stores other core data.
+## %events allows children to schedule GAPIL calls to be run when an event is fired
+## %delays allows children to schedule GAPIL calls to be run a certain number of seconds in the future
+## %autosave contains a list of all manually saved and loaded members of %dict to be autosaved at shutdown
 my %dicts;
 $dicts{'core'} = {};
 $dicts{'config'} = {};
@@ -52,17 +52,18 @@ value_set('core','configuration_file','config.txt');
 value_set('core','message_count',0);
 value_set('config','delay',0.1);
 
-##%pid_pipes store the process ids of processors and scripts
-##%read_pipes are for getting data from processors and scripts
-##%write_pipes are for sending data to processors and scripts
+## %pid_pipes store the process ids of processors and scripts
+## %read_pipes are for getting data from processors and scripts
+## %write_pipes are for sending data to processors and scripts
 my %pid_pipes;
 my %read_pipes;
 my %write_pipes;
 
-##The connection to the IRC server
+## The connection to the IRC server
 my $socket_connection;
 my $socket_buffer;
 
+## These variables are used to throttle messages.
 my @pending_outgoing;
 my $last_second = time;
 my $messages_this_second = 0;
@@ -270,31 +271,31 @@ sub delay_fire {
 }
 
 ####-----#----- Actual Work -----#-----####
+## Parse command line arguments
 &load_switches();
+## Load the config file
 &read_configuration_file(value_get('core','home_directory') . '/configurations/' . value_get('core','configuration_file'));
 value_set('core','nick',value_get('config','base_nick'));
 $socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
 
-#An awesome trick to register STDIN and STDOUT as children just like the message parsers and scripts
-#No extra work involved in reading STDIN now.
+## An awesome trick to register STDIN and STDOUT as children just like the message parsers and scripts
+## No extra work involved in reading STDIN now.
 $pid_pipes{'main'} = 1;
 $read_pipes{'main'} = \*STDIN;
 $write_pipes{'main'} = \*STDOUT;
 
 while(defined select(undef,undef,undef,value_get('config','delay'))) {
+
   ####-----#----- Read from the socket -----#-----####
   my $socket_status = &pipe_status($socket_connection);
 
   if ($socket_status eq 'dead') {
     error_output('IRC connection died.');
-    if(&value_get('core','staydead')) {
-      exit;
-    }
-    else {
-      reconnect();
-    }
+    ## Automatically reconnect unless gambot was started with --staydead
+    if(&value_get('core','staydead')) { exit; }
+    else { reconnect(); }
   }
 
   elsif ($socket_status eq 'ready') {
@@ -303,6 +304,7 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
       normal_output('INCOMING',$current_message);
       my $id = 'fork'.value_get('core','message_count');
       &run_command($id,value_get('config','processor'));
+      ## Message parsers need to know the nickname the bot is using, and the incoming message
       &send_pipe_message($id,value_get('core','nick'));
       &send_pipe_message($id,$current_message);
       value_increment('core','message_count',1);
@@ -313,9 +315,10 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
   while(my ($id, $pipe) = each %read_pipes) {
     my $pipe_status = &pipe_status($pipe);
 
-    if ($pipe_status eq 'dead') {
-      kill_pipe($id);
-    }
+    ## Clean up dead children
+    if ($pipe_status eq 'dead') { kill_pipe($id); }
+
+    ## Run responses from living children through the GAPIL parser
     elsif ($pipe_status eq 'ready') {
       my @commands = read_lines($pipe);
       foreach my $current_command (@commands) {
@@ -326,20 +329,25 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
 
   ####-----#----- Check delay events -----#-----####
   while(my ($name, $array) = each %delays) {
+    ## Fire the event if the current time is on or after its deadline
     if(time >= @{$array}[0]) {
       delay_fire($name);
     }
   }
 
   ####-----#----- Send outgoing messages -----#-----####
+  ## Keep shifting messages off of @pending_outgoing and sending them
   for (1; ($messages_this_second < 3) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
     normal_output('OUTGOING',$message);
     print $socket_connection $message . "\015\012";
   }
+
+  ## If we're over the flood limit, check if a second has passed
   if ($messages_this_second >= 3 && $last_second != time) {
     $messages_this_second = 0;
     $last_second = time;
   }
+
 }
 
 END {
