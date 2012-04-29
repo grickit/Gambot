@@ -43,25 +43,25 @@ They are as follows.
     * $dicts{[dict]}{[key]} will be set to [value].
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- * __(return) value_append>[dict]>[key]>[value]__
+  * __(return) value_append>[dict]>[key]>[value]__
     * $dicts{[dict]}{[key]} will be appended [value] __only if it already exists__.
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- * __(return) value_prepend>[dict]>[key]>[value]__
+  * __(return) value_prepend>[dict]>[key]>[value]__
     * $dicts{[dict]}{[key]} will be prepended [value] __only if it already exists__.
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- * __(return) value_increment>[dict]>[key]>[value]__
+  * __(return) value_increment>[dict]>[key]>[value]__
     * $dicts{[dict]}{[key]} will be increased by [value] amount __only if it already exists and is an integer__.
     * If $dicts{[dict]}{[key]} exists, but is not an integer, it will be set to "*0*".
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- * __(return) value_decrement>[dict]>[key]>[value]__
+  * __(return) value_decrement>[dict]>[key]>[value]__
     * $dicts{[dict]}{[key]} will be decreased by [value] amount __only if it already exists and is an integer__.
     * If $dicts{[dict]}{[key]} exists, but is not an integer, it will be set to "*0*".
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- * __(return) value_delete>[dict]>[key]__
+  * __(return) value_delete>[dict]>[key]__
     * $dicts{[dict]}{[key]} will be deleted __only if it already exists__.
     * If "*return*" is present, the calling script will receive the value of $dicts{[dict]}{[key]} before it was deleted or a blank line indicating it did not exist.
 
