@@ -2,10 +2,10 @@ The Gambot API Language is just a series of commands that message parsers and sc
 They are as follows.
 
 ### Sending Messages ###
-  * __ send_server_message>[message] __
+  * __send_server_message>[message]__
     Makes the bot send [message] to the IRC server. Should be valid IRC as per RFC 1459.
 
-  * __ send_pipe_message>[pipe id]>[message] __
+  * __send_pipe_message>[pipe id]>[message]__
     Sends [message] to the pipe named [pipe id].
     Use the id "main" to send messages to STDOUT.
 
