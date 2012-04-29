@@ -48,6 +48,9 @@ sub parse_command {
   elsif($command =~ /^dict_save_all>$/) {
     dict_save_all();
   }
+  elsif($command =~ /^dict_delete>($validkey)$/) {
+    dict_delete($1);
+  }
   elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
     send_pipe_message($pipeid,value_get($1,$2));
   }
@@ -85,12 +88,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^check_pipe_exists>($validkey)$/) {
-    if (&check_pipe_exists($1)) {
-      &send_pipe_message($pipeid,"1");
-    }
-    else {
-      &send_pipe_message($pipeid,"");
-    }
+    &send_pipe_message($pipeid,&check_pipe_exists($1));
   }
   elsif ($command =~ /^kill_pipe>($validkey)$/) {
     &kill_pipe($1);
@@ -127,8 +125,8 @@ sub parse_command {
   elsif ($command =~ /^check_event_exists>($validkey)$/) {
     send_pipe_message($pipeid,check_event_exists($1));
   }
-  elsif ($command =~ /^schedule_delay>([0-9]{1,6})>(.+)$/) {
-    schedule_delay($1,$2);
+  elsif ($command =~ /^schedule_delay>($validkey)>([0-9]{1,6})>(.+)$/) {
+    schedule_delay($1,$2,$3);
   }
   elsif ($command =~ /^fire_delay>([0-9]+)$/) {
     fire_delay($1);

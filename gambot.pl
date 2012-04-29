@@ -111,6 +111,11 @@ sub dict_save_all {
   }
 }
 
+sub dict_delete {
+  my $dict = shift;
+  delete $dicts{$dict};
+}
+
 sub value_exists {
   my ($dict,$key) = @_;
   return (dict_exists($dict) && exists $dicts{$dict}{$key}) ;
@@ -251,19 +256,17 @@ sub check_event_exists {
   else { return ''; }
 }
 sub schedule_delay {
-  my ($delay, $call) = @_;
+  my ($name, $delay, $call) = @_;
   my $time = time + $delay;
-  debug_output("Scheduling a a call at $time.");
-  if(!defined $delays{$time}) { $delays{$time} = (); }
-  push(@{$delays{$time}},$call);
+  debug_output("Scheduling $name at $time.");
+  $delays{$name} = [$time,$call];
 }
 sub fire_delay {
-  my $time = shift;
-  debug_output("Firing delay $time at ".time."; ".(time-$time)." seconds late.");
-  foreach my $call (@{$delays{$time}}) {
-    parse_command($call);
-  }
-  delete $delays{$time};
+  my $name = shift;
+  my $time = $delays{$name}[0];
+  debug_output("Firing delay $name at ".time."; ".(time-$time)." seconds late.");
+  parse_command($delays{$name}[1]);
+  delete $delays{$name};
 }
 
 ####-----#----- Actual Work -----#-----####
@@ -322,9 +325,9 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
   }
 
   ####-----#----- Check delay events -----#-----####
-  while(my ($time, $array) = each %delays) {
-    if(time >= $time) {
-      fire_delay($time);
+  while(my ($name, $array) = each %delays) {
+    if(time >= @{$array}[0]) {
+      fire_delay($name);
     }
   }
 

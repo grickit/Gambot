@@ -21,6 +21,12 @@ They are as follows.
   dict_load>[dict]
     A file named [dict] will be read into $dicts{[dict]}
 
+  dict_save_all>
+    All $dicts that were explicitly loaded or saved with dict_save or dict_load will be dumped to files.
+
+  dict_delete>[dict]
+    Deletes $dicts{$dict}
+
   value_get>[dict]>[key]
     $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
     Prints a blank line if the key does not exist.
@@ -105,12 +111,13 @@ They are as follows.
   check_event_exists>[name]
     If event [name] exists, you will receive [name] in STDIN, otherwise you receive a blank line.
 
-  schedule_delay>[seconds]>[GAPIL]
+  schedule_delay>[name]>[seconds]>[GAPIL]
     Schedules [GAPIL] to be run at least [seconds] seconds in the future.
     It may not be exactly on time if the core is congested, but it usually will be.
+    [name] can be used for editing delays
 
-  fire_delay>[timestamp]
-    Fires a delay early; any calls that were scheduled for the given timestamp.
+  fire_delay>[name]
+    Fires a delay early.
 
 
 --- Notes ---
