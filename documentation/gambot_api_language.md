@@ -99,6 +99,7 @@ They are as follows.
 
   * __reload_config>__
     * The bot will reread its configuration file and reset values in $dicts{'config'}.
+    * You could combine this with "*value_set>core>configuration_file>whatever.txt*" to switch configuration files without restarting (though you would also need to "*reconnect>*" if changing servers).
 
   * __log>[prefix]>[message]__
     * Uses the normal_output() function to log in the form: [prefix] timestamp [message]
@@ -129,4 +130,4 @@ They are as follows.
 
   * $dicts{'core'} contains information that the bot requires to run.
   * $dicts{'config'} contains any values set in the configuration file.
-  * Modifying or deleting any values in them could corrupt the bot.
+  * Modifying or deleting any values in them could corrupt the bot. It won't necessarily. Just be careful.
