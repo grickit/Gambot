@@ -67,20 +67,20 @@ They are as follows.
 
 
 ### Pipe Management ###
-  check_pipe_exists>[pipe id]
-    If the pipe named [pipe id] exists, the calling script will receive a "1" in its STDIN.
-    Otherwise it will receive a "0"
+  * __check_pipe_exists>[pipe id]__
+    * If the pipe named [pipe id] exists, the calling script will receive a "*1*" in STDIN.
+    * Otherwise it will receive a *blank line*
 
-  kill_pipe>[pipe id]
-    This abruptly kills and cleans up variables related to the pipe named [pipe id].
-    This can lead to data loss if that pipe isn't already finished running.
-    Never use on "main" or you will corrupt the running bot.
+  * __kill_pipe>[pipe id]__
+    * This abruptly kills and cleans up variables related to the pipe named [pipe id].
+    * Obviously, prematurely killing pipes can lead to data loss.
+    * Never use on "*main*" or you will corrupt the bot.
 
-  run_command>[pipe id]>[command]
-    This will start a new child pipe named [pipe id].
-    It will run the system command: [command]
-    Be careful about combining this with user input.
-    We recommend only running commands that you have explicitly typed out, and passing user input to them with send_pipe_message>
+  * __run_command>[pipe id]>[command]__
+    * This will start a new child pipe named [pipe id].
+    * It will __run the system command__: [command]
+    * __Be careful about combining this with user input.__
+    * It is __strongly recommended__ to only use "*run_command*" on hardcoded [command] values and then pass user input with "*send_pipe_message>*".
 
 
 ### Bot Management ###
