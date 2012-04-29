@@ -27,43 +27,43 @@ They are as follows.
   * __dict_delete>[dict]__
     * Deletes $dicts{[dict]}.
 
-  value_get>[dict]>[key]
-    $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
-    Prints a blank line if the key does not exist.
+  * __value_get>[dict]>[key]__
+    * $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
+    * Prints a blank line if the key does not exist.
 
-  (return) value_add>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} does not already exist, it will be set to [value].
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+  * __(return) value_add>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be set to [value] __only if it does not already exist__.
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
-  (return) value_replace>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} already exists, it will be set to [value].
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+  * __(return) value_replace>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be set to [value] __only if it already exists__.
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
-  (return) value_set>[dict]>[key]>[value]
-    $dicts{[dict]}{[key]} will be set to [value]
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+  * __(return) value_set>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be set to [value].
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- (return) value_append>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} already exists, [value] will be appended to it.
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+ * __(return) value_append>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be appended [value] __only if it already exists__.
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- (return) value_prepend>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} already exists, [value] will be prepended to it.
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+ * __(return) value_prepend>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be prepended [value] __only if it already exists__.
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- (return) value_increment>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} already exists and is an integer, [value] will be added to it.
-    If $dicts{[dict]}{[key]} existed, but was not an integer, it will be set to 0.
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+ * __(return) value_increment>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be increased by [value] amount __only if it already exists and is an integer__.
+    * If $dicts{[dict]}{[key]} exists, but is not an integer, it will be set to "*0*".
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- (return) value_decrement>[dict]>[key]>[value]
-    If $dicts{[dict]}{[key]} already exists and is an integer, [value] will be subtracted from it.
-    If $dicts{[dict]}{[key]} existed, but was not an integer, it will be set to 0.
-    If (return) is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+ * __(return) value_decrement>[dict]>[key]>[value]__
+    * $dicts{[dict]}{[key]} will be decreased by [value] amount __only if it already exists and is an integer__.
+    * If $dicts{[dict]}{[key]} exists, but is not an integer, it will be set to "*0*".
+    * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a blank line indicating failure.
 
- (return) value_delete>[dict]>[key]
-    If $dicts{[dict]}{[key]} exists, it will be deleted
-    If (return) is present, the calling script will receive the old value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
+ * __(return) value_delete>[dict]>[key]__
+    * $dicts{[dict]}{[key]} will be deleted __only if it already exists__.
+    * If "*return*" is present, the calling script will receive the value of $dicts{[dict]}{[key]} before it was deleted or a blank line indicating it did not exist.
 
 
 ### Pipe Management ###
