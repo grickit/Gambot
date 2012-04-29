@@ -80,7 +80,8 @@ They are as follows.
     * This will start a new child pipe named [pipe id].
     * It will __run the system command__: [command]
     * __Be careful about combining this with user input.__
-    * It is __strongly recommended__ to only use "*run_command*" on hardcoded [command] values and then pass user input with "*send_pipe_message>*".
+    * It is __strongly recommended__ to only use "*run_command>*" on hardcoded [command] values and then pass user input with "*send_pipe_message>*".
+    * Just in case it wasn't clear, __"*run_command>*" IS VERY DANGEROUS!__
 
 
 ### Bot Management ###
