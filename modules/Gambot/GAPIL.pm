@@ -110,7 +110,7 @@ sub parse_command {
   }
   elsif ($command =~ /^reload_config>$/) {
     event_output("API call from $pipeid asked for a configuration reload.");
-    &read_configuration_file(&get_core_value('home_directory') . '/configurations/' . &get_core_value('configuration_file'));
+    &read_configuration_file(&value_get('core','home_directory') . '/configurations/' . &value_get('core','configuration_file'));
   }
   elsif ($command =~ /^log>($validkey)>(.+)$/) {
     &normal_output($1,$2);
