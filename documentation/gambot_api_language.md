@@ -3,14 +3,14 @@ They are as follows.
 
 ### Sending Messages ###
   * __send_server_message>[message]__
-    Makes the bot send [message] to the IRC server. Should be valid IRC as per RFC 1459.
+    * Makes the bot send [message] to the IRC server. Should be valid IRC as per RFC 1459.
 
   * __send_pipe_message>[pipe id]>[message]__
-    Sends [message] to the pipe named [pipe id].
-    Use the id "main" to send messages to STDOUT.
+    * Sends [message] to the pipe named [pipe id].
+    * Use the id "main" to send messages to STDOUT.
 
 
---- Variable storage ---
+### Variable storage ###
   dict_exists>[dict]
     If $dicts{[dict]} exists, the calling script will receive a "1" in its STDIN.
     Otherwise it will receive a blank line.
@@ -66,7 +66,7 @@ They are as follows.
     If (return) is present, the calling script will receive the old value of $dicts{[dict]}{[key]} or a blank line indicating failure in STDIN.
 
 
---- Pipe Management ---
+### Pipe Management ###
   check_pipe_exists>[pipe id]
     If the pipe named [pipe id] exists, the calling script will receive a "1" in its STDIN.
     Otherwise it will receive a "0"
@@ -83,7 +83,7 @@ They are as follows.
     We recommend only running commands that you have explicitly typed out, and passing user input to them with send_pipe_message>
 
 
---- Bot Management ---
+### Bot Management ###
   sleep>[number]
     This will cause the bot to sleep for [number] seconds.
     Can be a float because we actually use the four argument version of select() for this.
@@ -101,7 +101,7 @@ They are as follows.
     This will use the normal_output() function to log in the form: [prefix] timestamp [message]
     It looks like: BOTEVENT 11:00:00 I am attempting to connect.
 
---- Events ---
+### Events ###
   event_schedule>[name]>[GAPIL]
     This schedules [GAPIL] to be parsed as a Gambot API call when event [name] is fired.
 
@@ -120,8 +120,8 @@ They are as follows.
     Fires a delay early.
 
 
---- Notes ---
-  All pipe ids and variable names must match: ([a-zA-Z0-9_-]+)
+### Notes ###
+  All pipe ids and variable names must match: __([a-zA-Z0-9_-]+)__
 
   %core contains information that the bot requires to run.
   %config contains any values set in the configuration file.
