@@ -3,29 +3,29 @@ They are as follows.
 
 ### Sending Messages ###
   * __send_server_message>[message]__
-    * Makes the bot send [message] to the IRC server. Should be valid IRC as per RFC 1459.
+    * Makes the bot send [message] to the IRC server. Should be valid raw IRC.
 
   * __send_pipe_message>[pipe id]>[message]__
     * Sends [message] to the pipe named [pipe id].
-    * Use the id "main" to send messages to STDOUT.
+    * Use the id *main* to send messages to STDOUT.
 
 
 ### Variable storage ###
-  dict_exists>[dict]
-    If $dicts{[dict]} exists, the calling script will receive a "1" in its STDIN.
-    Otherwise it will receive a blank line.
+  * __dict_exists>[dict]__
+    * If $dicts{[dict]} exists, the calling script will receive a *1* in STDIN.
+    * Otherwise it will receive a blank line.
 
-  dict_save>[dict]
-    $dicts{[dict]} will be dumped into a file named [dict]
+  * __ dict_save>[dict]__
+    * $dicts{[dict]} will be dumped into a file named [dict].
 
-  dict_load>[dict]
-    A file named [dict] will be read into $dicts{[dict]}
+  * __dict_load>[dict]__
+    * A file named [dict] will be read into $dicts{[dict]}.
 
-  dict_save_all>
-    All $dicts that were explicitly loaded or saved with dict_save or dict_load will be dumped to files.
+  * __dict_save_all>__
+    * All $dicts{} that were explicitly loaded or saved with *dict_save>* or *dict_load>* will be dumped to files.
 
-  dict_delete>[dict]
-    Deletes $dicts{$dict}
+  * __dict_delete>[dict]__
+    * Deletes $dicts{$dict}.
 
   value_get>[dict]>[key]
     $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
