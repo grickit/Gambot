@@ -1,8 +1,8 @@
 The Gambot API Language is just a series of commands that message parsers and scripts/commands can output to manipulate the bot.
 They are as follows.
 
-### Sending Messages ###
-  * __send_server_message>[message]__
+## Sending Messages ##
+  #### end_server_message>[message] ####
     * Makes the bot send [message] to the IRC server. Should be valid raw IRC.
 
   * __send_pipe_message>[pipe id]>[message]__
@@ -10,7 +10,7 @@ They are as follows.
     * Use the id "*main*" to send messages to STDOUT.
 
 
-### Variable storage ###
+## Variable storage ##
   * __dict_exists>[dict]__
     * If $dicts{[dict]} exists, the calling script will receive a "*1*" in STDIN.
     * Otherwise it will receive a *blank line*.
@@ -66,7 +66,7 @@ They are as follows.
     * If "*return*" is present, the calling script will receive the value of $dicts{[dict]}{[key]} before it was deleted or a "*blank line*" indicating it did not exist.
 
 
-### Pipe Management ###
+## Pipe Management ##
   * __check_pipe_exists>[pipe id]__
     * If the pipe named [pipe id] exists, the calling script will receive a "*1*" in STDIN.
     * Otherwise it will receive a *blank line*
@@ -84,7 +84,7 @@ They are as follows.
     * Just in case it wasn't clear, __"*run_command>*" IS VERY DANGEROUS!__
 
 
-### Bot Management ###
+## Bot Management ##
   * __sleep>[number]__
     * Causes the bot to sleep for [number] seconds.
     * Can be a float because it is directly mapped to the four argument version of select().
@@ -106,7 +106,7 @@ They are as follows.
     * normal_output() is always logged to files (unless using --unlogged mode), but is only output to the terminal in --verbose mode.
     * Sample: *BOTEVENT 11:00:00 I am attempting to connect.*
 
-### Events ###
+## Events ##
   * __event_schedule>[name]>[GAPIL]__
     * Schedules [GAPIL] to be parsed as a Gambot API call when event [name] is fired.
 
@@ -125,7 +125,7 @@ They are as follows.
     * Fires a delay early.
 
 
-### Notes ###
+## Notes ##
   All pipe ids and variable names must match: __([a-zA-Z0-9_-]+)__
 
   * $dicts{'core'} contains information that the bot requires to run.
