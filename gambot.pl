@@ -236,13 +236,13 @@ sub reconnect {
   value_set('core','message_count',0);
 }
 
-sub schedule_event {
+sub event_schedule {
   my ($name, $call) = @_;
   debug_output("Scheduling a call for $name.");
   if(!defined $events{$name}) { $events{$name} = (); }
   push(@{$events{$name}},$call);
 }
-sub fire_event {
+sub event_fire {
   my $name = shift;
   debug_output("Firing event: $name.");
   foreach my $call (@{$events{$name}}) {
@@ -250,18 +250,18 @@ sub fire_event {
   }
   delete $events{$name};
 }
-sub check_event_exists {
+sub event_exists {
   my $name = shift;
   if(defined $events{$name}) { return $name; }
   else { return ''; }
 }
-sub schedule_delay {
+sub delay_schedule {
   my ($name, $delay, $call) = @_;
   my $time = time + $delay;
   debug_output("Scheduling $name at $time.");
   $delays{$name} = [$time,$call];
 }
-sub fire_delay {
+sub delay_fire {
   my $name = shift;
   my $time = $delays{$name}[0];
   debug_output("Firing delay $name at ".time."; ".(time-$time)." seconds late.");
@@ -327,7 +327,7 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
   ####-----#----- Check delay events -----#-----####
   while(my ($name, $array) = each %delays) {
     if(time >= @{$array}[0]) {
-      fire_delay($name);
+      delay_fire($name);
     }
   }
 

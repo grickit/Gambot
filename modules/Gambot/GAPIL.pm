@@ -116,20 +116,20 @@ sub parse_command {
     &normal_output($1,$2);
   }
 
-  elsif ($command =~ /^schedule_event>($validkey)>(.+)$/) {
-    schedule_event($1,$2);
+  elsif ($command =~ /^event_schedule>($validkey)>(.+)$/) {
+    event_schedule($1,$2);
   }
   elsif ($command =~ /^fire_event>($validkey)$/) {
-    fire_event($1);
+    event_fire($1);
   }
-  elsif ($command =~ /^check_event_exists>($validkey)$/) {
-    send_pipe_message($pipeid,check_event_exists($1));
+  elsif ($command =~ /^event_exists>($validkey)$/) {
+    send_pipe_message($pipeid,event_exists($1));
   }
-  elsif ($command =~ /^schedule_delay>($validkey)>([0-9]{1,6})>(.+)$/) {
-    schedule_delay($1,$2,$3);
+  elsif ($command =~ /^delay_schedule>($validkey)>([0-9]{1,6})>(.+)$/) {
+    delay_schedule($1,$2,$3);
   }
-  elsif ($command =~ /^fire_delay>([0-9]+)$/) {
-    fire_delay($1);
+  elsif ($command =~ /^delay_fire>($validkey)$/) {
+    delay_fire($1);
   }
 
   else {
