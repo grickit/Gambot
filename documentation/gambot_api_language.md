@@ -85,45 +85,47 @@ They are as follows.
 
 
 ### Bot Management ###
-  sleep>[number]
-    This will cause the bot to sleep for [number] seconds.
-    Can be a float because we actually use the four argument version of select() for this.
+  * __sleep>[number]__
+    * This will cause the bot to sleep for [number] seconds.
+    * Can be a float because we actually use the four argument version of select() for this.
+    * Because this locks up the entire bot, it should be used sparingly.
+    * It is not necessary to use "*sleep>*" to throttle messages sent to the IRC server to avoid flood kicks. This is handled automatically.
 
-  shutdown>
-    Shuts the bot down.
+  * __shutdown>__
+    * Shuts the bot down.
 
-  reconnect>
-    The bot will disconnect from IRC and then reconnect.
+  * __reconnect>__
+    * The bot will disconnect from IRC and then reconnect.
 
-  reload_config>
-    The bot will reread its configuration file and re-set %config values.
+  * __reload_config>__
+    * The bot will reread its configuration file and reset values in $dicts{'config'}.
 
-  log>[prefix]>[message]
-    This will use the normal_output() function to log in the form: [prefix] timestamp [message]
-    It looks like: BOTEVENT 11:00:00 I am attempting to connect.
+  * __log>[prefix]>[message]__
+    * Uses the normal_output() function to log in the form: [prefix] timestamp [message]
+    * Sample: *BOTEVENT 11:00:00 I am attempting to connect.*
 
 ### Events ###
-  event_schedule>[name]>[GAPIL]
-    This schedules [GAPIL] to be parsed as a Gambot API call when event [name] is fired.
+  * __event_schedule>[name]>[GAPIL]__
+    * Schedules [GAPIL] to be parsed as a Gambot API call when event [name] is fired.
 
-  event_fire>[name]
-    This fires event [name]
+  * __event_fire>[name]__
+    * This fires event [name]
 
-  event_exists>[name]
-    If event [name] exists, you will receive [name] in STDIN, otherwise you receive a blank line.
+  * __event_exists>[name]__
+    * If event [name] exists, you will receive [name] in STDIN, otherwise you receive a blank line.
 
-  delay_schedule>[name]>[seconds]>[GAPIL]
-    Schedules [GAPIL] to be run at least [seconds] seconds in the future.
-    It may not be exactly on time if the core is congested, but it usually will be.
-    [name] can be used for editing delays
+  * __delay_schedule>[name]>[seconds]>[GAPIL]__
+    * Schedules [GAPIL] to be parsed as a Gambot API call at least [seconds] seconds in the future.
+    * It may not be exactly on time if the bot is congested, but it usually will be.
+    * Reuse "*delay_schedule*" on the same [name] value to change [seconds] or [GAPIL]
 
-  delay_fire>[name]
-    Fires a delay early.
+  * __delay_fire>[name]__
+    * Fires a delay early.
 
 
 ### Notes ###
   All pipe ids and variable names must match: __([a-zA-Z0-9_-]+)__
 
-  %core contains information that the bot requires to run.
-  %config contains any values set in the configuration file.
-  %variable contains nothing by default. Message parsers and commands are able to store data here.
+  * $dicts{'core'} contains information that the bot requires to run.
+  * $dicts{'config'} contains any values set in the configuration file.
+  * Modifying or deleting any values in them could corrupt the bot.
