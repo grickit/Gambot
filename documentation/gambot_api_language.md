@@ -72,12 +72,12 @@ They are as follows.
     * Otherwise it will receive a *blank line*
 
   * __kill_pipe>[pipe id]__
-    * This abruptly kills and cleans up variables related to the pipe named [pipe id].
+    * Abruptly kills and cleans up variables related to the pipe named [pipe id].
     * Obviously, prematurely killing pipes can lead to data loss.
     * Never use on "*main*" or you will corrupt the bot.
 
   * __run_command>[pipe id]>[command]__
-    * This will start a new child pipe named [pipe id].
+    * Start a new child pipe named [pipe id].
     * It will __run the system command__: [command]
     * __Be careful about combining this with user input.__
     * It is __strongly recommended__ to only use "*run_command>*" on hardcoded [command] values and then pass user input with "*send_pipe_message>*".
@@ -86,8 +86,8 @@ They are as follows.
 
 ### Bot Management ###
   * __sleep>[number]__
-    * This will cause the bot to sleep for [number] seconds.
-    * Can be a float because we actually use the four argument version of select() for this.
+    * Causes the bot to sleep for [number] seconds.
+    * Can be a float because it is directly mapped to the four argument version of select().
     * Because this locks up the entire bot, it should be used sparingly.
     * It is not necessary to use "*sleep>*" to throttle messages sent to the IRC server to avoid flood kicks. This is handled automatically.
 
@@ -102,6 +102,7 @@ They are as follows.
 
   * __log>[prefix]>[message]__
     * Uses the normal_output() function to log in the form: [prefix] timestamp [message]
+    * normal_output() is always logged to files (unless using --unlogged mode), but is only output to the terminal in --verbose mode.
     * Sample: *BOTEVENT 11:00:00 I am attempting to connect.*
 
 ### Events ###
