@@ -7,25 +7,25 @@ They are as follows.
 
   * __send_pipe_message>[pipe id]>[message]__
     * Sends [message] to the pipe named [pipe id].
-    * Use the id *main* to send messages to STDOUT.
+    * Use the id "*main*" to send messages to STDOUT.
 
 
 ### Variable storage ###
   * __dict_exists>[dict]__
-    * If $dicts{[dict]} exists, the calling script will receive a *1* in STDIN.
-    * Otherwise it will receive a blank line.
+    * If $dicts{[dict]} exists, the calling script will receive a "*1*" in STDIN.
+    * Otherwise it will receive a *blank line*.
 
-  * __ dict_save>[dict]__
+  * __dict_save>[dict]__
     * $dicts{[dict]} will be dumped into a file named [dict].
 
   * __dict_load>[dict]__
     * A file named [dict] will be read into $dicts{[dict]}.
 
   * __dict_save_all>__
-    * All $dicts{} that were explicitly loaded or saved with *dict_save>* or *dict_load>* will be dumped to files.
+    * All $dicts{} that were explicitly loaded or saved with "*dict_save>*" or "*dict_load>*" will be dumped to files.
 
   * __dict_delete>[dict]__
-    * Deletes $dicts{$dict}.
+    * Deletes $dicts{[dict]}.
 
   value_get>[dict]>[key]
     $dicts{[dict]}{[key]} will be be printed to STDIN of the calling script.
