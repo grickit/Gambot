@@ -47,10 +47,13 @@ my %events;
 my %delays;
 my %autosave;
 
+## Set some default values necessary for the bot to function.
+## Any of these might be overwritten by the config file or command line arguments.
 value_set('core','home_directory',$FindBin::Bin);
 value_set('core','configuration_file','config.txt');
 value_set('core','message_count',0);
-value_set('config','delay',0.1);
+value_set('config','main_loop_delay',0.1);
+value_set('config','messages_per_second',3);
 
 ## %pid_pipes store the process ids of processors and scripts
 ## %read_pipes are for getting data from processors and scripts
@@ -286,7 +289,7 @@ $pid_pipes{'main'} = 1;
 $read_pipes{'main'} = \*STDIN;
 $write_pipes{'main'} = \*STDOUT;
 
-while(defined select(undef,undef,undef,value_get('config','delay'))) {
+while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
 
   ####-----#----- Read from the socket -----#-----####
   my $socket_status = &pipe_status($socket_connection);
@@ -337,13 +340,13 @@ while(defined select(undef,undef,undef,value_get('config','delay'))) {
 
   ####-----#----- Send outgoing messages -----#-----####
   ## Keep shifting messages off of @pending_outgoing and sending them
-  for (1; ($messages_this_second < 3) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
+  for (1; ($messages_this_second < value_get('config','messages_per_second')) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
     normal_output('OUTGOING',$message);
     print $socket_connection $message . "\015\012";
   }
 
   ## If we're over the flood limit, check if a second has passed
-  if ($messages_this_second >= 3 && $last_second != time) {
+  if ($messages_this_second >= value_get('config','messages_per_second') && $last_second != time) {
     $messages_this_second = 0;
     $last_second = time;
   }
