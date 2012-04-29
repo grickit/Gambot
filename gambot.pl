@@ -339,17 +339,14 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
   }
 
   ####-----#----- Send outgoing messages -----#-----####
-  ## Keep shifting messages off of @pending_outgoing and sending them
-  for (1; ($messages_this_second < value_get('config','messages_per_second')) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
+  ## As long as we're under our flood limit, and still have messages pending, send messages
+  for(1; ($messages_this_second < value_get('config','messages_per_second')) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
+    debug_output("Sent $messages_this_second messages this second so far during ".time);
     normal_output('OUTGOING',$message);
     print $socket_connection $message . "\015\012";
   }
-
-  ## If we're over the flood limit, check if a second has passed
-  if ($messages_this_second >= value_get('config','messages_per_second') && $last_second != time) {
-    $messages_this_second = 0;
-    $last_second = time;
-  }
+  ## Keep track of the seconds
+  if($last_second != time) { $messages_this_second = 0; $last_second = time; }
 
 }
 
