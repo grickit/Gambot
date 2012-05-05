@@ -25,7 +25,7 @@ sub parse_command {
   $command =~ s/[\r\n]+$//;
   debug_output("Received API call: $command");
 
-  my $validkey = '[a-zA-Z0-9_#-]+';
+  my $validkey = '[a-zA-Z0-9_#:-]+';
 
 
   if ($command =~ /^send_server_message>(.+)$/) {

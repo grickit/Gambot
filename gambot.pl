@@ -98,7 +98,7 @@ sub dict_load {
     foreach my $current_line (@lines) {
       $current_line =~ s/[\r\n\s]+$//;
       $current_line =~ s/^[\t\s]+//;
-      if ($current_line =~ /^([a-zA-Z0-9_-]+) = "(.+)"$/) {
+      if ($current_line =~ /^([a-zA-Z0-9_#:-]+) = "(.+)"$/) {
 	&value_set($dict,$1,$2);
       }
     }
