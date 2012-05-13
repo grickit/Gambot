@@ -125,10 +125,10 @@ sub parse_command {
   elsif ($command =~ /^event_exists>($validkey)$/) {
     send_pipe_message($pipeid,event_exists($1));
   }
-  elsif ($command =~ /^delay_schedule>($validkey)>([0-9]{1,6})>(.+)$/) {
-    delay_schedule($1,$2,$3);
+  elsif ($command =~ /^delay_schedule>([0-9]{1,6})>(.+)$/) {
+    delay_schedule($1,$2);
   }
-  elsif ($command =~ /^delay_fire>($validkey)$/) {
+  elsif ($command =~ /^delay_fire>([0-9]+)$/) {
     delay_fire($1);
   }
 

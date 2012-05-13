@@ -260,17 +260,19 @@ sub event_exists {
   else { return ''; }
 }
 sub delay_schedule {
-  my ($name, $delay, $call) = @_;
+  my ($delay, $call) = @_;
   my $time = time + $delay;
-  debug_output("Scheduling $name at $time.");
-  $delays{$name} = [$time,$call];
+  debug_output("Scheduling a call at $time.");
+  if(!defined $delays{$time}) { $delays{$time} = (); }
+  push(@{$delays{$time}},$call);
 }
 sub delay_fire {
-  my $name = shift;
-  my $time = $delays{$name}[0];
-  debug_output("Firing delay $name at ".time."; ".(time-$time)." seconds late.");
-  parse_command($delays{$name}[1]);
-  delete $delays{$name};
+  my $time = shift;
+  debug_output("Firing delay $time at ".time."; ".(time-$time)." seconds late.");
+  foreach my $call (@{$delays{$time}}) {
+    parse_command($call);
+  }
+  delete $delays{$time};
 }
 
 ####-----#----- Actual Work -----#-----####
@@ -331,11 +333,8 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
   }
 
   ####-----#----- Check delay events -----#-----####
-  while(my ($name, $array) = each %delays) {
-    ## Fire the event if the current time is on or after its deadline
-    if(time >= @{$array}[0]) {
-      delay_fire($name);
-    }
+  while(my ($time, $array) = each %delays) {
+    if(time >= $time) { delay_fire($time); }
   }
 
   ####-----#----- Send outgoing messages -----#-----####
