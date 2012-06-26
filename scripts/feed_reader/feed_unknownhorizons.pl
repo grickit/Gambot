@@ -26,6 +26,7 @@ push(@feed_array, '29'); #Bugs
 push(@feed_array, '38'); #Development
 push(@feed_array, '33'); #Off-Topic
 push(@feed_array, '34'); #GSoC
+push(@feed_array, '40'); #scenarios and campaigns
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
 
