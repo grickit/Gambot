@@ -12,6 +12,7 @@ This README was last updated April 29 2012
 
 ### Full Asynchronism ###
   * Messages don't get parsed in order.
+  * Can handle an infinite amount of messages simultaneously (given infinite resources).
   * If you have certain commands that take longer (maybe they require network resources) they won't slow down the entire bot.
   * The core script acts as a server, with many clients connecting to it; again these are all handled asynchronously.
 
