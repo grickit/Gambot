@@ -30,6 +30,7 @@ push(@feed_array, 'Wesnoth');
 push(@feed_array, 'Notch');
 push(@feed_array, 'jeb_');
 push(@feed_array, 'Dinnerbone');
+push(@feed_array, 'EthoLP');
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
 
@@ -56,7 +57,7 @@ foreach my $current_feed (@feed_array) {
       #print "sleep>0.5\n";
       foreach my $current_subscriber (@subscribers_array) {
 	if($current_subscriber eq '#minecraft') {
-	  if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit)/) {
+	  if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit|EthoLP)/) {
 	    next;
 	  }
 	  else {
