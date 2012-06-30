@@ -54,6 +54,7 @@ value_set('core','configuration_file','config.txt');
 value_set('core','message_count',0);
 value_set('config','main_loop_delay',0.1);
 value_set('config','messages_per_second',3);
+value_set('config','ping_timeout',600);
 
 ## %pid_pipes store the process ids of processors and scripts
 ## %read_pipes are for getting data from processors and scripts
@@ -70,6 +71,9 @@ my $socket_buffer;
 my @pending_outgoing;
 my $last_second = time;
 my $messages_this_second = 0;
+
+## Used for client-side ping timeout
+my $last_received = time;
 
 
 ####-----#----- Subroutines -----#-----####
@@ -313,6 +317,17 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
       &send_pipe_message($id,value_get('core','nick'));
       &send_pipe_message($id,$current_message);
       value_increment('core','message_count',1);
+      $last_received = time;
+    }
+  }
+
+  elsif($socket_status eq 'later') {
+    my $current_time = time;
+    if($current_time - $last_received >= value_get('config','ping_timeout')) {
+	error_output('IRC connection timed out.');
+      ## Automatically reconnect unless gambot was started with --staydead
+      if(&value_get('core','staydead')) { exit; }
+      else { reconnect(); }
     }
   }
 
