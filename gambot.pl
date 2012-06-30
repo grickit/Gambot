@@ -302,7 +302,14 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
 
   if ($socket_status eq 'dead') {
     error_output('IRC connection died.');
-    ## Automatically reconnect unless gambot was started with --staydead
+    ## Automatically reconnect unless the bot was started with --staydead
+    if(&value_get('core','staydead')) { exit; }
+    else { reconnect(); }
+  }
+
+  elsif($socket_status eq 'later' && time - $last_received >= value_get('config','ping_timeout')) {
+    error_output('IRC connection timed out.');
+    ## Automatically reconnect unless the bot was started with --staydead
     if(&value_get('core','staydead')) { exit; }
     else { reconnect(); }
   }
@@ -318,16 +325,6 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
       &send_pipe_message($id,$current_message);
       value_increment('core','message_count',1);
       $last_received = time;
-    }
-  }
-
-  elsif($socket_status eq 'later') {
-    my $current_time = time;
-    if($current_time - $last_received >= value_get('config','ping_timeout')) {
-	error_output('IRC connection timed out.');
-      ## Automatically reconnect unless gambot was started with --staydead
-      if(&value_get('core','staydead')) { exit; }
-      else { reconnect(); }
     }
   }
 
