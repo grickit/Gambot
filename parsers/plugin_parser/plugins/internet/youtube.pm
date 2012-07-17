@@ -1,4 +1,4 @@
-if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/) {
+if ($message =~ /^$sl !youtube [a-zA-Z0-9-_:\/\.&?=]+[?&]v=([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]+$/) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $vid = $1;
