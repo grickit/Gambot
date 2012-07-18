@@ -13,7 +13,7 @@ if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/ || $message =~ /^$sl !youtube 
   my $content = $response->decoded_content;
 
   if ($content =~ /<error><domain>GData<\/domain><code>InvalidRequestUriException<\/code><internalReason>Invalid id<\/internalReason><\/error>/) {
-    ACT('MESSAGE',$target,"$receiver: $vid");
+    ACT('MESSAGE',$target,"$receiver: That video does not exist.");
   }
 
   elsif ($content =~ /<title>(.+)<\/title>/) {
