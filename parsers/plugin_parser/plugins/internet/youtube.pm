@@ -1,7 +1,7 @@
-if ($message =~ /^$sl !youtube [a-zA-Z0-9-_:\/\.&?=]*([?&]v=)?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*$/) {
+if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/ || $message =~ /^$sl !youtube [a-zA-Z0-9-_:\/\.&?=]*[?&]v=?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*$/) {
   require LWP::Simple;
   require LWP::UserAgent;
-  my $vid = $2;
+  my $vid = $1;
   my $url = "http://gdata.youtube.com/feeds/api/videos/$vid?v=2";
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
@@ -13,7 +13,7 @@ if ($message =~ /^$sl !youtube [a-zA-Z0-9-_:\/\.&?=]*([?&]v=)?([a-zA-Z0-9-_]+)[a
   my $content = $response->decoded_content;
 
   if ($content =~ /<error><domain>GData<\/domain><code>InvalidRequestUriException<\/code><internalReason>Invalid id<\/internalReason><\/error>/) {
-    ACT('MESSAGE',$target,"$receiver: That video does not exist.");
+    ACT('MESSAGE',$target,"$receiver: $vid");
   }
 
   elsif ($content =~ /<title>(.+)<\/title>/) {
