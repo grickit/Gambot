@@ -119,7 +119,7 @@ sub parse_command {
   elsif ($command =~ /^event_schedule>($validkey)>(.+)$/) {
     event_schedule($1,$2);
   }
-  elsif ($command =~ /^fire_event>($validkey)$/) {
+  elsif ($command =~ /^event_fire>($validkey)$/) {
     event_fire($1);
   }
   elsif ($command =~ /^event_exists>($validkey)$/) {
