@@ -4,21 +4,31 @@ use warnings;
 my $have_output = 0;
 
 my %permissions;
-$permissions{'wesnoth/developer/*'} 			= '#wesnoth*';
-$permissions{'wesnoth/artist/*'} 			= '#wesnoth*';
-$permissions{'wesnoth/forumsith/*'} 			= '#wesnoth*';
+$permissions{'wesnoth/developer/*'}               = '#wesnoth*';
+$permissions{'wesnoth/artist/*'}                  = '#wesnoth*';
+$permissions{'wesnoth/forumsith/*'}               = '#wesnoth*';
 
-$permissions{'wesnoth/developer/dave'} 			= '#frogatto*';
-$permissions{'wesnoth/developer/crimson_penguin'} 	= '#frogatto*';
-$permissions{'wesnoth/artist/jetrel'}		 	= '#frogatto*';
-$permissions{'unaffiliated/marcavis*'}	 		= '#frogatto*';
+$permissions{'wesnoth/developer/dave'}            = '#frogatto*';
+$permissions{'wesnoth/developer/crimson_penguin'} = '#frogatto*';
+$permissions{'wesnoth/artist/jetrel'}             = '#frogatto*';
+$permissions{'unaffiliated/marcavis*'}            = '#frogatto*';
 
-$permissions{'unaffiliated/dreadknight'} 		= '#AncientBeast';
+$permissions{'unaffiliated/dreadknight'}          = '#AncientBeast';
 
-$permissions{'unaffiliated/gambit/bot/*'} 		= '##Gambot*';
-$permissions{'unaffiliated/gambit/bot/*'} 		= '#wesnoth-offtopic';
-$permissions{'wesnoth/developer/grickit'}	 	= '*';
-$permissions{'wesnoth/developer/shadowmaster*'} 	= '*';
+$permissions{'unaffiliated/aperson'}              = '#minecraft';
+$permissions{'reddit/operator/bep'}               = '#minecraft';
+$permissions{'unaffiliated/dagmar'}               = '#minecraft';
+$permissions{'unaffiliated/helzibah'}             = '#minecraft';
+$permissions{'reddit/operator/kylexy'}            = '#minecraft';
+$permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
+$permissions{'unaffiliated/skuld'}                = '#minecraft';
+$permissions{'unaffiliated/sircmpwn'}             = '#minecraft';
+$permissions{'unaffiliated/streather'}            = '#minecraft';
+
+$permissions{'unaffiliated/gambit/bot/*'}         = '##Gambot*';
+$permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
+$permissions{'wesnoth/developer/grickit'}         = '*';
+$permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
 my $events = {
   'server_ping' => \&on_ping,
