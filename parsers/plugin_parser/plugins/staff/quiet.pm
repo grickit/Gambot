@@ -6,6 +6,14 @@ if ($message =~ /^$sl !unquiet ([$valid_chan_characters]+) ([$valid_nick_charact
   CheckAuth($1,$hostname) ? ACT('MESSAGE','chanserv',"unquiet $1 $2") : AuthError($sender,$target,$1);
 }
 
+if ($message =~ /^$sl !quiet ([$valid_nick_characters]+)$/) {
+  CheckAuth($target,$hostname) ? ACT('MESSAGE','chanserv',"quiet $target $1") : AuthError($sender,$target,$target);
+}
+
+if ($message =~ /^$sl !unquiet ([$valid_nick_characters]+)$/) {
+  CheckAuth($target,$hostname) ? ACT('MESSAGE','chanserv',"unquiet $target $1") : AuthError($sender,$target,$target);
+}
+
 if ($message =~ /^$sl !quietme$/) {
   CheckAuth($target,$hostname) ? ACT('MESSAGE','chanserv',"quiet $target $receiver") : AuthError($sender,$target,$target);
 }
