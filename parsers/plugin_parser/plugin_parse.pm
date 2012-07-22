@@ -25,6 +25,8 @@ $permissions{'unaffiliated/skuld'}                = '#minecraft';
 $permissions{'unaffiliated/sircmpwn'}             = '#minecraft';
 $permissions{'unaffiliated/streather'}            = '#minecraft';
 
+$permissions{'unaffiliated/sircmpwn'}             = '#mcgaming';
+
 $permissions{'unaffiliated/gambit/bot/*'}         = '##Gambot*';
 $permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
 $permissions{'wesnoth/developer/grickit'}         = '*';
