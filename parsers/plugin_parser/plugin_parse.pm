@@ -24,6 +24,7 @@ $permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
 $permissions{'unaffiliated/skuld'}                = '#minecraft';
 $permissions{'unaffiliated/sircmpwn'}             = '#minecraft';
 $permissions{'unaffiliated/streather'}            = '#minecraft';
+$permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.com'} = '#minecraft';
 
 $permissions{'unaffiliated/sircmpwn'}             = '#mcgaming';
 
