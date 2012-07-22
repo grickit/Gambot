@@ -339,7 +339,7 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
     elsif ($pipe_status eq 'ready') {
       my @commands = read_lines($pipe);
       foreach my $current_command (@commands) {
-	parse_command($current_command,$id) if $current_command;
+        parse_command($current_command,$id) if $current_command;
       }
     }
   }
