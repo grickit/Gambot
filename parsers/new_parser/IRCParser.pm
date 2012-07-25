@@ -9,15 +9,19 @@ our @EXPORT = qw(
   stripNewlines
   readInput
   actOut
+  authCheck
+  authError
   $nickCharacters
   $channelCharacters
   $hostmaskCharacters
-  $validNick $valid_channel
+  $validNick
+  $validChannel
   $validHostmask
   $validHumanSender
   $pipeID
   $botName
   $incomingMessage
+  %permissions
 );
 
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
@@ -31,6 +35,8 @@ our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
 our $pipeID = readInput();
 our $botName = readInput();
 our $incomingMessage = readInput();
+
+our %permissions;
 
 sub stripNewlines { #string
   my $string = shift;
@@ -59,3 +65,21 @@ sub actOut { #action,target,message
   else { print "log>ACTERROR>Unrecognized action: $args[1]"; return ''; }
   return 1;
 }
+
+sub authCheck { #chanmask,hostmask
+  my ($chanmask,$hostmask) = @_;
+  while (my ($hostreg, $chanreg) = each %permissions) {
+    $hostreg =~ s/\*/.*/;
+    $chanreg =~ s/\*/.*/;
+    $hostreg = qr/$hostreg/;
+    $chanreg = qr/$chanreg/;
+    if (($hostmask =~ /^$hostreg$/) && ($chanmask =~ /^$chanreg$/)) { return 1; }
+  }
+  return 0;
+}
+
+sub authError { #sender,target,location
+  actOut('MESSAGE',$_[1],"$_[0]: Sorry. You don't have permission to do that in $_[2].");
+}
+
+1;
