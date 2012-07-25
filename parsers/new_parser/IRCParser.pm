@@ -82,4 +82,15 @@ sub authError { #sender,target,location
   actOut('MESSAGE',$_[1],"$_[0]: Sorry. You don't have permission to do that in $_[2].");
 }
 
+sub parseMessage { #string
+  my $string = shift;
+  my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
+
+  if ($string =~ /^PING(.*)$/i) {
+    ACT('LITERAL',undef,"send_server_message>PONG$1");
+    ($sender, $account, $hostname, $command, $target, $message) = ('','','','','','');
+    $event = 'server_ping';
+  }
+}
+
 1;
