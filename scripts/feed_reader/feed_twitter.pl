@@ -30,7 +30,7 @@ push(@feed_array, 'Wesnoth');
 push(@feed_array, 'Notch');
 push(@feed_array, 'jeb_');
 push(@feed_array, 'Dinnerbone');
-push(@feed_array, 'EthoLP');
+push(@feed_array, 'MinecraftAPIBot');
 
 print "log>FEEDREAD>$data_site feeds beginning\n";
 
