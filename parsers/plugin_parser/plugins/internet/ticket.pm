@@ -2,7 +2,8 @@ if ($message =~ /^$sl !ticket ([0-9]+)$/) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $answer = $1;
-  $answer = "http://trac.unknown-horizons.org/t/ticket/$answer" if ($target =~ /#unknown-horizons/);
+  #$answer = "http://trac.unknown-horizons.org/t/ticket/$answer" if ($target =~ /#unknown-horizons/);
+  $answer = "https://github.com/unknown-horizons/unknown-horizons/issues/$answer" if ($target =~ /#unknown-horizons/);
   $answer = "https://github.com/grickit/Gambot/issues#issue/$answer" if ($target =~ /##Gambot/);
   $answer = "https://gna.org/bugs/index.php?$answer" if ($target =~ /#wesnoth/);
   ACT('MESSAGE',$target,"$receiver: $answer");
