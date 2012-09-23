@@ -3,13 +3,35 @@ use strict;
 use warnings;
 use LWP::UserAgent;
 use HTML::Entities;
-use DBI;
+use Benchmark;
 
-sub connect_to_database {
-  my $db_user = "foo";
-  my $db_pass = "bar";
-  my $db_connection = DBI->connect('dbi:mysql:Gambot',$db_user,$db_pass) or die "Database connection error: $DBI::errstr\n";
-  return $db_connection;
+$| = 1;
+binmode STDOUT, ":utf8";
+
+my ($pipeid,$time_start,$time_end,%last_reported);
+
+sub start_read {
+  $pipeid = <STDIN>;
+  $time_start = Benchmark->new();
+  my $loaded = get_from_core('dict_exists>feed_reader:subscribers');
+  if($loaded eq '') {
+    print "dict_load>feed_reader:subscribers\r\n";
+    print "dict_load>feed_reader:last_reported\r\n";
+  }
+  print "log>FEEDREAD>$_[0] beginning\n";
+}
+
+sub end_read {
+  $time_end = Benchmark->new();
+  my $time_difference = timestr(timediff($time_end,$time_start));
+  print "log>FEEDREAD>$_[0] finished. $time_difference\n";
+}
+
+sub get_from_core {
+  print "$_[0]\r\n";
+  my $response = <STDIN>;
+  $response =~ s/[\r\n]+//g;
+  return $response;
 }
 
 sub url_to_entries {
@@ -74,12 +96,16 @@ sub shorten_url {
 }
 
 sub entry_to_data {
-  my ($entry_text, $link_regex, $author_regex, $title_regex, $date_regex) = @_;
-  my ($link, $author, $title, $date);
+  my ($entry_text,$link_regex,$item_id_regex,$author_regex,$title_regex,$date_regex) = @_;
+  my ($link,$item_id,$author,$title,$date);
 
   if($entry_text =~ m/$link_regex/) {
     $link = $1;
     $link = decode_entities($link);
+  }
+
+  if($entry_text =~ m/$item_id_regex/) {
+    $item_id = $1;
   }
 
   if($entry_text =~ m/$author_regex/) {
@@ -96,45 +122,29 @@ sub entry_to_data {
     $date = $1;
   }
 
-  return ($link, $author, $title, $date);
+  return ($link,$item_id,$author,$title,$date);
 }
 
-sub check_existence {
-  my ($db_connection, $feed_id, $link) = @_;
-  my $id;
-  my $query_string = "SELECT id FROM feed_items WHERE feed_id = ? AND link = ?";
-  my $query = $db_connection->prepare($query_string) or die "SQL preparation error: $DBI::errstr\n";
-  $query->execute($feed_id, $link) or die "SQL query error: $DBI::errstr\n";
-  $query->bind_columns(\$id);
-  my $results = $query->rows();
-  $query->finish();
-
-  if($results) { return 1; }
+sub check_new {
+  my ($site_name,$feed_id,$item_id) = @_;
+  my $subscription_name = $site_name.$feed_id;
+  if(!$last_reported{$subscription_name}) { $last_reported{$subscription_name} = get_from_core("value_get>feed_reader:last_reported>$subscription_name"); }
+  if(!$last_reported{$subscription_name} || $item_id > $last_reported{$subscription_name}) { return 1; }
   else { return 0; }
 }
 
 sub commit_entry {
-  my ($db_connection, $site_name, $feed_id, $link, $title, $author, $date, $time) = @_;
-  my $query_string = "INSERT INTO feed_items (site_name, feed_id, link, title, author, date, time) VALUES (?, ?, ?, ?, ?, ?, ?)";
-  my $query = $db_connection->prepare($query_string) or die "SQL preparation error: $DBI::errstr\n";
-  $query->execute($site_name, $feed_id, $link, $title, $author, $date, $time) or die "SQL query error: $DBI::errstr\n";
+  my ($site_name,$feed_id,$item_id) = @_;
+  my $subscription_name = $site_name.$feed_id;
+  print "value_set>feed_reader:last_reported>$subscription_name>$item_id\r\n";
+  $last_reported{$subscription_name} = $item_id;
 }
 
 sub get_subscribers {
-  my ($db_connection, $source,$feed_id) = @_;
-  my @subscribers = ();
-  my $subscriber_name;
-  my $subscription_name = $source . $feed_id;
+  my ($site_name,$feed_id) = @_;
 
-  my $query_string = "SELECT name FROM feed_subscriptions WHERE feed_id = ?";
-  my $query = $db_connection->prepare($query_string) or die "SQL preparation error: $DBI::errstr\n";
-  $query->execute($subscription_name) or die "SQL query error: $DBI::errstr\n";
-  $query->bind_columns(\$subscriber_name);
-
-  while($query->fetch()) {
-    push(@subscribers,$subscriber_name);
-  }
-
-  return @subscribers;
+  my $subscription_name = $site_name.$feed_id;
+  my $subscriber_list = get_from_core("value_get>feed_reader:subscribers>$subscription_name\r\n");
+  return split(',',$subscriber_list);
 }
 1;
