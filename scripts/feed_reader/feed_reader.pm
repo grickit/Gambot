@@ -14,9 +14,9 @@ sub start_read {
   $pipeid = <STDIN>;
   $time_start = Benchmark->new();
   my $loaded = get_from_core('dict_exists>feed_reader:subscribers');
-  if($loaded eq '') {
-    print "dict_load>feed_reader:subscribers\r\n";
-    print "dict_load>feed_reader:last_reported\r\n";
+  if(!$loaded || $loaded eq '') {
+    print "dict_load>feed_reader:subscribers\n";
+    print "dict_load>feed_reader:last_reported\n";
   }
   print "log>FEEDREAD>$_[0] beginning\n";
 }
@@ -28,7 +28,7 @@ sub end_read {
 }
 
 sub get_from_core {
-  print "$_[0]\r\n";
+  print "$_[0]\n";
   my $response = <STDIN>;
   $response =~ s/[\r\n]+//g;
   return $response;
@@ -136,7 +136,7 @@ sub check_new {
 sub commit_entry {
   my ($site_name,$feed_id,$item_id) = @_;
   my $subscription_name = $site_name.$feed_id;
-  print "value_set>feed_reader:last_reported>$subscription_name>$item_id\r\n";
+  print "value_set>feed_reader:last_reported>$subscription_name>$item_id\n";
   $last_reported{$subscription_name} = $item_id;
 }
 
@@ -144,7 +144,7 @@ sub get_subscribers {
   my ($site_name,$feed_id) = @_;
 
   my $subscription_name = $site_name.$feed_id;
-  my $subscriber_list = get_from_core("value_get>feed_reader:subscribers>$subscription_name\r\n");
+  my $subscriber_list = get_from_core("value_get>feed_reader:subscribers>$subscription_name\n");
   return split(',',$subscriber_list);
 }
 1;
