@@ -54,8 +54,5 @@ sub on_kick {}
 sub on_server_message {}
 sub on_server_error {}
 
-
-# Parse the incoming message
-beginParsing();
 # Fire the subroutine that is named in $event
 &{\&{$IRCParser::event}}();

@@ -54,8 +54,11 @@ our $validHostmask = '(['.$hostmaskCharacters.']+)';
 our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
 our $validServerSender = '(['.$serverCharacters.']+)';
 
-our($pipeID,$botName,$incomingMessage) = ('','','');
-our($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = ('','','','','','','','');
+our $pipeID = readInput();
+our $botName = readInput();
+our $incomingMessage = readInput();
+
+our($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
 
 our $sl = $botName.'[;,]';
 our $cm = '!';
@@ -63,13 +66,6 @@ our $version = 'Gambot Core MK III | Plugin Parser 6 ';
 our $about = 'I am a basic Gambot. http://grickit.github.com/ irc://chat.freenode.net/%23%23Gambot';
 
 our %permissions;
-
-sub beginParsing {
-  $pipeID = readInput();
-  $botName = readInput();
-  $incomingMessage = readInput();
-  ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
-}
 
 sub stripNewlines { #string
   my $string = shift;
