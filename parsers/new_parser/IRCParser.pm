@@ -78,7 +78,7 @@ sub authCheck { #chanmask,hostmask
     $chanreg = qr/$chanreg/;
     if (($hostmask =~ /^$hostreg$/) && ($chanmask =~ /^$chanreg$/)) { return 1; }
   }
-  return 0;
+  return '';
 }
 
 sub authError { #sender,target,location
@@ -94,6 +94,7 @@ sub parseMessage { #string
     ($sender,$account,$hostname,$command,$target,$message,$receiver) = ('','','','','','','');
     $event = 'server_ping';
   }
+
   elsif ($string =~ /^:$validHumanSender (PRIVMSG) $validChannel :(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
     if($target eq $botName) { $event = 'private_message'; $target = $sender; }
@@ -156,7 +157,7 @@ sub parseMessage { #string
   else {
     ACT('LITERAL',undef,"log>APIERROR>Message did not match preparser.");
     ACT('LITERAL',undef,"log>APIERROR>$string");
-    exit();
+    return '';
   }
 
   return ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
