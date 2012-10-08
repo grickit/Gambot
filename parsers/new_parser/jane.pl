@@ -33,8 +33,25 @@ $IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopi
 $IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
 $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
+my $sl = '';
+my $cm = 'j'
 my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($IRCParser::incomingMessage);
 
+sub on_server_ping {}
+sub on_private_message {}
+sub on_public_message {
 
-if($event eq 'public_message' && authCheck($target,$hostname)) { actOut('MESSAGE',$target,"$receiver: hi"); }
-elsif($event eq 'public_message') { authError($sender,$target,$target); }
+  if(authCheck($target,$hostname)) { actOut('MESSAGE',$target,"$receiver: hi"); }
+  else { authError($sender,$target,$target); }
+
+}
+sub on_private_notice {}
+sub on_public_notice {}
+sub on_join {}
+sub on_part {}
+sub on_quit {}
+sub on_mode {}
+sub on_nick {}
+sub on_kick {}
+sub on_server_message {}
+sub on_server_error {}

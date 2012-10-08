@@ -49,8 +49,6 @@ our $cm = '!';
 
 our %permissions;
 
-
-
 sub stripNewlines { #string
   my $string = shift;
   $string =~ s/[\r\n\s\t]+$//;
@@ -95,6 +93,14 @@ sub authError { #sender,target,location
   actOut('MESSAGE',$_[1],"$_[0]: Sorry. You don't have permission to do that in $_[2].");
 }
 
+sub runPlugin { #filepath
+  my $plugin;
+  open(PLUGIN_FILE, $_[0]) or actOut('LITERAL',undef,"error>Could not load plugin file: $_[0]");
+  while(<PLUGIN_FILE>) { $plugin .= $_; }
+  close(PLUGIN_FILE);
+  eval($plugin);
+}
+
 sub parseMessage { #string
   my $string = shift;
   my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
@@ -102,13 +108,13 @@ sub parseMessage { #string
   if ($string =~ /^PING(.*)$/i) {
     ACT('LITERAL',undef,"send_server_message>PONG$1");
     ($sender,$account,$hostname,$command,$target,$message,$receiver) = ('','','','','','','');
-    $event = 'server_ping';
+    $event = 'on_server_ping';
   }
 
   elsif ($string =~ /^:$validHumanSender (PRIVMSG) $validChannel :(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
-    if($target eq $botName) { $event = 'private_message'; $target = $sender; }
-    else { $event = 'public_message'; }
+    if($target eq $botName) { $event = 'on_private_message'; $target = $sender; }
+    else { $event = 'on_public_message'; }
     $receiver = $sender;
     if ($message =~ /@ ?([, $nickCharacters]+)$/) {
       $receiver = $1;
@@ -118,55 +124,55 @@ sub parseMessage { #string
 
   elsif ($string =~ /^:$validHumanSender (NOTICE) $validChannel :(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
-    if ($target eq $botName) { $event = 'private_notice'; $target = $sender; }
-    else { $event = 'public_notice'; }
+    if ($target eq $botName) { $event = 'on_private_notice'; $target = $sender; }
+    else { $event = 'on_public_notice'; }
   }
 
   elsif ($string =~ /^:$validHumanSender (JOIN) :?$validChannel$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,'');
-    $event = 'join';
+    $event = 'on_join';
   }
 
   elsif ($string =~ /^:$validHumanSender (PART) $validChannel ?:?(.+)?$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
     $message = '' unless $message;
-    $event = 'part';
+    $event = 'on_part';
   }
 
   elsif ($string =~ /^:$validHumanSender (QUIT) :(.+)?$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,'',$5);
-    $event = 'quit';
+    $event = 'on_quit';
   }
 
   elsif ($string =~ /^:$validHumanSender (MODE) $validChannel (.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
-    $event = 'mode';
+    $event = 'on_mode';
   }
 
   elsif ($string =~ /^:$validHumanSender (NICK) :?$validNick$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,'',$5);
-    $event = 'nick';
+    $event = 'on_nick';
   }
 
   elsif ($string =~ /^:$validHumanSender (KICK) $validChannel ?:?(.+)?$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
     $message = '' unless $message;
-    $event = 'kick';
+    $event = 'on_kick';
   }
 
   elsif ($string =~ /^:$validServerSender ([a-zA-Z0-9]+) (.+?) :?(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,'','',$2,$3,$4);
-    $event = 'server_message';
+    $event = 'on_server_message';
   }
 
   elsif ($string =~ /^ERROR :(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ('','','','','',$1);
-    $event = 'error';
+    $event = 'on_server_error';
   }
 
   else {
-    ACT('LITERAL',undef,"log>APIERROR>Message did not match preparser.");
-    ACT('LITERAL',undef,"log>APIERROR>$string");
+    actOut('LITERAL',undef,'error>Message did not match preparser.');
+    actOut('LITERAL',undef,"error>$string");
     return '';
   }
 
