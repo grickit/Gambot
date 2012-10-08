@@ -23,7 +23,6 @@ $permissions{'unaffiliated/helzibah'}             = '#minecraft';
 $permissions{'reddit/operator/kylexy'}            = '#minecraft';
 $permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
 $permissions{'unaffiliated/skuld'}                = '#minecraft';
-$permissions{'unaffiliated/sircmpwn'}             = '#minecraft';
 $permissions{'unaffiliated/streather'}            = '#minecraft';
 $permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.com'} = '#minecraft';
 
@@ -34,5 +33,6 @@ $permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
 $permissions{'wesnoth/developer/grickit'}         = '*';
 $permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
-if(authCheck('#minecraft','wesnoth/artist/shadowmaster')) { actOut('MESSAGE',$botName,'Hi'); }
-else { authError($botName,'#minecraft','#minecraft'); }
+my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
+if($event eq 'public_message' && authCheck($target,$hostname)) { actOut('MESSAGE',$target,"$receiver: hi"); }
+elsif($event eq 'public_message') { authError($sender,$target,$target); }

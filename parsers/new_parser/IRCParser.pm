@@ -11,6 +11,7 @@ our @EXPORT = qw(
   actOut
   authCheck
   authError
+  parseMessage
   $nickCharacters
   $channelCharacters
   $hostmaskCharacters
@@ -24,6 +25,7 @@ our @EXPORT = qw(
   %permissions
 );
 
+our $serverCharacters = 'a-zA-Z0-9\.';
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
 our $channelCharacters = '#A-Za-z0-9[\]\\`_^{}|-';
 our $hostmaskCharacters = './A-Za-z0-9[\]\\`_^{}|-';
@@ -31,6 +33,7 @@ our $validNick = '(['.$nickCharacters.']+)';
 our $validChannel = '(['.$channelCharacters.']+)';
 our $validHostmask = '(['.$hostmaskCharacters.']+)';
 our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
+our $validServerSender = '(['.$serverCharacters.']+)';
 
 our $pipeID = readInput();
 our $botName = readInput();
@@ -88,9 +91,75 @@ sub parseMessage { #string
 
   if ($string =~ /^PING(.*)$/i) {
     ACT('LITERAL',undef,"send_server_message>PONG$1");
-    ($sender, $account, $hostname, $command, $target, $message) = ('','','','','','');
+    ($sender,$account,$hostname,$command,$target,$message,$receiver) = ('','','','','','','');
     $event = 'server_ping';
   }
+  elsif ($string =~ /^:$validHumanSender (PRIVMSG) $validChannel :(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    if($target eq $botName) { $event = 'private_message'; $target = $sender; }
+    else { $event = 'public_message'; }
+    $receiver = $sender;
+    if ($message =~ /@ ?([, $nickCharacters]+)$/) {
+      $receiver = $1;
+      $message =~ s/ ?@ ?$receiver$//;
+    }
+  }
+
+  elsif ($string =~ /^:$validHumanSender (NOTICE) $validChannel :(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    if ($target eq $botName) { $event = 'private_notice'; $target = $sender; }
+    else { $event = 'public_notice'; }
+  }
+
+  elsif ($string =~ /^:$validHumanSender (JOIN) :?$validChannel$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,'');
+    $event = 'join';
+  }
+
+  elsif ($string =~ /^:$validHumanSender (PART) $validChannel ?:?(.+)?$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    $message = '' unless $message;
+    $event = 'part';
+  }
+
+  elsif ($string =~ /^:$validHumanSender (QUIT) :(.+)?$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,'',$5);
+    $event = 'quit';
+  }
+
+  elsif ($string =~ /^:$validHumanSender (MODE) $validChannel (.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    $event = 'mode';
+  }
+
+  elsif ($string =~ /^:$validHumanSender (NICK) :?$validNick$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,'',$5);
+    $event = 'nick';
+  }
+
+  elsif ($string =~ /^:$validHumanSender (KICK) $validChannel ?:?(.+)?$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    $message = '' unless $message;
+    $event = 'kick';
+  }
+
+  elsif ($string =~ /^:$validServerSender ([a-zA-Z0-9]+) (.+?) :?(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,'','',$2,$3,$4);
+    $event = 'server_message';
+  }
+
+  elsif ($string =~ /^ERROR :(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ('','','','','',$1);
+    $event = 'error';
+  }
+
+  else {
+    ACT('LITERAL',undef,"log>APIERROR>Message did not match preparser.");
+    ACT('LITERAL',undef,"log>APIERROR>$string");
+    exit();
+  }
+
+  return ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
 }
 
 1;
