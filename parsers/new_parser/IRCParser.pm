@@ -6,32 +6,46 @@ use Exporter;
 use base 'Exporter';
 
 our @EXPORT = qw(
+  beginParsing
   stripNewlines
   readInput
   actOut
   authCheck
   authError
   parseMessage
+  runPlugin
 );
 
 our @EXPORT_OK = qw(
   $nickCharacters
+  $serverCharacters
   $channelCharacters
   $hostmaskCharacters
   $validNick
   $validChannel
   $validHostmask
   $validHumanSender
+  $validServerSender
   $pipeID
   $botName
   $incomingMessage
-  %permissions
+  $sender
+  $account
+  $hostname
+  $command
+  $target
+  $message
+  $event
+  $receiver
   $sl
   $cm
+  $version
+  $about
+  %permissions
 );
 
-our $serverCharacters = 'a-zA-Z0-9\.';
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
+our $serverCharacters = 'a-zA-Z0-9\.';
 our $channelCharacters = '#A-Za-z0-9[\]\\`_^{}|-';
 our $hostmaskCharacters = './A-Za-z0-9[\]\\`_^{}|-';
 our $validNick = '(['.$nickCharacters.']+)';
@@ -40,19 +54,30 @@ our $validHostmask = '(['.$hostmaskCharacters.']+)';
 our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
 our $validServerSender = '(['.$serverCharacters.']+)';
 
-our $pipeID = readInput();
-our $botName = readInput();
-our $incomingMessage = readInput();
+our($pipeID,$botName,$incomingMessage) = ('','','');
+our($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = ('','','','','','','','');
 
 our $sl = $botName.'[;,]';
 our $cm = '!';
+our $version = 'Gambot Core MK III | Plugin Parser 6 ';
+our $about = 'I am a basic Gambot. http://grickit.github.com/ irc://chat.freenode.net/%23%23Gambot';
 
 our %permissions;
 
+sub beginParsing {
+  $pipeID = readInput();
+  $botName = readInput();
+  $incomingMessage = readInput();
+  ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
+}
+
 sub stripNewlines { #string
   my $string = shift;
-  $string =~ s/[\r\n\s\t]+$//;
-  return $string;
+  if($string) {
+    $string =~ s/[\r\n\s\t]+$//;
+    return $string;
+  }
+  return '';
 }
 
 sub readInput { #NONE
@@ -62,7 +87,7 @@ sub readInput { #NONE
 
 sub actOut { #action,target,message
   my @args = @_;
-  foreach my $i (0..$#args) { $args[$i] =~ s/[\r\n]+/ /g; }
+  foreach my $i (0..$#args) { $args[$i] = stripNewlines($args[$i]); }
 
   if($_[0] eq 'MESSAGE')    { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; }
   elsif($_[0] eq 'ACTION')  { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; }
@@ -94,11 +119,12 @@ sub authError { #sender,target,location
 }
 
 sub runPlugin { #filepath
-  my $plugin;
+  my $plugin = '';
   open(PLUGIN_FILE, $_[0]) or actOut('LITERAL',undef,"error>Could not load plugin file: $_[0]");
-  while(<PLUGIN_FILE>) { $plugin .= $_; }
+  while(my $line = <PLUGIN_FILE>) { $plugin .= $line; }
   close(PLUGIN_FILE);
   eval($plugin);
+  if($@) { print "$@\r\n"; }
 }
 
 sub parseMessage { #string
@@ -106,7 +132,7 @@ sub parseMessage { #string
   my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
 
   if ($string =~ /^PING(.*)$/i) {
-    ACT('LITERAL',undef,"send_server_message>PONG$1");
+    actOut('LITERAL',undef,"send_server_message>PONG$1");
     ($sender,$account,$hostname,$command,$target,$message,$receiver) = ('','','','','','','');
     $event = 'on_server_ping';
   }

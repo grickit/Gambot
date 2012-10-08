@@ -33,16 +33,14 @@ $IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopi
 $IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
 $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
-my $sl = '';
-my $cm = 'j'
-my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($IRCParser::incomingMessage);
+$IRCParser::sl = '';
+$IRCParser::cm = '.';
 
 sub on_server_ping {}
 sub on_private_message {}
 sub on_public_message {
 
-  if(authCheck($target,$hostname)) { actOut('MESSAGE',$target,"$receiver: hi"); }
-  else { authError($sender,$target,$target); }
+  runPlugin("$FindBin::Bin/plugins/hug.pm");
 
 }
 sub on_private_notice {}
@@ -55,3 +53,9 @@ sub on_nick {}
 sub on_kick {}
 sub on_server_message {}
 sub on_server_error {}
+
+
+# Parse the incoming message
+beginParsing();
+# Fire the subroutine that is named in $event
+&{\&{$IRCParser::event}}();
