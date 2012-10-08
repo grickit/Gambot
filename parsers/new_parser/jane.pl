@@ -5,34 +5,36 @@ use FindBin;
 use lib $FindBin::Bin;
 use IRCParser;
 
-$permissions{'wesnoth/developer/*'}               = '#wesnoth*';
-$permissions{'wesnoth/artist/*'}                  = '#wesnoth*';
-$permissions{'wesnoth/forumsith/*'}               = '#wesnoth*';
+$IRCParser::permissions{'wesnoth/developer/*'}               = '#wesnoth*';
+$IRCParser::permissions{'wesnoth/artist/*'}                  = '#wesnoth*';
+$IRCParser::permissions{'wesnoth/forumsith/*'}               = '#wesnoth*';
 
-$permissions{'wesnoth/developer/dave'}            = '#frogatto*';
-$permissions{'wesnoth/developer/crimson_penguin'} = '#frogatto*';
-$permissions{'wesnoth/artist/jetrel'}             = '#frogatto*';
-$permissions{'unaffiliated/marcavis*'}            = '#frogatto*';
+$IRCParser::permissions{'wesnoth/developer/dave'}            = '#frogatto*';
+$IRCParser::permissions{'wesnoth/developer/crimson_penguin'} = '#frogatto*';
+$IRCParser::permissions{'wesnoth/artist/jetrel'}             = '#frogatto*';
+$IRCParser::permissions{'unaffiliated/marcavis*'}            = '#frogatto*';
 
-$permissions{'unaffiliated/dreadknight'}          = '#AncientBeast';
+$IRCParser::permissions{'unaffiliated/dreadknight'}          = '#AncientBeast';
 
-$permissions{'unaffiliated/aperson'}              = '#minecraft';
-$permissions{'reddit/operator/bep'}               = '#minecraft';
-$permissions{'unaffiliated/dagmar'}               = '#minecraft';
-$permissions{'unaffiliated/helzibah'}             = '#minecraft';
-$permissions{'reddit/operator/kylexy'}            = '#minecraft';
-$permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
-$permissions{'unaffiliated/skuld'}                = '#minecraft';
-$permissions{'unaffiliated/streather'}            = '#minecraft';
-$permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.com'} = '#minecraft';
+$IRCParser::permissions{'unaffiliated/aperson'}              = '#minecraft';
+$IRCParser::permissions{'reddit/operator/bep'}               = '#minecraft';
+$IRCParser::permissions{'unaffiliated/dagmar'}               = '#minecraft';
+$IRCParser::permissions{'unaffiliated/helzibah'}             = '#minecraft';
+$IRCParser::permissions{'reddit/operator/kylexy'}            = '#minecraft';
+$IRCParser::permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
+$IRCParser::permissions{'unaffiliated/skuld'}                = '#minecraft';
+$IRCParser::permissions{'unaffiliated/streather'}            = '#minecraft';
+$IRCParser::permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.com'} = '#minecraft';
 
-$permissions{'unaffiliated/sircmpwn'}             = '#mcgaming';
+$IRCParser::permissions{'unaffiliated/sircmpwn'}             = '#mcgaming';
 
-$permissions{'unaffiliated/gambit/bot/*'}         = '##Gambot*';
-$permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
-$permissions{'wesnoth/developer/grickit'}         = '*';
-$permissions{'wesnoth/developer/shadowmaster*'}   = '*';
+$IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '##Gambot*';
+$IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
+$IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
+$IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
-my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
+my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($IRCParser::incomingMessage);
+
+
 if($event eq 'public_message' && authCheck($target,$hostname)) { actOut('MESSAGE',$target,"$receiver: hi"); }
 elsif($event eq 'public_message') { authError($sender,$target,$target); }

@@ -12,6 +12,9 @@ our @EXPORT = qw(
   authCheck
   authError
   parseMessage
+);
+
+our @EXPORT_OK = qw(
   $nickCharacters
   $channelCharacters
   $hostmaskCharacters
@@ -23,6 +26,8 @@ our @EXPORT = qw(
   $botName
   $incomingMessage
   %permissions
+  $sl
+  $cm
 );
 
 our $serverCharacters = 'a-zA-Z0-9\.';
@@ -39,7 +44,12 @@ our $pipeID = readInput();
 our $botName = readInput();
 our $incomingMessage = readInput();
 
+our $sl = $botName.'[;,]';
+our $cm = '!';
+
 our %permissions;
+
+
 
 sub stripNewlines { #string
   my $string = shift;
