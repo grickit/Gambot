@@ -32,7 +32,7 @@ sub pipe_status {
       return 'dead';
     }
     else {
-      if(defined $back_buffers{$pipe}) { $back_buffers{$pipe} = $buffer . $back_buffers{$pipe}; }
+      if($back_buffers{$pipe}) { $back_buffers{$pipe} .= $buffer; }
       else { $back_buffers{$pipe} = $buffer; }
       return 'ready';
     }
@@ -43,23 +43,22 @@ sub pipe_status {
 }
 
 sub read_lines {
-  my ($pipe, $buffer) = (shift,'');
-  fcntl($pipe, F_SETFL(), O_NONBLOCK());
+  my ($pipe,$buffer) = (shift,'');
+  fcntl($pipe,F_SETFL(),O_NONBLOCK());
 
   if($back_buffers{$pipe}) {
+    print "the backbuffer holds--- ".$back_buffers{$pipe}."\r\n";
     $buffer = $back_buffers{$pipe};
   }
 
   while(my $bytes_read = sysread($pipe,$buffer,1024,length($buffer))) { 1; }
   my @lines = split(/[\r\n]+/,$buffer);
 
-  if($buffer !~ /[\r\n]+$/) { $back_buffers{$pipe} = pop(@lines); }
-  else { delete $back_buffers{$pipe}; }
+  if($buffer =~ /[\r\n]+$/) { $back_buffers{$pipe} = undef; delete $back_buffers{$pipe}; }
+  else { $back_buffers{$pipe} = pop(@lines); }
 
   return @lines;
 }
-
-
 
 sub generate_timestamps {
   my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
