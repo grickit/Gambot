@@ -47,7 +47,6 @@ sub read_lines {
   fcntl($pipe,F_SETFL(),O_NONBLOCK());
 
   if($back_buffers{$pipe}) {
-    print "the backbuffer holds--- ".$back_buffers{$pipe}."\r\n";
     $buffer = $back_buffers{$pipe};
   }
 
