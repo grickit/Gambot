@@ -36,6 +36,11 @@ $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 $IRCParser::sl = '';
 $IRCParser::cm = '.';
 
+# Autojoin list
+if($IRCParser::pipeID eq 'fork10') {
+  actOut('JOIN','##Gambot',undef);
+}
+
 sub on_server_ping {}
 sub on_private_message {}
 sub on_public_message {
@@ -51,7 +56,11 @@ sub on_quit {}
 sub on_mode {}
 sub on_nick {}
 sub on_kick {}
-sub on_server_message {}
+sub on_server_message {
+
+  runPlugin("$FindBin::Bin/plugins/basic/nick_bump.pm");
+
+}
 sub on_server_error {}
 
 # Fire the subroutine that is named in $event
