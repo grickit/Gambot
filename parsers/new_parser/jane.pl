@@ -34,7 +34,7 @@ $IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
 $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
 $IRCParser::sl = '';
-$IRCParser::cm = '.';
+$IRCParser::cm = '(?:&|(?:'.$IRCParser::botName.'[:,] ))';
 
 # Autojoin list
 if($IRCParser::pipeID eq 'fork10') {
@@ -42,18 +42,32 @@ if($IRCParser::pipeID eq 'fork10') {
 }
 
 sub on_server_ping {}
-sub on_private_message {}
+sub on_private_message {
+  runPlugin("$FindBin::Bin/plugins/basic/ctcp.pm");
+  on_public_message();
+}
 sub on_public_message {
-
+  runPlugin("$FindBin::Bin/plugins/basic/about.pm");
   runPlugin("$FindBin::Bin/plugins/hug.pm");
+  runPlugin("$FindBin::Bin/plugins/actions.pm");
+  runPlugin("$FindBin::Bin/plugins/temperature.pm");
+  runPlugin("$FindBin::Bin/plugins/time.pm");
 
+  runPlugin("$FindBin::Bin/plugins/staff/joinpart.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/speak.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/op.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/voice.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/quiet.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/kick.pm");
 }
 sub on_private_notice {}
 sub on_public_notice {}
 sub on_join {}
 sub on_part {}
 sub on_quit {}
-sub on_mode {}
+sub on_mode {
+  runPlugin("$FindBin::Bin/plugins/staff/mode.pm");
+}
 sub on_nick {}
 sub on_kick {}
 sub on_server_message {

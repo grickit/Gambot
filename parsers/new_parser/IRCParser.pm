@@ -62,8 +62,8 @@ our($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = par
 
 our $sl = $botName.'[;,]';
 our $cm = '!';
-our $version = 'Gambot Core MK III | Plugin Parser 6 ';
-our $about = 'I am a basic Gambot. http://grickit.github.com/ irc://chat.freenode.net/%23%23Gambot';
+our $version = 'Gambot Core MK III | Plugin Parser 6 | <http://grickit.github.com/>';
+our $about = 'I am a basic Gambot. <http://grickit.github.com/> <irc://chat.freenode.net/%23%23Gambot>';
 
 our %permissions;
 
