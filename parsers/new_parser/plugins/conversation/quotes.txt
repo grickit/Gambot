@@ -1,0 +1,334 @@
+//* Marks a new person
+//# Denotes the number of public quotes that person has.
+//  Private quotes (this just means they don't show up randomly) should be placed at the end, and after this number has run out.
+//  Quotes with potentially offensive words should be private. That is, you should only be able to call those if you know they exist.
+//- Marks a quote.
+//> Is a redirect. Once a name is defined you can use > to set aliases. See David White and Sirp for an example.
+//  That bit makes 'Sirp' redirect to 'David White'.
+
+*list
+#1
+-https://github.com/grickit/Gambot/blob/master/parsers/plugin_parser/plugins/conversation/quotes.txt
+
+*shadowmaster
+#10
+-I don't care.
+-you… FOOL!
+-People we have a… TROPE!
+-NOBODY TOUCH THAT LINK!
+-what do you need a driver's license for? most drivers you need are in the Linux kernel.
+-CANNOT UNSEA
+-I don't believe in large genitals being instant win.
+-I have this deep feeling of self-satisfaction whenever I see you bite the dust.
+-◕ ‿‿ ◕
+-There needs to be a Smokey-like figure teaching about the dangers of rm -rf
+-highlight me dammit. highlight me all you want. highlight me for decades if you want. just highlight me!
+-COMMAS ARE FOR PUSSIES
+-I'm pretty much wasted right now. weeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+
+*shadowm_laptop
+>shadowmaster
+
+*uneducated troglodyte
+>shadowmaster
+
+*Espreon
+#2
+-jeß jeß
+-Oh, and fun fact, "woman" is a masculine noun. So, we're both grammatically equal!
+
+*joshrl
+#1
+-I want to use Comic Sans, just for everyone else to go around shouting COMIC SAAAAAAAAAAAAAAAAANS!
+
+*Grapist
+#3
+-You kids look like you could use a delicious fruity beverage!
+-Open wide kids! Cause I'm goona grape ya in the mouth!
+-I'm going to tie you to the radiator and grape you!
+
+*The Grapist
+>Grapist
+
+*Ackbar
+#2
+-IT'S A TRAP!
+-Our shields can't repel firepower of that magnitude!
+
+*Admiral Ackbar
+>Ackbar
+
+*Anthony Weiner
+#5
+-THE GENTLEMAN IS WRONG!
+-IT IS A SHAME! A shame!
+-I will not yield to the gentleman!
+-The gentleman will observe regular order!
+-The gentleman is correct in sitting!
+
+*Phil Davison
+#5
+-TELL YOUR FRIENDS! TELL YOUR NEIGHBORS! TELL RANDY GONZOLEZ! I'm coming.
+-WHO SAID THAT!?
+-I am from the village of Minerva!
+-I have represented our party twice! ON THE COUNTY BALLOT!
+-I have a master's degree in communication!
+
+*Antoine Dodson
+#5
+-He's climbing in yo windows. He's snatchin yo people up tryin to rape em.
+-Hide ye kids, hide yo wife, an hide ya husban cause they rapin eveybody up out hea.
+-You know that. So you can run and tell that! Homeboy!
+-You are so dumb! You are really dumb! Fo reals.
+-We lookin fo you. We goon find you!
+
+*David White
+#3
+-I didn't do any of those rigorous things that good software engineers do like actually reproduce the problem myself, code a fix, then show it's not reproducing anymore.
+-shhhh pipe down. You'll start an argument with a horde of Python fanatics. Us cool coders are just meant to quietly Get Stuff Done(tm) in the languages that are actually good for hacking in and let the Python illuminati live in their delighted smugness that their language is all powerful.
+-The main barrier would be the whole re-writing the entire engine thing.
+
+*Sirp
+>David White
+
+*Flapjack
+#4
+-ADVENTURE!!
+-Dead rat off the starboard bow!
+-If danger was a beautiful woman, I would marry her.
+-Whoever goes to the bathroom first loses. Oh… hehe… you win.
+
+*Fevens
+#8
+-At least I got to do things my way. The Fevens way.
+-Canadian tactic #1: hide. Canadian tactic #2: Grenadas.
+-Not all snipers are like me. Some snipers actually hit people.
+-Grenada. Grenada. Grenada. Grenada. Grenada. Grenada. Grenada. Grenada. Grenada. Grenada.
+-I'm so canadian.
+-Here I am zooming in. That's important with the sniper. You have to remember to zoom. Many people don't realize you can zoom, but zooming is the important part of the sniper.
+-You have to roll and throw grenades. In Cananada we call them grenadas, but in America they call them grenades.
+-Wow. I couldn't take one lousy base.
+-Oh shit. He saw me. Holy shit he saw me! Opposition! I repeat opposition!
+-What the fuck am I thinking? I'm getting the fuck out of here. The only good thing Canadians are good at are running away from shit.
+
+*loonycyborg
+#1
+-Only M$ can induce that warm feeling of user-friendliness, and it does this not with coding or documentation but with irresistable social-engineering magic :P
+
+*Gambit
+#8
+-I've heard it both ways.
+-I will kick you so hard that candy will come out!
+-Interesting.
+-Fine. Be a jerk.
+-Dubito.
+-shhh. I'm talking about how amazing I am.
+-I'm just not that kind of girl.
+-03Magic Voodoo™
+-I wonder if there is Wesnoth rule 34 content.
+-I shit þee not.
+-… except Ivanovic. He's scary.
+-I found a cartoon that essentially stars us. As girls.
+
+*Gamb
+>Gambit
+
+*Shadowmbit
+#5
+-People, we have... A WKUK SKETCH!!!
+-PERL!!! *fap* *fap* *fap* *fap* *fap*
+-WML!!! *fap* *fap* *fap* *fap* *fap*
+-an IRC bot in WML! the problem is I don't know how to use socket networking in Wesnoth.
+-What impersonation?
+
+*John McCain
+#1
+-It's not the policy. It's not the policy. It's not the policy. It's not the policy.
+
+*Alvin Greene
+#1
+-Jim DeMint started the recession.
+
+*Basil Marceaux
+#2
+-Hi. I'm Basil Marceaux.com
+-If you vote for me, I will immune you from all state crimes for the rest of you life.
+
+*Christine O'Donnell
+#7
+-The Bible says that lust in your heart is committing adultery, so you… you can't masturbate without lust.
+-I dabbled into witchcraft, but I never joined a coven!
+-Evolution is a myth. Why aren't monkies still evolving into humans?
+-American scientific companies are cross-breeding humans and animals, and coming up with mice with fully functioning human brains!
+-I was an English major, so break it down: -ist means one who celebrates. As a feminist, I celebrate my femininity.
+-We took the Bible and prayer out of public schools. Now we're having weekly shootings. We had the 60s sexual revolution, and now people are dying of AIDS.
+-America is now a socialist economy. The definition of a socialist economy is when 50% or more of your economy is dependent on the federal government.
+
+*Michele Bachmann
+#4
+-Sarah Stoesz, who heads the Planned Parenthood operation in my state of Minnesota, said she recently opened three express centers in wealthy Minnesota suburbs, and shopping centers and malls and places where women are already doing their grocery shopping, picking up Starbucks, living their daily lives, and stopping off for an abortion.
+-And what a bizarre time we're in when a judge will say to little children that you can't say the pledge of allegiance, but you must learn that homosexuality is normal and you should try it.
+-Carbon dioxide is portrayed as harfuml, but there isn't even one study that can be produced that shows carbon dioxide is a harmful gas.
+-Normalization through desensitization. Very effective way to do this with a bunch of second graders is to take a picture of the Lion King, for instance, and the teacher might say "Do you know the music for this movie was written by a gay man?" The message is: I'm better at what I do because I'm gay.
+
+*timotei
+#1
+-… I like ubuntu
+
+*Charlie Sheen
+#4
+-You can't process me with a normal human brain.
+-I might come in a little bit sideways, but never slammed. Never fully loaded or drunk.
+-I'm on a drug. It's called Charlie Sheen.
+-It's not available because if you try it you will die. Your face will melt off, and your children will weep over your exploded body.
+-I'm tired of pretending I'm not a total bitchin rock star from Mars.
+
+*gamefreak264
+#0
+-I demand a picture or our dispute about the size of your ass shall continue!
+
+*Taco_Princess
+>gamefreak264
+
+*John Boehner
+#0
+-HELL NO YOU CAN'T!
+
+*The Save-Ums
+#1
+-Small is powerful!
+
+*chirpsalot
+#1
+-I'm not inclined to have an opinion.
+
+*Betacrow
+#1
+-Is Gambit the Comic foil to shadowmaster, or is shadowmaster the straightman to Gambit's comedy?
+
+*shikadibot
+#1
+-Don't paste on IRC! Use a pastebin: http://pastebin.com/ http://imagebin.org
+
+*Dr. Cox
+#8
+-Unfortunately Radar, I'm fresh out of gold stars.
+-You're having a big day there Susan.
+-You have five seconds to get out of this room. Otherwise I'm going to start whacking you on the nose.
+-If your head explodes, you'll never make it as a doctor.
+-I was just wondering how you comb your hair so the horns don’t show.
+-Everyone, we can all relax now. The planets have been realigned and order shall be returned to the people.
+-Oh, my god. I care so little, I almost passed out.
+-You would hear crickets chirping, but they were just too uncomfortable about how unfunny that actually was.
+-That is both very sad, and yet totally not shocking.
+
+*Turuk
+#2
+-I would imagine they are equipped with either melee or ranged attacks, maybe even a combination of both, and are actively trying to kill each other.
+-The members here suffer from a mild for of posting ADD. They tend to get distracted by the least little... OOH butterfly!
+
+*Murdock
+#1
+-Have you ever seen a hearse go by and think that some day you'll surely die? They put you in a little box, and cover you over with dirt and rocks.
+
+*Ed Reed
+#2
+-I'm hurt dawg!
+-Don't ask me if I'm alright!
+-HELL NAH!
+
+*Gwen Stefani
+#1
+-B-A-N-A-N-A-S
+-This shit is bananas.
+
+*Tim and Eric
+#3
+-I sit down when I pee. There's nothing that crazy 'bout me.
+-I'm just taking a wiz. Mind your own biz. Why is everybody always staring at me?
+-Hey bro. I gotta go. Let me through I gotta go number two.
+
+*atomicbomb
+#1
+-[referring to homosexuals] Someday, they will probably dominate the world and I don't like that
+
+*Rick Santorum
+#3
+-[Referring to former prisoner of war and torture victim, Senator John McCain] he doesn’t understand how enhanced interrogation works. I mean, you break somebody, and after they’re broken, they become cooperative.
+-In every society, the definition of marriage has not ever to my knowledge included homosexuality. That's not to pick on homosexuality. It's not, you know, man on child, man on dog, or whatever the case may be. It is one thing. And when you destroy that you have a dramatic impact on the quality.
+-Friends don't let friends use pink balls.
+
+*Eric Cartman
+#3
+-I am a cop, and you will respect my authoritah!
+-My mom says if you wanna be a lesbian, you have to lick carpet.
+-Screw you guys, I'm goin home.
+-Dude. The fuck? I mean really, the fuck dude. The fuck?
+
+*Cartman
+>Eric Cartman
+
+*VurtualRuler98
+#1
+-We could make our own burger stands in new york, with GPL'd burger designs and we'll call it OpenSesame.
+
+*Victor Sullivan
+#1
+-Enough of this frivolity kid. C'mon, we got work to do.
+
+*Sully
+>Victor Sullivan
+
+*PeterPorty
+#1
+-^quote worthy forever
+
+*PetePorty
+>PeterPorty
+
+*PolarPanda
+>PeterPorty
+
+*Andrew Breitbart
+#3
+-BEHAVE YOURSELF!
+-YOU'RE FREAKS AND ANIMALS!
+-STOP RAPING PEOPLE!
+
+*Herman Cain
+#4
+-Two. Levels. Deep.
+-When they ask me who's the president of Ubeki-beki-beki-beki-stan-stan I'm goona say 'You know. I don't know. Do you know?'
+-A poet once said 'Life can be a challenge. Life can seem impossible, but it's never easy when there's so much on the line'.
+-How do you say 'delicious' in Cuban?
+-I've never sexually harassed anyone. Anyone.
+
+*Marc Watson
+#2
+-Hey, I'm just like all of you guys, except Mojang gives me money
+-So when people are all like Y U NO CAN CHANGE USERNAME? I'm like WHY I NOT HAVE TOOLS FOR JOB?
+
+*Nikondork
+#2
+-If I had hepititis in a squirt gun they would be the first to get it
+-leetle babby's all cranky because he cant sit at the adult's table
+
+*bep
+#2
+-let me wipe up your tears with a rice crispy cake
+-my milkshake brings all the boys to the yard and they're like ew it's sour
+
+*BritishEnglishPolice
+>bep
+
+*British English Police
+>bep
+
+*Dinnerbone
+#2
+-[when asked what Mortvert blocks will do in Minecraft 1.3] Nothing. They're as useful as real life.
+-There should be an australiam biome. Everything is upside down, the leaves/bushes/etc will poison you if you touch it, all monsters deal 50% more damage and bukkits of milk turn into beer
+
+*Ausmerica
+#1
+-I heard the Australian army has a gun. They might let you borrow it for a while.

@@ -2,6 +2,8 @@ package IRCParser;
 
 use strict;
 use warnings;
+use FindBin;
+use lib $FindBin::Bin;
 use Exporter;
 use base 'Exporter';
 

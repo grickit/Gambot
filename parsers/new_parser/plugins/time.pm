@@ -1,22 +1,22 @@
-if ($message =~ /^${sl}${cm}time-local$/) {
+if ($message =~ /^${sl}${cm}time-local$/i) {
   require POSIX;
   my $timestamp = POSIX::strftime('%H:%M:%S',localtime);
   actOut('MESSAGE',$target,"$receiver: $timestamp");
 }
 
-if ($message =~ /^${sl}${cm}time(-utc)?$/) {
+if ($message =~ /^${sl}${cm}time(-utc)?$/i) {
   require POSIX;
   my $timestamp = POSIX::strftime('%H:%M:%S',gmtime(time));
   actOut('MESSAGE',$target,"$receiver: $timestamp");
 }
 
-if ($message =~ /^${sl}${cm}time-unix$/) {
+if ($message =~ /^${sl}${cm}time-unix$/i) {
   require POSIX;
   my $timestamp = time;
   actOut('MESSAGE',$target,"$receiver: $timestamp");
 }
 
-if ($message =~ /^${sl}${cm}time ([+-][0-9]+)$/) {
+if ($message =~ /^${sl}${cm}time ([+-][0-9]+)$/i) {
   require POSIX;
   my $offset = $1;
   my $hours = POSIX::strftime('%H',gmtime(time));
@@ -27,7 +27,7 @@ if ($message =~ /^${sl}${cm}time ([+-][0-9]+)$/) {
   actOut('MESSAGE',$target,"$receiver: $timestamp");
 }
 
-if ($message =~ /^${sl}${cm}time-internet$/) {
+if ($message =~ /^${sl}${cm}time-internet$/i) {
   require POSIX;
   my @time_struct = gmtime(time);
   my $seconds_into_day = ($time_struct[2] * 3600 + $time_struct[1] * 60 + $time_struct[0] + 3600) % 86400; # + 3600 because 'BMT' = UTC+1

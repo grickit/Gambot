@@ -1,4 +1,4 @@
-if ($message =~ /^${sl}${cm}kick $validNick ?(.+)?$/) {
+if ($message =~ /^${sl}${cm}kick $validNick ?(.+)?$/i) {
   my $kickmessage = "[requested by $sender]";
   $kickmessage .= ": $2" if $2;
   if(authCheck($1,$hostname)) {

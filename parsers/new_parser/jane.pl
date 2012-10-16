@@ -5,6 +5,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use IRCParser;
 
+$| = 1;
+
 $IRCParser::permissions{'wesnoth/developer/*'}               = '#wesnoth*';
 $IRCParser::permissions{'wesnoth/artist/*'}                  = '#wesnoth*';
 $IRCParser::permissions{'wesnoth/forumsith/*'}               = '#wesnoth*';
@@ -59,6 +61,21 @@ sub on_public_message {
   runPlugin("$FindBin::Bin/plugins/staff/voice.pm");
   runPlugin("$FindBin::Bin/plugins/staff/quiet.pm");
   runPlugin("$FindBin::Bin/plugins/staff/kick.pm");
+
+  runPlugin("$FindBin::Bin/plugins/conversation/ed-block.pm");
+  runPlugin("$FindBin::Bin/plugins/conversation/memes.pm");
+  runPlugin("$FindBin::Bin/plugins/conversation/quote.pm");
+
+  runPlugin("$FindBin::Bin/plugins/games/roulette.pm");
+  runPlugin("$FindBin::Bin/plugins/games/dice.pm");
+  runPlugin("$FindBin::Bin/plugins/games/eightball.pm");
+
+  runPlugin("$FindBin::Bin/plugins/internet/url-check.pm");
+  runPlugin("$FindBin::Bin/plugins/internet/ticket.pm");
+  runPlugin("$FindBin::Bin/plugins/internet/youtube.pm");
+
+  runPlugin("$FindBin::Bin/plugins_private/literal.pm");
+  runPlugin("$FindBin::Bin/plugins_private/gitpull.pm");
 }
 sub on_private_notice {}
 sub on_public_notice {}
