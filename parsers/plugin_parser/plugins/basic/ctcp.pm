@@ -1,18 +1,16 @@
-if ($message =~ /^(VERSION|CLIENTINFO).*$/) {
-  ACT('NOTICE',$sender,"$1 $version");
+if ($message =~ /^(VERSION|CLIENTINFO).*$/i) {
+  actOut('NOTICE',$sender,"$1 $version");
 }
 
-if ($message =~ /^TIME.*$/) {
+if ($message =~ /^TIME.*$/i) {
   require POSIX;
-  my $timestamp = POSIX::strftime('%m-%d-%Y %H:%M:%S',localtime);
-  ACT('NOTICE',$sender,"TIME $timestamp");
+  actOut('NOTICE',$sender,'TIME '.POSIX::strftime('%Y-%m-%d %H:%M:%S',localtime).'');
 }
 
-if ($message =~ /^PING.*$/) {
-  my $timestamp = time;
-  ACT('NOTICE',$sender,"PING $timestamp");
+if ($message =~ /^PING.*$/i) {
+  actOut('NOTICE',$sender,'PING '.time.'');
 }
 
-if ($message =~ /^FINGER.*$/) {
-  ACT('NOTICE',$sender,"FINGER Take your fingers off me!");
+if ($message =~ /^FINGER.*$/i) {
+  actOut('NOTICE',$sender,"FINGER Take your fingers off me!");
 }

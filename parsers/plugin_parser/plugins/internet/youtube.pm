@@ -1,4 +1,4 @@
-if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/ || $message =~ /^$sl !youtube [a-zA-Z0-9-_:\/\.&?=]*[?&]v=?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*$/) {
+if ($message =~ /^${sl}${cm}youtube ([a-zA-Z0-9-_]+)$/i || $message =~ /^${sl}${cm}youtube [a-zA-Z0-9-_:\/\.&?=]*[?&]v=?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*$/i) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $vid = $1;
@@ -13,7 +13,7 @@ if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/ || $message =~ /^$sl !youtube 
   my $content = $response->decoded_content;
 
   if ($content =~ /<error><domain>GData<\/domain><code>InvalidRequestUriException<\/code><internalReason>Invalid id<\/internalReason><\/error>/) {
-    ACT('MESSAGE',$target,"$receiver: That video does not exist.");
+    actOut('MESSAGE',$target,"$receiver: That video does not exist.");
   }
 
   elsif ($content =~ /<title>(.+)<\/title>/) {
@@ -43,10 +43,10 @@ if ($message =~ /^$sl !youtube ([a-zA-Z0-9-_]+)$/ || $message =~ /^$sl !youtube 
       $title = HTML::Entities::decode_entities($title);
     }
 
-    ACT('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
-    ACT('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
+    actOut('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
+    actOut('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
     if ($receiver ne $sender) {
-      ACT('MESSAGE',$target,"$receiver ^^^");
+      actOut('MESSAGE',$target,"$receiver ^^^");
     }
   }
 }

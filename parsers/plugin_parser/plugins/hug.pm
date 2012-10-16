@@ -1,5 +1,5 @@
-if ($message =~ /^$sl !?hug (.+)$/) {
+if ($message =~ /^${sl}${cm}hug (.+)$/i) {
   my $person = $1;
   $person =~ s/\bme\b/$sender/;
-  ACT('ACTION',$target,"hugs $person");
+  actOut('ACTION',$target,"hugs $person");
 }

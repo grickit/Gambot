@@ -1,3 +1,3 @@
-if($message =~ /^\+o $self$/) {
-  ACT('LITERAL',undef,"event_fire>op$target");
+if($message =~ /^\+o $botName/i) {
+  actOut('LITERAL',undef,"event_fire>op$target");
 }

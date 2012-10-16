@@ -1,4 +1,4 @@
-if ($message =~ /^$sl (http:\/\/(.+))$/) {
+if ($message =~ /^${sl}${cm}(http:\/\/(.+))$/i) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $url = $1;
@@ -10,7 +10,7 @@ if ($message =~ /^$sl (http:\/\/(.+))$/) {
   $request->parse_head(0);
   my $response = $request->get("$url");
   my $content = $response->decoded_content;
-  if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { my $answer="$1"; $answer=~s/(\n|\s|\r|\t)+/ /g; ACT('MESSAGE',"$target","$receiver: title: $answer"); }
-  elsif (defined $content) { ACT('MESSAGE',"$target","$receiver: It doesn't look like that page has a title."); }
-  else { ACT('MESSAGE',$target,"$receiver: I can't get that page for some reason."); }
+  if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) { my $answer="$1"; $answer=~s/(\n|\s|\r|\t)+/ /g; actOut('MESSAGE',"$target","$receiver: title: $answer"); }
+  elsif (defined $content) { actOut('MESSAGE',"$target","$receiver: It doesn't look like that page has a title."); }
+  else { actOut('MESSAGE',$target,"$receiver: I can't get that page for some reason."); }
 }

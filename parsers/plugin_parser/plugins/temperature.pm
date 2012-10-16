@@ -1,9 +1,9 @@
-if ($message =~ /^$sl !ftc (-?[0-9]*.*[0-9]*)$/) {
+if ($message =~ /^${sl}${cm}ftc (-?[0-9]*.*[0-9]*)$/i) {
   my $answer = (5/9) * ($1 - 32);
-  ACT('MESSAGE',$target,"$receiver: $answer°C");
+  actOut('MESSAGE',$target,"$receiver: $answer°C");
 }
 
-if ($message =~ /^$sl !ctf (-?[0-9]*.*[0-9]*)$/) {
+if ($message =~ /^${sl}${cm}ctf (-?[0-9]*.*[0-9]*)$/i) {
   my $answer = (9/5) * $1 + 32;
-  ACT('MESSAGE',$target,"$receiver: $answer°F");
+  actOut('MESSAGE',$target,"$receiver: $answer°F");
 }

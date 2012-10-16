@@ -1,9 +1,9 @@
-if ($message =~ /^$sl !quote? ?([0-9]+)? ?(.+)$/) {
+if ($message =~ /^${sl}${cm}quote? ?([0-9]+)? ?(.+)$/i) {
   my ($choice, $person, %quotes, $temp_person, $i) = ('','',(),'',0);
   $choice = $1;
   $person = $2;
 
-  open (QUOTESR,"$home_folder/plugins/conversation/quotes.txt");
+  open (QUOTESR,"$FindBin::Bin/plugins/conversation/quotes.txt");
   my @lines = <QUOTESR>;
   close(QUOTESR);
 
@@ -29,7 +29,7 @@ if ($message =~ /^$sl !quote? ?([0-9]+)? ?(.+)$/) {
 
   $choice = int(rand($quotes{$person}{'size'})) + 1 if !($choice);
 
-  if(!keys %{$quotes{$person}}) { ACT('MESSAGE',$target,"$sender: I couldn't find that person."); }
-  elsif(!$quotes{$person}{$choice}) { ACT('MESSAGE',$target,"$sender: I couldn't find that quote."); }
-  else { ACT('MESSAGE',$target,"$receiver: \"$quotes{$person}{$choice}\" - $person $choice"); }
+  if(!keys %{$quotes{$person}}) { actOut('MESSAGE',$target,"$sender: I couldn't find that person."); }
+  elsif(!$quotes{$person}{$choice}) { actOut('MESSAGE',$target,"$sender: I couldn't find that quote."); }
+  else { actOut('MESSAGE',$target,"$receiver: \"$quotes{$person}{$choice}\" - $person $choice"); }
 }

@@ -1,4 +1,4 @@
-if ($message =~ /^$sl !ticket ([0-9]+)$/) {
+if ($message =~ /^${sl}${cm}ticket ([0-9]+)$/i) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $ticket = $1;
@@ -18,8 +18,8 @@ if ($message =~ /^$sl !ticket ([0-9]+)$/) {
   if ($content =~ /<title>((\n|\s|\r|\t|.)+)<\/title>/) {
     my $answer = $1;
     $answer =~ s/(\n|\s|\r|\t)+/ /g;
-    ACT('MESSAGE',$target,"$receiver: $answer [ $url ]");
+    actOut('MESSAGE',$target,"$receiver: $answer [ $url ]");
   }
-  else { ACT('MESSAGE',$target,"$sender: There was a problem getting that ticket."); }
+  else { actOut('MESSAGE',$target,"$sender: There was a problem getting that ticket."); }
 
 }

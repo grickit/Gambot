@@ -1,4 +1,4 @@
-if ($message =~ /^$sl !(8|eightball) (.+)$/) {
+if ($message =~ /^${sl}${cm}(8|eightball) (.+)$/i) {
   my @response;
   $response[0] = 'As I see it, yes.';
   $response[1] = 'It is certain.';
@@ -23,5 +23,5 @@ if ($message =~ /^$sl !(8|eightball) (.+)$/) {
   my $answer = int(rand(19));
   $answer = $response[$answer];
 
-  ACT('MESSAGE',$target,"$receiver: $answer");
+  actOut('MESSAGE',$target,"$receiver: $answer");
 }
