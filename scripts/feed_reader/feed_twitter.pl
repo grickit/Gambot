@@ -22,6 +22,7 @@ push(@feed_array, 'Wesnoth');
 push(@feed_array, 'jeb_');
 push(@feed_array, 'Dinnerbone');
 push(@feed_array, 'MinecraftAPIBot');
+push(@feed_array, 'shikadilord');
 
 start_read($data_site);
 foreach my $current_feed (@feed_array) {
