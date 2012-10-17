@@ -27,7 +27,7 @@ push(@feed_array, 'shikadilord');
 start_read($data_site);
 foreach my $current_feed (@feed_array) {
   my @subscribers_array = get_subscribers($data_site,$current_feed);
-  my $current_feed_url = "http://twitter.com/statuses/user_timeline/$current_feed.rss";
+  my $current_feed_url = "https://api.twitter.com/1/statuses/user_timeline.rss?screen_name=$current_feed";
   my @entries_array = &url_to_entries($current_feed_url,'<item>','</item>');
 
   foreach my $i (1..scalar(@entries_array)) {
