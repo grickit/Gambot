@@ -1,4 +1,4 @@
-if ($message =~ /^${sl}${cm}ticket ([0-9]+)$/i) {
+if ($message =~ /^${sl}${cm}ticket #?([0-9]+)$/i) {
   require LWP::Simple;
   require LWP::UserAgent;
   my $ticket = $1;
