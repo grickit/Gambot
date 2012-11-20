@@ -41,3 +41,7 @@ if ($message =~ /^${sl}${cm}gooby$/i) {
 if ($message =~ /^${sl}${cm}Ausmerica$/i) {
   actOut('MESSAGE',$target,"$receiver: Lemon lemon lemon lemon lemon lemon lemon lemon. http://i.imgur.com/5C4Gi.png");
 }
+
+if ($message =~ /^${sl}${cm}What is love\?$/i) {
+  actOut('MESSAGE',$target,"$receiver: Baby don't hurt me. Don't hurt me. No more.");
+}
