@@ -27,9 +27,10 @@ $IRCParser::permissions{'pdpc/supporter/student/phonicuk'}   = '#minecraft';
 $IRCParser::permissions{'unaffiliated/skuld'}                = '#minecraft';
 $IRCParser::permissions{'unaffiliated/streather'}            = '#minecraft';
 $IRCParser::permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.com'} = '#minecraft';
+$IRCParser::permissions{'unaffiliated/mustek'}               = '#minecraft';
+$IRCParser::permissions{'unaffiliated/ausmerica'}            = '#minecraft';
 $IRCParser::permissions{'reddit/operator/mortvert'}          = '#minecraft';
-
-$IRCParser::permissions{'unaffiliated/sircmpwn'}             = '#mcgaming';
+$IRCParser::permissions{'defocus/yummy/enchilado'}           = '#minecraft';
 
 $IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '##Gambot*';
 $IRCParser::permissions{'unaffiliated/gambit/bot/*'}         = '#wesnoth-offtopic';
@@ -42,7 +43,21 @@ $IRCParser::cm = '(?:&|(?:'.$IRCParser::botName.'[:,] ))';
 # Autojoin list
 if($IRCParser::pipeID eq 'fork10') {
   actOut('JOIN','##Gambot',undef);
+  if($IRCParser::botName =~ /^janebot/) {
+    actOut('JOIN','#wesnoth',undef);
+    actOut('JOIN','#wesnoth-dev',undef);
+    actOut('JOIN','#wesnoth-offtopic',undef);
+    actOut('JOIN','##shadowm',undef);
+    actOut('JOIN','#merc',undef);
+    actOut('JOIN','#frogatto',undef);
+    actOut('JOIN','#frogatto-dev',undef);
+    actOut('JOIN','#unknown-horizons',undef);
+    actOut('JOIN','#minecraft',undef);
+    actOut('LITERAL',undef,'run_command>feed_timer>perl /home/gambit/source/Gambot/scripts/gambot_timer.pl');
+    actOut('LITERAL',undef,'run_command>uh_timer>perl /home/gambit/source/Gambot/scripts/uhmeeting.pl');
+  }
 }
+
 
 sub on_server_ping {}
 sub on_private_message {
