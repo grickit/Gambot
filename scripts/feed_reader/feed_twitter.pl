@@ -23,6 +23,7 @@ push(@feed_array, 'jeb_');
 push(@feed_array, 'Dinnerbone');
 push(@feed_array, 'MinecraftAPIBot');
 push(@feed_array, 'shikadilord');
+push(@feed_array, 'StatusMinecraft');
 
 start_read($data_site);
 foreach my $current_feed (@feed_array) {
@@ -45,7 +46,7 @@ foreach my $current_feed (@feed_array) {
       my $shortened_link = &shorten_url($data_link);
       foreach my $current_subscriber (@subscribers_array) {
         if($current_subscriber eq '#minecraft') {
-          if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit|EthoLP)/) {
+          if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(StatusMinecraft|Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit|EthoLP)/) {
             next;
           }
           else {
