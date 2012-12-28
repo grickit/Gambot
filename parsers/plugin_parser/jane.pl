@@ -30,6 +30,7 @@ $IRCParser::permissions{'i.could.have.had.any.host.but.i.decided.on.dinnerbone.c
 $IRCParser::permissions{'unaffiliated/mustek'}               = '#minecraft';
 $IRCParser::permissions{'unaffiliated/nikondork'}            = '#minecraft';
 $IRCParser::permissions{'unaffiliated/ausmerica'}            = '#minecraft';
+$IRCParser::permissions{'unaffiliated/forstride'}            = '#minecraft';
 $IRCParser::permissions{'reddit/operator/mortvert'}          = '#minecraft';
 $IRCParser::permissions{'defocus/yummy/enchilado'}           = '#minecraft';
 
