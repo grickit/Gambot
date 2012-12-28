@@ -20,6 +20,7 @@ use warnings;
 
 use IPC::Open2;
 use Fcntl qw(F_SETFL O_NONBLOCK);
+use Digest::MD5 qw(md5_hex);
 use FindBin;
 use lib "$FindBin::Bin/modules/";
 
@@ -43,8 +44,9 @@ $SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
 my %dicts;
 $dicts{'core'} = {};
 $dicts{'config'} = {};
-my %events;
-my %delays;
+$dicts{'events'} = {};
+$dicts{'delay_timers'} = {};
+$dicts{'delay_events'} = {};
 my %autosave;
 
 ## Set some default values necessary for the bot to function.
@@ -103,14 +105,14 @@ sub dict_load {
       $current_line =~ s/[\r\n\s]+$//;
       $current_line =~ s/^[\t\s]+//;
       if ($current_line =~ /^([a-zA-Z0-9_#:-]+) = "(.+)"$/) {
-	&value_set($dict,$1,$2);
+        &value_set($dict,$1,$2);
       }
     }
-    $autosave{$dict} = 1;
   }
   else {
     error_output("Tried to load persistence file \"$filename\", but it doesn't exist.");
   }
+  $autosave{$dict} = 1;
 }
 
 sub dict_save_all {
@@ -126,7 +128,7 @@ sub dict_delete {
 
 sub value_exists {
   my ($dict,$key) = @_;
-  return (dict_exists($dict) && exists $dicts{$dict}{$key}) ;
+  return (dict_exists($dict) && exists $dicts{$dict}{$key});
 }
 
 sub value_get {
@@ -247,36 +249,38 @@ sub reconnect {
 sub event_schedule {
   my ($name, $call) = @_;
   debug_output("Scheduling a call for $name.");
-  if(!defined $events{$name}) { $events{$name} = (); }
-  push(@{$events{$name}},$call);
+  if(value_exists('events',$name)) { value_append('events',$name,"$call\n"); }
+  else { value_set('events',$name,"$call\n"); }
 }
 sub event_fire {
   my $name = shift;
   debug_output("Firing event: $name.");
-  foreach my $call (@{$events{$name}}) {
+  foreach my $call (split(/[\r\n]+/,value_get('events',$name))) {
     parse_command($call);
   }
-  delete $events{$name};
+  value_delete('events',$name);
 }
 sub event_exists {
-  my $name = shift;
-  if(defined $events{$name}) { return $name; }
-  else { return ''; }
+  return value_exists('events',$_[0]);
 }
 sub delay_schedule {
   my ($delay, $call) = @_;
   my $time = time + $delay;
+  my $hash = time.md5_hex($call.rand);
   debug_output("Scheduling a call at $time.");
-  if(!defined $delays{$time}) { $delays{$time} = (); }
-  push(@{$delays{$time}},$call);
+  if(value_exists('delay_events',$hash)) { error_output("Delayed event collision at time: $time with call: $call"); }
+  else { value_set('delay_events',$hash,$call); }
+  if(value_exists('delay_timers',$time)) { value_append('delay_timers',$time,"$hash,"); }
+  else { value_set('delay_timers',$time,"$hash,"); }
 }
 sub delay_fire {
   my $time = shift;
   debug_output("Firing delay $time at ".time."; ".(time-$time)." seconds late.");
-  foreach my $call (@{$delays{$time}}) {
-    parse_command($call);
+  foreach my $hash (split(/[,]+/,value_get('delay_timers',$time))) {
+    parse_command(value_get('delay_events',$hash));
+    value_delete('delay_events',$hash);
   }
-  delete $delays{$time};
+  value_delete('delay_timers',$time);
 }
 
 ####-----#----- Actual Work -----#-----####
@@ -288,6 +292,10 @@ value_set('core','nick',value_get('config','base_nick'));
 $socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
 fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+
+## Load any delayed events
+dict_load('delay_timers');
+dict_load('delay_events');
 
 ## An awesome trick to register STDIN and STDOUT as children just like the message parsers and scripts
 ## No extra work involved in reading STDIN now.
@@ -345,7 +353,7 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
   }
 
   ####-----#----- Check delay events -----#-----####
-  while(my ($time, $array) = each %delays) {
+  while(my ($time, $array) = each %{$dicts{'delay_timers'}}) {
     if(time >= $time) { delay_fire($time); }
   }
 
