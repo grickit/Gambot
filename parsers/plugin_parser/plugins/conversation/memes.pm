@@ -45,3 +45,7 @@ if ($message =~ /^${sl}${cm}Ausmerica$/i) {
 if ($message =~ /^${sl}${cm}What is love\?$/i) {
   actOut('MESSAGE',$target,"$receiver: Baby don't hurt me. Don't hurt me. No more.");
 }
+
+if ($message =~ /^${sl}${cm}nikon/i) {
+  actOut('MESSAGE',$target,"$receiver: http://i.imgur.com/nikon.png");
+}
