@@ -7,6 +7,7 @@ if ($message =~ /^${sl}${cm}ticket #?([0-9]+)$/i) {
   $url = "https://github.com/unknown-horizons/unknown-horizons/issues/$ticket" if ($target =~ /#unknown-horizons/);
   $url = "https://github.com/grickit/Gambot/issues/$ticket" if ($target =~ /##Gambot/);
   $url = "https://gna.org/bugs/index.php?$ticket" if ($target =~ /#wesnoth/);
+  $url = "https://mojang.atlassian.net/browse/MC-$ticket" if ($target =~ /#minecraft/);
 
   my $request = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0});
   $request->timeout(120);
