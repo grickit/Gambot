@@ -40,7 +40,7 @@ $IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
 $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
 $IRCParser::sl = '';
-$IRCParser::cm = '(?:!|(?:'.$IRCParser::botName.'[:,] ))';
+$IRCParser::cm = '(?:&|(?:'.$IRCParser::botName.'[:,] ))';
 
 # Autojoin list
 if($IRCParser::pipeID eq 'fork10') {
