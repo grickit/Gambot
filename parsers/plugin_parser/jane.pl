@@ -40,7 +40,7 @@ $IRCParser::permissions{'wesnoth/developer/grickit'}         = '*';
 $IRCParser::permissions{'wesnoth/developer/shadowmaster*'}   = '*';
 
 $IRCParser::sl = '';
-$IRCParser::cm = '(?:&|(?:'.$IRCParser::botName.'[:,] ))';
+$IRCParser::cm = '(?:!|(?:'.$IRCParser::botName.'[:,] ))';
 
 # Autojoin list
 if($IRCParser::pipeID eq 'fork10') {
@@ -57,6 +57,7 @@ if($IRCParser::pipeID eq 'fork10') {
     actOut('JOIN','#minecraft',undef);
     actOut('LITERAL',undef,'run_command>feed_timer>perl /home/gambit/source/Gambot/scripts/gambot_timer.pl');
     actOut('LITERAL',undef,'run_command>uh_timer>perl /home/gambit/source/Gambot/scripts/uhmeeting.pl');
+    actOut('LITERAL',undef,'dict_load>hostnames');
   }
 }
 
@@ -79,6 +80,8 @@ sub on_public_message {
   runPlugin("$FindBin::Bin/plugins/staff/voice.pm");
   runPlugin("$FindBin::Bin/plugins/staff/quiet.pm");
   runPlugin("$FindBin::Bin/plugins/staff/kick.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/ban.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
 
   runPlugin("$FindBin::Bin/plugins/conversation/ed-block.pm");
   runPlugin("$FindBin::Bin/plugins/conversation/memes.pm");
@@ -97,13 +100,22 @@ sub on_public_message {
 }
 sub on_private_notice {}
 sub on_public_notice {}
-sub on_join {}
-sub on_part {}
-sub on_quit {}
+sub on_join {
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+}
+sub on_part {
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+}
+sub on_quit {
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+}
 sub on_mode {
   runPlugin("$FindBin::Bin/plugins/staff/mode.pm");
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
 }
-sub on_nick {}
+sub on_nick {
+  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+}
 sub on_kick {}
 sub on_server_message {
 
