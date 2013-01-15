@@ -117,6 +117,7 @@ sub on_nick {
   runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
 }
 sub on_kick {}
+sub on_topic {}
 sub on_server_message {
 
   runPlugin("$FindBin::Bin/plugins/basic/nick_bump.pm");
@@ -125,4 +126,4 @@ sub on_server_message {
 sub on_server_error {}
 
 # Fire the subroutine that is named in $event
-&{\&{$IRCParser::event}}();
+&{\&{$IRCParser::event}}() if $IRCParser::event;

@@ -184,9 +184,19 @@ sub parseMessage { #string
     $event = 'on_kick';
   }
 
+  elsif ($string =~ /^:$validHumanSender (TOPIC) $validChannel ?:?(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
+    $event = 'on_topic';
+  }
+
   elsif ($string =~ /^:$validServerSender ([a-zA-Z0-9]+) (.+?) :?(.+)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,'','',$2,$3,$4);
     $event = 'on_server_message';
+  }
+
+  elsif ($string =~ /^:$validServerSender (332) $validNick $validChannel ?:?(.+)$/) {
+    ($sender,$account,$hostname,$command,$target,$message) = ($1,$3,'',$2,$4,$5);
+    $event = 'on_topic';
   }
 
   elsif ($string =~ /^ERROR :(.+)$/) {
