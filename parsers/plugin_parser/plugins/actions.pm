@@ -12,7 +12,7 @@ if ($message =~ /^ACTION ([a-zA-Z]+) $botName$/i) {
     actOut('MESSAGE',$target,'I may have deserved that.');
   }
   elsif ($1 =~ /^murders$/) {
-    ACT('ACTION',$target,'dies... I guess?');
+    actOut('ACTION',$target,'dies... I guess?');
   }
 }
 
