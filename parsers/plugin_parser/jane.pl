@@ -103,12 +103,15 @@ sub on_private_notice {}
 sub on_public_notice {}
 sub on_join {
   runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+  runPlugin("$FindBin::Bin/plugins_private/dineanddash.pm");
 }
 sub on_part {
   runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+  runPlugin("$FindBin::Bin/plugins_private/dineanddash.pm");
 }
 sub on_quit {
   runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
+  runPlugin("$FindBin::Bin/plugins_private/dineanddash.pm");
 }
 sub on_mode {
   runPlugin("$FindBin::Bin/plugins/staff/mode.pm");
