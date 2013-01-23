@@ -97,6 +97,7 @@ sub on_public_message {
 
   runPlugin("$FindBin::Bin/plugins_private/literal.pm");
   runPlugin("$FindBin::Bin/plugins_private/gitpull.pm");
+  runPlugin("$FindBin::Bin/plugins_private/dineanddash.pm");
 }
 sub on_private_notice {}
 sub on_public_notice {}
