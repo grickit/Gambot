@@ -1,7 +1,10 @@
-if ($message =~ /^${sl}${cm}youtube ([a-zA-Z0-9-_]+)$/i || $message =~ /^${sl}${cm}youtube [a-zA-Z0-9-_:\/\.&?=]*[?&]v=?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*$/i) {
+if ($message =~ /^${sl}${cm}youtube ([a-zA-Z0-9-_]+)(#[a-zA-Z0-9-_=]+)?$/i || $message =~ /^${sl}${cm}youtube [a-zA-Z0-9-_:\/\.&?=]*[?&]v=?([a-zA-Z0-9-_]+)[a-zA-Z0-9-_:\/\.&?=]*(#[a-zA-Z0-9-_=]+)?$/i) {
   require LWP::Simple;
   require LWP::UserAgent;
-  my $vid = $1;
+  my $vid = 'dQw4w9WgXcQ';
+  my $anchor = '';
+  $vid = $1 if $1;
+  $anchor = $2 if $2;
   my $url = "http://gdata.youtube.com/feeds/api/videos/$vid?v=2";
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
@@ -44,7 +47,7 @@ if ($message =~ /^${sl}${cm}youtube ([a-zA-Z0-9-_]+)$/i || $message =~ /^${sl}${
     }
 
     actOut('MESSAGE',$target,"\x02\"$title\"\x02 Length: \x0306$length_m:$length_s\x0F (by \x0303$uploader\x0F)");
-    actOut('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid");
+    actOut('MESSAGE',$target,"\x0314$views\x0F views, \x0303$likes\x0F likes, \x0304$dislikes\x0F dislikes $restricted http://youtu.be/$vid$anchor");
     if ($receiver ne $sender) {
       actOut('MESSAGE',$target,"$receiver ^^^");
     }
