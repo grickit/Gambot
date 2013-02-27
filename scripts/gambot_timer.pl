@@ -25,6 +25,7 @@ while(defined sleep(1)) {
       print "run_command>feed_frogatto>perl $FindBin::RealBin/feed_reader/feed_frogatto.pl\n";
       print "run_command>feed_unknownhorizons>perl $FindBin::RealBin/feed_reader/feed_unknownhorizons.pl\n";
       print "run_command>feed_wesnoth>perl $FindBin::RealBin/feed_reader/feed_wesnoth.pl\n";
+      print "run_command>feed_tribalhero>perl $FindBin::RealBin/feed_reader/feed_tribalhero.pl\n";
     }
     $ten = !$ten;
   }
