@@ -6,11 +6,11 @@ use lib $FindBin::Bin;
 use feed_reader;
 
 my $link_regex = qr!\n<id>(.+)</id>\n!;
-my $item_id_regex = qr!\n<id>http://forums.wesnoth.org/viewtopic.php\?t=[0-9]+&amp;p=([0-9]+)#p[0-9]+</id>\n!;
+my $item_id_regex = qr!\n<id>http://forums.tribalhero.com/viewtopic.php\?t=[0-9]+&amp;p=([0-9]+)#p[0-9]+</id>\n!;
 my $author_regex = qr!^<author><name><\!\[CDATA\[(.+)]]></name></author>\n!;
 my $title_regex = qr!\n<title type="html"><\!\[CDATA\[(.+)]]></title>\n!;
 my $date_regex = qr!\n<updated>(.+)</updated>\n!;
-my $data_site = 'Wesnoth';
+my $data_site = 'Tribalhero';
 
 my @feed_array;
 push(@feed_array, '5'); #Announcements
@@ -38,7 +38,7 @@ foreach my $current_feed (@feed_array) {
     if(&check_new($data_site,$current_feed,$item_id)) {
       &commit_entry($data_site,$current_feed,$item_id);
       foreach my $current_subscriber (@subscribers_array) {
-        #http://forums.wesnoth.org/viewtopic.php?t=35139&p=508432#p508432
+        #http://forums.tribalhero.com/viewtopic.php?t=35139&p=508432#p508432
         print "send_server_message>PRIVMSG $current_subscriber :\x02Tribalhero Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]\n";
       }
     }
