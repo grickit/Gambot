@@ -24,6 +24,7 @@ push(@feed_array, 'Dinnerbone');
 push(@feed_array, 'MinecraftAPIBot');
 push(@feed_array, 'shikadilord');
 push(@feed_array, 'StatusMinecraft');
+push(@feed_array, 'tribalherogame');
 
 start_read($data_site);
 foreach my $current_feed (@feed_array) {
