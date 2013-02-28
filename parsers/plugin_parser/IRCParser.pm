@@ -44,6 +44,7 @@ our @EXPORT_OK = qw(
   $version
   $about
   %permissions
+  $sentOutput
 );
 
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
@@ -66,6 +67,7 @@ our $sl = $botName.'[;,]';
 our $cm = '!';
 our $version = 'Gambot Core MK III | Plugin Parser 6 | <http://grickit.github.com/>';
 our $about = 'I am a basic Gambot. <http://grickit.github.com/> <irc://chat.freenode.net/%23%23Gambot>';
+our $sentOutput = 0;
 
 our %permissions;
 
@@ -87,14 +89,14 @@ sub actOut { #action,target,message
   my @args = @_;
   foreach my $i (0..$#args) { $args[$i] = stripNewlines($args[$i]); }
 
-  if($_[0] eq 'MESSAGE')    { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; }
-  elsif($_[0] eq 'ACTION')  { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; }
-  elsif($_[0] eq 'NOTICE')  { print "send_server_message>NOTICE $args[1] :$args[2]\n"; }
-  elsif($_[0] eq 'JOIN')    { print "send_server_message>JOIN $args[1]\n"; }
-  elsif($_[0] eq 'PART')    { print "send_server_message>PART $args[1] :$args[2]\n"; }
-  elsif($_[0] eq 'KICK')    { print "send_server_message>KICK $args[1] :$args[2]\n"; }
-  elsif($_[0] eq 'INVITE')  { print "send_server_message>INVITE $args[1] :$args[2]\n"; }
-  elsif($_[0] eq 'MODE')    { print "send_server_message>MODE $args[1] $args[2]\n"; }
+  if($_[0] eq 'MESSAGE')    { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; $sentOutput = 1;}
+  elsif($_[0] eq 'ACTION')  { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'NOTICE')  { print "send_server_message>NOTICE $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'JOIN')    { print "send_server_message>JOIN $args[1]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'PART')    { print "send_server_message>PART $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'KICK')    { print "send_server_message>KICK $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'INVITE')  { print "send_server_message>INVITE $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'MODE')    { print "send_server_message>MODE $args[1] $args[2]\n"; $sentOutput = 1; }
   elsif($_[0] eq 'LITERAL') { print "$args[2]\n"; }
   else { print "log>ACTERROR>Unrecognized action: $args[1]"; return ''; }
   return 1;
