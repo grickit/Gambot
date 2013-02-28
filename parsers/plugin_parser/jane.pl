@@ -98,6 +98,7 @@ sub on_public_message {
 
   runPlugin("$FindBin::Bin/plugins_private/literal.pm");
   runPlugin("$FindBin::Bin/plugins_private/gitpull.pm");
+  runPlugin("$FindBin::Bin/plugins/internet/QMarkAPI.pm");
 }
 sub on_private_notice {}
 sub on_public_notice {}
@@ -120,9 +121,7 @@ sub on_nick {
 sub on_kick {}
 sub on_topic {}
 sub on_server_message {
-
   runPlugin("$FindBin::Bin/plugins/basic/nick_bump.pm");
-
 }
 sub on_server_error {}
 
