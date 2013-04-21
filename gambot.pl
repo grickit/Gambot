@@ -195,6 +195,7 @@ sub value_delete {
 sub send_server_message {
   push(@pending_outgoing,$_[0]);
 }
+
 sub send_pipe_message {
   my ($pipeid, $message) = @_;
   if(&check_pipe_exists($pipeid) && pipe_status($read_pipes{$pipeid}) ne 'dead') {
@@ -252,6 +253,7 @@ sub event_schedule {
   if(value_exists('events',$name)) { value_append('events',$name,"$call\n"); }
   else { value_set('events',$name,"$call\n"); }
 }
+
 sub event_fire {
   my $name = shift;
   debug_output("Firing event: $name.");
@@ -260,9 +262,11 @@ sub event_fire {
   }
   value_delete('events',$name);
 }
+
 sub event_exists {
   return value_exists('events',$_[0]);
 }
+
 sub delay_schedule {
   my ($delay, $call) = @_;
   my $time = time + $delay;
@@ -273,6 +277,7 @@ sub delay_schedule {
   if(value_exists('delay_timers',$time)) { value_append('delay_timers',$time,"$hash,"); }
   else { value_set('delay_timers',$time,"$hash,"); }
 }
+
 sub delay_fire {
   my $time = shift;
   debug_output("Firing delay $time at ".time."; ".(time-$time)." seconds late.");
