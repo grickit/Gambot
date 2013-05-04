@@ -35,7 +35,4 @@ This README was last updated April 29 2012
   * The code is also well commented, and several example extensions and parsers are included.
 
 ## Contact ##
-  Contact me at: <thegrickit@gmail.com>
-  Include "Gambot" in the subject line.
-
   Bug reports at: <https://github.com/grickit/Gambot/issues>
