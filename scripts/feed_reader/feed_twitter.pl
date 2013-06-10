@@ -25,6 +25,7 @@ push(@feed_array, 'MinecraftAPIBot');
 push(@feed_array, 'shikadilord');
 push(@feed_array, 'StatusMinecraft');
 push(@feed_array, 'tribalherogame');
+push(@feed_array, '_grum');
 
 start_read($data_site);
 foreach my $current_feed (@feed_array) {
