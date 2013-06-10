@@ -48,7 +48,7 @@ foreach my $current_feed (@feed_array) {
       my $shortened_link = &shorten_url($data_link);
       foreach my $current_subscriber (@subscribers_array) {
         if($current_subscriber eq '#minecraft') {
-          if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(StatusMinecraft|Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit|EthoLP)/) {
+          if($data_title =~ /^(RT )?\@[a-zA-Z0-9_-]+/ && $data_title !~ /^(RT )?\@(StatusMinecraft|Marc_IRL|KrisJelbring|LydiaWinters|xlson|carnalizer|BomuBoi|danfrisk|Kappische|JahKob|jeb_|notch|jnkboy|carlmanneh|mollstam|Dinnerbone|CraftBukkit|EthoLP|_grum)/) {
             next;
           }
           else {
