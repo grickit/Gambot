@@ -89,14 +89,14 @@ sub actOut { #action,target,message
   my @args = @_;
   foreach my $i (0..$#args) { $args[$i] = stripNewlines($args[$i]); }
 
-  if($_[0] eq 'MESSAGE')    { print "send_server_message>PRIVMSG $args[1] :$args[2]\n"; $sentOutput = 1;}
-  elsif($_[0] eq 'ACTION')  { print "send_server_message>PRIVMSG $args[1] :ACTION $args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'NOTICE')  { print "send_server_message>NOTICE $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'JOIN')    { print "send_server_message>JOIN $args[1]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'PART')    { print "send_server_message>PART $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'KICK')    { print "send_server_message>KICK $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'INVITE')  { print "send_server_message>INVITE $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'MODE')    { print "send_server_message>MODE $args[1] $args[2]\n"; $sentOutput = 1; }
+  if($_[0] eq 'MESSAGE')    { print "server_send>PRIVMSG $args[1] :$args[2]\n"; $sentOutput = 1;}
+  elsif($_[0] eq 'ACTION')  { print "server_send>PRIVMSG $args[1] :ACTION $args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'NOTICE')  { print "server_send>NOTICE $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'JOIN')    { print "server_send>JOIN $args[1]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'PART')    { print "server_send>PART $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'KICK')    { print "server_send>KICK $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'INVITE')  { print "server_send>INVITE $args[1] :$args[2]\n"; $sentOutput = 1; }
+  elsif($_[0] eq 'MODE')    { print "server_send>MODE $args[1] $args[2]\n"; $sentOutput = 1; }
   elsif($_[0] eq 'LITERAL') { print "$args[2]\n"; }
   else { print "log>ACTERROR>Unrecognized action: $args[1]"; return ''; }
   return 1;
@@ -132,7 +132,7 @@ sub parseMessage { #string
   my ($sender,$account,$hostname,$command,$target,$message,$event,$receiver);
 
   if ($string =~ /^PING(.*)$/i) {
-    actOut('LITERAL',undef,"send_server_message>PONG$1");
+    actOut('LITERAL',undef,"server_send>PONG$1");
     ($sender,$account,$hostname,$command,$target,$message,$receiver) = ('','','','','','','');
     $event = 'on_server_ping';
   }

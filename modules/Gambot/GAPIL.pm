@@ -21,7 +21,7 @@ use strict;
 use warnings;
 
 sub parse_command {
-  my ($command, $pipeid) = @_;
+  my ($command, $childid) = @_;
   $command =~ s/[\r\n]+$//;
   debug_output("Received API call: $command");
 
@@ -33,12 +33,12 @@ sub parse_command {
   }
 
   elsif ($command =~ /^server_reconnect>$/) {
-    &event_output("API call from $pipeid asked for a reconnection.");
+    &event_output("API call from $childid asked for a reconnection.");
     &server_reconnect();
   }
 
   elsif($command =~ /^dict_exists>($validkey)$/) {
-    child_send($pipeid,dict_exists($1));
+    child_send($childid,dict_exists($1));
   }
 
   elsif($command =~ /^dict_save>($validkey)$/) {
@@ -58,51 +58,51 @@ sub parse_command {
   }
 
   elsif($command =~ /^value_exists>($validkey)>($validkey)$/) {
-    child_send($pipeid,value_get($1,$2));
+    child_send($childid,value_get($1,$2));
   }
 
   elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
-    child_send($pipeid,value_get($1,$2));
+    child_send($childid,value_get($1,$2));
   }
 
   elsif($command =~ /^(return )?value_add>($validkey)>($validkey)>(.+)$/) {
     my $result = value_add($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_replace>($validkey)>($validkey)>(.+)$/) {
     my $result = value_replace($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_set>($validkey)>($validkey)>(.+)$/) {
     my $result = value_set($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_append>($validkey)>($validkey)>(.+)$/) {
     my $result = value_append($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_prepend>($validkey)>($validkey)>(.+)$/) {
     my $result = value_prepend($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_increment>($validkey)>($validkey)>(.+)$/) {
     my $result = value_increment($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_decrement>($validkey)>($validkey)>(.+)$/) {
     my $result = value_decrement($2,$3,$4);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_delete>($validkey)>($validkey)$/) {
     my $result = value_delete($2,$3);
-    child_send($pipeid,$result) if($1);
+    child_send($childid,$result) if($1);
   }
 
   elsif ($command =~ /^child_send>($validkey)>(.+)$/) {
@@ -114,7 +114,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^child_exists>($validkey)$/) {
-    &child_send($pipeid,&child_exists($1));
+    &child_send($childid,&child_exists($1));
   }
 
   elsif ($command =~ /^child_add>($validkey)>(.+)$/) {
@@ -126,12 +126,12 @@ sub parse_command {
   }
 
   elsif ($command =~ /^shutdown>$/) {
-    &event_output("API call from $pipeid asked for a shutdown.");
+    &event_output("API call from $childid asked for a shutdown.");
     exit;
   }
 
   elsif ($command =~ /^reload_config>$/) {
-    event_output("API call from $pipeid asked for a configuration reload.");
+    event_output("API call from $childid asked for a configuration reload.");
     &read_configuration_file(&value_get('core','home_directory') . '/configurations/' . &value_get('core','configuration_file'));
   }
 
@@ -148,7 +148,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^event_exists>($validkey)$/) {
-    child_send($pipeid,event_exists($1));
+    child_send($childid,event_exists($1));
   }
 
   elsif ($command =~ /^delay_schedule>([0-9]+)>(.+)$/) {
