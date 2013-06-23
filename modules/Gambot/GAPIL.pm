@@ -27,13 +27,14 @@ sub parse_command {
 
   my $validkey = '[a-zA-Z0-9_#:-]+';
 
-  if ($command =~ /^send_server_message>(.+)$/) {
-    send_server_message($1);
+  if ($command =~ /^server_send>(.+)$/) {
+    server_send($1);
     if ($1 =~ /^NICK (.+)$/) { value_set('core','nick',$1); }
   }
 
-  elsif ($command =~ /^child_send>($validkey)>(.+)$/) {
-    child_send($1,$2);
+  elsif ($command =~ /^server_reconnect>$/) {
+    &event_output("API call from $pipeid asked for a reconnection.");
+    &server_reconnect();
   }
 
   elsif($command =~ /^dict_exists>($validkey)$/) {
@@ -54,6 +55,10 @@ sub parse_command {
 
   elsif($command =~ /^dict_delete>($validkey)$/) {
     dict_delete($1);
+  }
+
+  elsif($command =~ /^value_exists>($validkey)>($validkey)$/) {
+    child_send($pipeid,value_get($1,$2));
   }
 
   elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
@@ -100,12 +105,16 @@ sub parse_command {
     child_send($pipeid,$result) if($1);
   }
 
-  elsif ($command =~ /^child_exists>($validkey)$/) {
-    &child_send($pipeid,&child_exists($1));
+  elsif ($command =~ /^child_send>($validkey)>(.+)$/) {
+    child_send($1,$2);
   }
 
   elsif ($command =~ /^child_delete>($validkey)$/) {
     &child_delete($1);
+  }
+
+  elsif ($command =~ /^child_exists>($validkey)$/) {
+    &child_send($pipeid,&child_exists($1));
   }
 
   elsif ($command =~ /^child_add>($validkey)>(.+)$/) {
@@ -119,11 +128,6 @@ sub parse_command {
   elsif ($command =~ /^shutdown>$/) {
     &event_output("API call from $pipeid asked for a shutdown.");
     exit;
-  }
-
-  elsif ($command =~ /^reconnect>$/) {
-    &event_output("API call from $pipeid asked for a reconnection.");
-    &reconnect();
   }
 
   elsif ($command =~ /^reload_config>$/) {

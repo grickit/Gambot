@@ -74,6 +74,18 @@ my @pending_outgoing_IRC_messages; # Used to hold messages that are being thrott
 
 
 ####-----#----- Subroutines -----#-----####
+sub server_send {
+  push(@pending_outgoing_IRC_messages,$_[0]);
+}
+
+sub server_reconnect {
+  $irc_connection->close();
+  event_output('Reconnecting.');
+  $irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
+  fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
+  $IRC_messages_received_this_connection = 0;
+}
+
 sub dict_exists {
   my $dict = shift;
   return exists $dicts{$dict};
@@ -187,10 +199,6 @@ sub value_delete {
   else { return ''; }
 }
 
-sub send_server_message {
-  push(@pending_outgoing_IRC_messages,$_[0]);
-}
-
 sub child_send {
   my ($childid, $message) = @_;
   if(&child_exists($childid) && pipe_status($read_pipes{$childid}) ne 'dead') {
@@ -201,11 +209,6 @@ sub child_send {
   else {
     error_output("Tried to send a message to child named $childid, but it doesn't exist.");
   }
-}
-
-sub child_exists {
-  my $childid = shift;
-  return (defined $pid_pipes{$childid});
 }
 
 sub child_delete {
@@ -222,6 +225,11 @@ sub child_delete {
   }
 }
 
+sub child_exists {
+  my $childid = shift;
+  return (defined $pid_pipes{$childid});
+}
+
 sub child_add {
   my ($childid, $command) = @_;
   if(&child_exists($childid)) {
@@ -232,14 +240,6 @@ sub child_add {
     $pid_pipes{$childid} = open2($read_pipes{$childid},$write_pipes{$childid},$command);
     &child_send($childid,$childid);
   }
-}
-
-sub reconnect {
-  $irc_connection->close();
-  event_output('Reconnecting.');
-  $irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
-  fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
-  $IRC_messages_received_this_connection = 0;
 }
 
 sub event_schedule {
@@ -311,13 +311,13 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
   if ($irc_connection_status eq 'dead') {
     error_output('IRC connection died.');
     if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
-    else { reconnect(); } # Otherwise automatically reconnect
+    else { server_reconnect(); } # Otherwise automatically reconnect
   }
 
   elsif($irc_connection_status eq 'later' && time - $last_received_IRC_message_time >= value_get('config','ping_timeout')) {
     error_output('IRC connection timed out.');
     if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
-    else { reconnect(); } # Otherwise automatically reconnect
+    else { server_reconnect(); } # Otherwise automatically reconnect
   }
 
   elsif ($irc_connection_status eq 'ready') {
