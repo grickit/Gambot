@@ -32,12 +32,12 @@ sub parse_command {
     if ($1 =~ /^NICK (.+)$/) { value_set('core','nick',$1); }
   }
 
-  elsif ($command =~ /^send_pipe_message>($validkey)>(.+)$/) {
-    send_pipe_message($1,$2);
+  elsif ($command =~ /^child_send>($validkey)>(.+)$/) {
+    child_send($1,$2);
   }
 
   elsif($command =~ /^dict_exists>($validkey)$/) {
-    send_pipe_message($pipeid,dict_exists($1));
+    child_send($pipeid,dict_exists($1));
   }
 
   elsif($command =~ /^dict_save>($validkey)$/) {
@@ -57,59 +57,59 @@ sub parse_command {
   }
 
   elsif($command =~ /^value_get>($validkey)>($validkey)$/) {
-    send_pipe_message($pipeid,value_get($1,$2));
+    child_send($pipeid,value_get($1,$2));
   }
 
   elsif($command =~ /^(return )?value_add>($validkey)>($validkey)>(.+)$/) {
     my $result = value_add($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_replace>($validkey)>($validkey)>(.+)$/) {
     my $result = value_replace($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_set>($validkey)>($validkey)>(.+)$/) {
     my $result = value_set($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_append>($validkey)>($validkey)>(.+)$/) {
     my $result = value_append($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_prepend>($validkey)>($validkey)>(.+)$/) {
     my $result = value_prepend($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_increment>($validkey)>($validkey)>(.+)$/) {
     my $result = value_increment($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_decrement>($validkey)>($validkey)>(.+)$/) {
     my $result = value_decrement($2,$3,$4);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
   elsif($command =~ /^(return )?value_delete>($validkey)>($validkey)$/) {
     my $result = value_delete($2,$3);
-    send_pipe_message($pipeid,$result) if($1);
+    child_send($pipeid,$result) if($1);
   }
 
-  elsif ($command =~ /^check_pipe_exists>($validkey)$/) {
-    &send_pipe_message($pipeid,&check_pipe_exists($1));
+  elsif ($command =~ /^child_exists>($validkey)$/) {
+    &child_send($pipeid,&child_exists($1));
   }
 
-  elsif ($command =~ /^kill_pipe>($validkey)$/) {
-    &kill_pipe($1);
+  elsif ($command =~ /^child_delete>($validkey)$/) {
+    &child_delete($1);
   }
 
-  elsif ($command =~ /^run_command>($validkey)>(.+)$/) {
-    &run_command($1,$2);
+  elsif ($command =~ /^child_add>($validkey)>(.+)$/) {
+    &child_add($1,$2);
   }
 
   elsif ($command =~ /^sleep>([0-9.]+)$/) {
@@ -144,7 +144,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^event_exists>($validkey)$/) {
-    send_pipe_message($pipeid,event_exists($1));
+    child_send($pipeid,event_exists($1));
   }
 
   elsif ($command =~ /^delay_schedule>([0-9]+)>(.+)$/) {

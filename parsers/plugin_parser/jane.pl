@@ -56,8 +56,8 @@ if($IRCParser::pipeID eq 'fork10') {
     actOut('JOIN','#unknown-horizons',undef);
     actOut('JOIN','#minecraft',undef);
     actOut('JOIN','#tribalhero',undef);
-    actOut('LITERAL',undef,'run_command>feed_timer>perl /home/gambit/source/Gambot/scripts/gambot_timer.pl');
-    actOut('LITERAL',undef,'run_command>uh_timer>perl /home/gambit/source/Gambot/scripts/uhmeeting.pl');
+    actOut('LITERAL',undef,'child_add>feed_timer>perl /home/gambit/source/Gambot/scripts/gambot_timer.pl');
+    actOut('LITERAL',undef,'child_add>uh_timer>perl /home/gambit/source/Gambot/scripts/uhmeeting.pl');
     actOut('LITERAL',undef,'dict_load>hostnames');
   }
 }

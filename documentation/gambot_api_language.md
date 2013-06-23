@@ -6,11 +6,6 @@ They are as follows.
     * Makes the bot send [message] to the IRC server. Should be valid raw IRC.
 
 
-  * ### send_pipe_message>[pipe id]>[message] ###
-    * Sends [message] to the pipe named [pipe id].
-    * Use the id "*main*" to send messages to STDOUT.
-
-
 
 ## Variable storage ##
   * ### dict_exists>[dict] ###
@@ -52,6 +47,7 @@ They are as follows.
   * ### (return) value_set>[dict]>[key]>[value] ###
     * $dicts{[dict]}{[key]} will be set to [value].
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a "*blank line*" indicating failure.
+    * __Be careful about modifying the "*config*" and "*core*" dicts.__
 
 
   * ### (return) value_append>[dict]>[key]>[value] ###
@@ -82,24 +78,29 @@ They are as follows.
 
 
 
-## Pipe Management ##
-  * ### check_pipe_exists>[pipe id] ###
-    * If the pipe named [pipe id] exists, the calling script will receive a "*1*" in STDIN.
+## Child Process Management ##
+  * ### child_exists>[child id] ###
+    * If the child named [child id] exists, the calling script will receive a "*1*" in STDIN.
     * Otherwise it will receive a *blank line*
 
 
-  * ### kill_pipe>[pipe id] ###
-    * Abruptly kills and cleans up variables related to the pipe named [pipe id].
+  * ### child_send>[child id]>[message] ###
+    * Sends [message] to the child named [child id].
+    * Use the id "*terminal*" to send messages to STDOUT.
+
+
+  * ### child_delete>[child id] ###
+    * Abruptly kills and cleans up variables related to the child named [child id].
     * Obviously, prematurely killing pipes can lead to data loss.
     * Never use on "*main*" or you will corrupt the bot.
 
 
-  * ### run_command>[pipe id]>[command] ###
-    * Start a new child pipe named [pipe id].
+  * ### child_add>[child id]>[command] ###
+    * Start a new child child named [child id].
     * It will __run the system command__: [command]
     * __Be careful about combining this with user input.__
-    * It is __strongly recommended__ to only use "*run_command>*" on hardcoded [command] values and then pass user input with "*send_pipe_message>*".
-    * Just in case it wasn't clear, __"*run_command>*" IS VERY DANGEROUS!__
+    * It is __strongly recommended__ to only use "*child_add>*" on hardcoded [command] values and then pass user input with "*child_send>*".
+    * Just in case it wasn't clear, __"*child_add>*" IS VERY DANGEROUS!__
 
 
 
@@ -155,7 +156,7 @@ They are as follows.
 
 
 ## Notes ##
-  All pipe ids and variable names must match: __([a-zA-Z0-9_-]+)__
+  All child ids and variable names must match: __([a-zA-Z0-9_-]+)__
 
   * $dicts{'core'} contains information that the bot requires to run.
   * $dicts{'config'} contains any values set in the configuration file.

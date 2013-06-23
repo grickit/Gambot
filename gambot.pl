@@ -30,11 +30,11 @@ use Gambot::Connect;
 use Gambot::GAPIL;
 
 ####-----#----- Setup -----#-----####
-$| = 1;
-$SIG{CHLD} = 'IGNORE';
-$SIG{INT} = sub { exit; }; #Exit gracefully and save data on SIGINT
-$SIG{HUP} = sub { exit; }; #Exit gracefully and save data on SIGHUP
-$SIG{TERM} = sub { exit; }; #Exit gracefully and save data on SIGTERM
+$| = 1; # Unbuffered IO
+$SIG{CHLD} = 'IGNORE'; # Reap zombie child processes
+$SIG{INT} = sub { exit; }; # Exit gracefully and save data on SIGINT
+$SIG{HUP} = sub { exit; }; # Exit gracefully and save data on SIGHUP
+$SIG{TERM} = sub { exit; }; # Exit gracefully and save data on SIGTERM
 
 ## %dict{config} stores stuff from the config file.
 ## %dict{core} stores other core data.
@@ -53,29 +53,24 @@ my %autosave;
 ## Any of these might be overwritten by the config file or command line arguments.
 value_set('core','home_directory',$FindBin::Bin);
 value_set('core','configuration_file','config.txt');
-value_set('core','message_count',0);
-value_set('config','main_loop_delay',0.1);
+value_set('config','iterations_per_second',10);
 value_set('config','messages_per_second',3);
 value_set('config','ping_timeout',600);
 
-## %pid_pipes store the process ids of processors and scripts
-## %read_pipes are for getting data from processors and scripts
-## %write_pipes are for sending data to processors and scripts
+## %pid_pipes store the process ids of child processes
+## %read_pipes are for getting data from child processes
+## %write_pipes are for sending data to child processes
 my %pid_pipes;
 my %read_pipes;
 my %write_pipes;
 
-## The connection to the IRC server
-my $socket_connection;
-my $socket_buffer;
+my $irc_connection; # The connection to the IRC server
 
-## These variables are used to throttle messages.
-my @pending_outgoing;
-my $last_second = time;
-my $messages_this_second = 0;
-
-## Used for client-side ping timeout
-my $last_received = time;
+my $last_received_IRC_message_time = time; # Used for client-side ping timeout
+my $last_sent_IRC_message_time = time; # Used for throttling IRC messages
+my $IRC_messages_sent_this_second = 0; # Used for throttling IRC messages
+my $IRC_messages_received_this_connection = 0; # Used for naming child processes
+my @pending_outgoing_IRC_messages; # Used to hold messages that are being throttled
 
 
 ####-----#----- Subroutines -----#-----####
@@ -91,7 +86,7 @@ sub dict_save {
     print $file "$key = \"$value\"\n";
   }
   close($file);
-  $autosave{$dict} = 1;
+  $autosave{$dict} = 1; # Mark the dict as manually saved
 }
 
 sub dict_load {
@@ -112,7 +107,7 @@ sub dict_load {
   else {
     error_output("Tried to load persistence file \"$filename\", but it doesn't exist.");
   }
-  $autosave{$dict} = 1;
+  $autosave{$dict} = 1; # Mark the dict as manually opened
 }
 
 sub dict_save_all {
@@ -193,58 +188,58 @@ sub value_delete {
 }
 
 sub send_server_message {
-  push(@pending_outgoing,$_[0]);
+  push(@pending_outgoing_IRC_messages,$_[0]);
 }
 
-sub send_pipe_message {
-  my ($pipeid, $message) = @_;
-  if(&check_pipe_exists($pipeid) && pipe_status($read_pipes{$pipeid}) ne 'dead') {
-    debug_output("Sending \"$message\" to a pipe named $pipeid.");
-    my $write_pipe = $write_pipes{$pipeid};
+sub child_send {
+  my ($childid, $message) = @_;
+  if(&child_exists($childid) && pipe_status($read_pipes{$childid}) ne 'dead') {
+    debug_output("Sending \"$message\" to child named $childid.");
+    my $write_pipe = $write_pipes{$childid};
     print $write_pipe $message."\n";
   }
   else {
-    error_output("Tried to send a message to a pipe named $pipeid, but it doesn't exist.");
+    error_output("Tried to send a message to child named $childid, but it doesn't exist.");
   }
 }
 
-sub check_pipe_exists {
-  my $pipeid = shift;
-  return (defined $pid_pipes{$pipeid});
+sub child_exists {
+  my $childid = shift;
+  return (defined $pid_pipes{$childid});
 }
 
-sub kill_pipe {
-  my $pipeid = shift;
-  if(&check_pipe_exists($pipeid)) {
-    debug_output("Killing pipe named $pipeid.");
-    kill 1, $pid_pipes{$pipeid};
-    delete $pid_pipes{$pipeid};
-    delete $read_pipes{$pipeid};
-    delete $write_pipes{$pipeid};
+sub child_delete {
+  my $childid = shift;
+  if(&child_exists($childid)) {
+    debug_output("Deleting child named $childid.");
+    kill 1, $pid_pipes{$childid};
+    delete $pid_pipes{$childid};
+    delete $read_pipes{$childid};
+    delete $write_pipes{$childid};
   }
   else {
-    error_output("Tried to kill a pipe named $pipeid, but it doesn't exist.");
+    error_output("Tried to delete child named $childid, but it doesn't exist.");
   }
 }
 
-sub run_command {
-  my ($pipeid, $command) = @_;
-  if(&check_pipe_exists($pipeid)) {
-    error_output("Tried to start a pipe named $pipeid, but one already exists.");
+sub child_add {
+  my ($childid, $command) = @_;
+  if(&child_exists($childid)) {
+    error_output("Tried to add child named $childid, but one already exists.");
   }
   else {
-    debug_output("Starting a pipe named $pipeid with the command: $command");
-    $pid_pipes{$pipeid} = open2($read_pipes{$pipeid},$write_pipes{$pipeid},$command);
-    &send_pipe_message($pipeid,$pipeid);
+    debug_output("Adding child named $childid with the command: $command");
+    $pid_pipes{$childid} = open2($read_pipes{$childid},$write_pipes{$childid},$command);
+    &child_send($childid,$childid);
   }
 }
 
 sub reconnect {
-  $socket_connection->close();
+  $irc_connection->close();
   event_output('Reconnecting.');
-  $socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
-  fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
-  value_set('core','message_count',0);
+  $irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
+  fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
+  $IRC_messages_received_this_connection = 0;
 }
 
 sub event_schedule {
@@ -294,9 +289,9 @@ sub delay_fire {
 ## Load the config file
 &read_configuration_file(value_get('core','home_directory') . '/configurations/' . value_get('core','configuration_file'));
 value_set('core','nick',value_get('config','base_nick'));
-$socket_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
+$irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
 fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
-fcntl($socket_connection, F_SETFL(), O_NONBLOCK());
+fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
 
 ## Load any delayed events
 dict_load('delay_timers');
@@ -304,40 +299,38 @@ dict_load('delay_events');
 
 ## An awesome trick to register STDIN and STDOUT as children just like the message parsers and scripts
 ## No extra work involved in reading STDIN now.
-$pid_pipes{'main'} = 1;
-$read_pipes{'main'} = \*STDIN;
-$write_pipes{'main'} = \*STDOUT;
+$pid_pipes{'terminal'} = 1;
+$read_pipes{'terminal'} = \*STDIN;
+$write_pipes{'terminal'} = \*STDOUT;
 
-while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
+while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_second')))) {
 
-  ####-----#----- Read from the socket -----#-----####
-  my $socket_status = &pipe_status($socket_connection);
+  ####-----#----- Read from the IRC connection -----#-----####
+  my $irc_connection_status = &pipe_status($irc_connection);
 
-  if ($socket_status eq 'dead') {
+  if ($irc_connection_status eq 'dead') {
     error_output('IRC connection died.');
-    ## Automatically reconnect unless the bot was started with --staydead
-    if(&value_get('core','staydead')) { exit; }
-    else { reconnect(); }
+    if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
+    else { reconnect(); } # Otherwise automatically reconnect
   }
 
-  elsif($socket_status eq 'later' && time - $last_received >= value_get('config','ping_timeout')) {
+  elsif($irc_connection_status eq 'later' && time - $last_received_IRC_message_time >= value_get('config','ping_timeout')) {
     error_output('IRC connection timed out.');
-    ## Automatically reconnect unless the bot was started with --staydead
-    if(&value_get('core','staydead')) { exit; }
-    else { reconnect(); }
+    if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
+    else { reconnect(); } # Otherwise automatically reconnect
   }
 
-  elsif ($socket_status eq 'ready') {
-    my @messages = read_lines($socket_connection, $socket_status);
-    foreach my $current_message (@messages) {
-      normal_output('INCOMING',$current_message);
-      my $id = 'fork'.value_get('core','message_count');
-      &run_command($id,value_get('config','processor'));
+  elsif ($irc_connection_status eq 'ready') {
+    my @received_IRC_messages = read_lines($irc_connection,$irc_connection_status);
+    foreach my $current_received_IRC_message (@received_IRC_messages) {
+      normal_output('INCOMING',$current_received_IRC_message);
+      my $new_pipe_id = 'fork'.$IRC_messages_received_this_connection;
+      &child_add($new_pipe_id,value_get('config','processor'));
       ## Message parsers need to know the nickname the bot is using, and the incoming message
-      &send_pipe_message($id,value_get('core','nick'));
-      &send_pipe_message($id,$current_message);
-      value_increment('core','message_count',1);
-      $last_received = time;
+      &child_send($new_pipe_id,value_get('core','nick'));
+      &child_send($new_pipe_id,$current_received_IRC_message);
+      $IRC_messages_received_this_connection++;
+      $last_received_IRC_message_time = time;
     }
   }
 
@@ -346,7 +339,7 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
     my $pipe_status = &pipe_status($pipe);
 
     ## Clean up dead children
-    if ($pipe_status eq 'dead') { kill_pipe($id); }
+    if ($pipe_status eq 'dead') { child_delete($id); }
 
     ## Run responses from living children through the GAPIL parser
     elsif ($pipe_status eq 'ready') {
@@ -363,14 +356,20 @@ while(defined select(undef,undef,undef,value_get('config','main_loop_delay'))) {
   }
 
   ####-----#----- Send outgoing messages -----#-----####
-  ## As long as we're under our flood limit, and still have messages pending, send messages
-  for(1; ($messages_this_second < value_get('config','messages_per_second')) && (my $message = shift(@pending_outgoing)); $messages_this_second++) {
-    debug_output("Sent $messages_this_second messages this second so far during ".time);
-    normal_output('OUTGOING',$message);
-    print $socket_connection $message . "\015\012";
+  while(my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages)) { # Do we have pending outgoing IRC messages?
+    if($IRC_messages_sent_this_second < value_get('config','messages_per_second')) { # Are we under the flood limit?
+      debug_output("Sent $IRC_messages_sent_this_second IRC messages this second so far during ".time);
+      normal_output('OUTGOING',$current_pending_IRC_message);
+      print $irc_connection $current_pending_IRC_message."\015\012";
+      $IRC_messages_sent_this_second++;
+    }
   }
-  ## Keep track of the seconds
-  if($last_second != time) { $messages_this_second = 0; $last_second = time; }
+
+  ## Keep track of how many messages we've sent to the IRC server this second
+  if($last_sent_IRC_message_time != time) {
+    $IRC_messages_sent_this_second = 0;
+    $last_sent_IRC_message_time = time;
+  }
 
 }
 
