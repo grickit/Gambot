@@ -356,13 +356,13 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
   }
 
   ####-----#----- Send outgoing messages -----#-----####
-  while(my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages)) { # Do we have pending outgoing IRC messages?
-    if($IRC_messages_sent_this_second < value_get('config','messages_per_second')) { # Are we under the flood limit?
-      debug_output("Sent $IRC_messages_sent_this_second IRC messages this second so far during ".time);
-      normal_output('OUTGOING',$current_pending_IRC_message);
-      print $irc_connection $current_pending_IRC_message."\015\012";
-      $IRC_messages_sent_this_second++;
-    }
+  ## Are we under the throttle?
+  ## Do we have pending outgoing messages?
+  while($IRC_messages_sent_this_second < value_get('config','messages_per_second') && (my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages))) {
+    debug_output("Sent $IRC_messages_sent_this_second IRC messages this second so far during ".time);
+    normal_output('OUTGOING',$current_pending_IRC_message);
+    print $irc_connection $current_pending_IRC_message."\015\012";
+    $IRC_messages_sent_this_second++;
   }
 
   ## Keep track of how many messages we've sent to the IRC server this second
