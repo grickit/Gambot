@@ -21,7 +21,7 @@ package Gambot::Logging;
 use strict;
 use warnings;
 
-use Gambot::GAPILCore;
+use Gambot::GAPIL::Core;
 
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);
@@ -52,9 +52,9 @@ sub generate_timestamps {
 sub file_log {
   my ($prefix, $datestamp, $timestamp, $message) = @_;
 
-  my $unlogged = &Gambot::GAPILCore::value_get('core','unlogged');
-  my $log_directory = &Gambot::GAPILCore::value_get('config','log_directory');
-  my $base_nick = &Gambot::GAPILCore::value_get('config','base_nick');
+  my $unlogged = &Gambot::GAPIL::Core::value_get('core','unlogged');
+  my $log_directory = &Gambot::GAPIL::Core::value_get('config','log_directory');
+  my $base_nick = &Gambot::GAPIL::Core::value_get('config','base_nick');
 
   unless ($unlogged) {
     my $filename = "$log_directory/$base_nick-$datestamp.txt";
@@ -91,7 +91,7 @@ sub event_log {
 sub normal_log {
   my ($prefix,$message) = @_;
   my ($datestamp, $timestamp) = &generate_timestamps();
-  my $verbose = &Gambot::GAPILCore::value_get('core','verbose');
+  my $verbose = &Gambot::GAPIL::Core::value_get('core','verbose');
 
   file_log($prefix,$datestamp,$timestamp,$message);
   if ($verbose) {
@@ -103,8 +103,8 @@ sub normal_log {
 sub debug_log {
   my $message = shift;
   my ($datestamp, $timestamp) = &generate_timestamps();
-  my $verbose = &Gambot::GAPILCore::value_get('core','verbose');
-  my $debug = &Gambot::GAPILCore::value_get('core','debug');
+  my $verbose = &Gambot::GAPIL::Core::value_get('core','verbose');
+  my $debug = &Gambot::GAPIL::Core::value_get('core','debug');
 
   if ($debug) {
     file_log('BOTDEBUG',$datestamp,$timestamp,$message);

@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-### This file provides functions for child processes to read messages
-### from the Gambot core.
+### This file provides functions making GAPIL calls to the core.
 
-package Gambot::GAPILChild;
+package Gambot::GAPIL::Child;
 use strict;
 use warnings;
 

@@ -17,7 +17,7 @@
 
 ### This file provides an implementation of the Gambot API Language.
 
-package Gambot::GAPILCore;
+package Gambot::GAPIL::Core;
 use strict;
 use warnings;
 use IPC::Open2;

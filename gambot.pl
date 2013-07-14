@@ -23,12 +23,12 @@ use Digest::MD5 qw(md5_hex);
 use FindBin;
 use lib "$FindBin::Bin/modules/";
 
-use Gambot::GAPILCore;
+use Gambot::GAPIL::Core;
 use Gambot::Logging;
 use Gambot::IO;
 use Gambot::Configure;
 use Gambot::Connect;
-use Gambot::GAPIL;
+use Gambot::GAPIL::Parse;
 
 ####-----#----- Setup -----#-----####
 $| = 1; # Unbuffered IO

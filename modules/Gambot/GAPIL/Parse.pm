@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Copyright (C) 2010-2011 by Derek Hoagland <grickit@gmail.com>
+# Copyright (C) 2010-2013 by Derek Hoagland <grickit@gmail.com>
 # This file is part of Gambot.
 #
 # Gambot is free software: you can redistribute it and/or modify
@@ -15,13 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-###This file handles parsing of the Gambot API Language
+### This file handles parsing of the Gambot API Language from children.
 
+package Gambot::GAPIL::Parse;
 use strict;
 use warnings;
 
-use Gambot::GAPILCore;
+use Gambot::GAPIL::Core;
 use Gambot::Logging;
+
+our $VERSION = 1.0;
+our @ISA = qw(Exporter);
+our @EXPORT = qw(
+  parse_command
+);
+our @EXPORT_OK = qw();
 
 sub parse_command {
   my ($command, $childid) = @_;
