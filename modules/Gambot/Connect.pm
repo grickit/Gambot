@@ -23,7 +23,7 @@ use IO::Socket;
 
 sub create_socket_connection {
   my ($server, $port, $nick, $pass) = @_;
-  &event_output('I am attempting to connect.');
+  &event_log('I am attempting to connect.');
 
   my $sock = new IO::Socket::INET(
     PeerAddr => $server,
@@ -32,7 +32,7 @@ sub create_socket_connection {
     timeout => 1)
     or die "Error while connecting to $server:$port";
 
-  &event_output('I am attempting to login.');
+  &event_log('I am attempting to login.');
   print $sock "PASS $nick:$pass\015\012" if($pass);
   print $sock "NICK $nick\015\012";
   print $sock "USER Gambot 8 * :Perl Gambot\015\012";

@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# Copyright (C) 2010-2011 by Derek Hoagland <grickit@gmail.com>
+# Copyright (C) 2010-2013 by Derek Hoagland <grickit@gmail.com>
 # This file is part of Gambot.
 #
 # Gambot is free software: you can redistribute it and/or modify
@@ -15,14 +15,24 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-###This file handles logging and read/write operations on filehandles.
+### This file handles read/write operations on filehandles.
 
+package Gambot::IO;
 use strict;
 use warnings;
+use Fcntl qw(F_SETFL O_NONBLOCK);
+
+our $VERSION = 1.0;
+our @ISA = qw(Exporter);
+our @EXPORT = qw(
+  filehandle_status
+  filehandle_multiread
+);
+our @EXPORT_OK = qw();
 
 my %back_buffers;
 
-sub pipe_status {
+sub filehandle_status {
   no warnings 'unopened';
   my $pipe = shift;
   fcntl($pipe, F_SETFL(), O_NONBLOCK());
@@ -42,7 +52,7 @@ sub pipe_status {
   }
 }
 
-sub read_lines {
+sub filehandle_multiread {
   my ($pipe,$buffer) = (shift,'');
   fcntl($pipe,F_SETFL(),O_NONBLOCK());
 
@@ -57,74 +67,6 @@ sub read_lines {
   else { $back_buffers{$pipe} = pop(@lines); }
 
   return @lines;
-}
-
-sub generate_timestamps {
-  my ($sec,$min,$hour,$mday,$mon,$year,undef,undef,undef) = localtime(time);
-  $mon += 1;
-  $year += 1900;
-  $hour = sprintf("%02d", $hour);
-  $min = sprintf("%02d", $min);
-  $sec = sprintf("%02d", $sec);
-  my $datestamp = "$year-$mon-$mday";
-  my $timestamp = "$hour:$min:$sec";
-  return $datestamp, $timestamp;
-}
-
-sub log_output {
-  my ($prefix, $datestamp, $timestamp, $message) = @_;
-
-  unless (&value_get('core','unlogged')) {
-    my $filename = &value_get('config','log_directory') . '/' . &value_get('config','base_nick') . "-$datestamp.txt";
-    open my $logfile, '>>' . $filename
-      or print 'Unable to open logfile "' . $filename . "\".\n" . "Does that directory structure exist?\n";
-    print $logfile "$prefix $timestamp $message\015\012";
-    close $logfile;
-  }
-}
-
-sub stdout_output {
-  my ($prefix, $timestamp, $message) = @_;
-  print "$prefix $timestamp $message\n";
-}
-
-
-#Always logged and displayed
-sub error_output {
-  my $message = shift;
-  my ($datestamp, $timestamp) = &generate_timestamps();
-  log_output('BOTERROR',$datestamp,$timestamp,$message);
-  stdout_output('BOTERROR',$timestamp,$message);
-}
-
-#Always logged and displayed
-sub event_output {
-  my $message = shift;
-  my ($datestamp, $timestamp) = &generate_timestamps();
-  log_output('BOTEVENT',$datestamp,$timestamp,$message);
-  stdout_output('BOTEVENT',$timestamp,$message);
-}
-
-#Always logged, but only displayed if --verbose
-sub normal_output {
-  my ($prefix,$message) = @_;
-  my ($datestamp, $timestamp) = &generate_timestamps();
-  log_output($prefix,$datestamp,$timestamp,$message);
-  if (&value_get('core','verbose')) {
-    stdout_output($prefix,$timestamp,$message);
-  }
-}
-
-#Logged if --debug. Displayed if --verbose and --debug
-sub debug_output {
-  my $message = shift;
-  my ($datestamp, $timestamp) = &generate_timestamps();
-  if (&value_get('core','debug')) {
-    log_output('BOTDEBUG',$datestamp,$timestamp,$message);
-    if(&value_get('core','verbose')) {
-      stdout_output('BOTDEBUG',$timestamp,$message);
-    }
-  }
 }
 
 1;

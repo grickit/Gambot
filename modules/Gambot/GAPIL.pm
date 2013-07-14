@@ -20,10 +20,16 @@
 use strict;
 use warnings;
 
+use FindBin;
+use lib "$FindBin::Bin";
+
+use Gambot::GAPILCore;
+use Gambot::Logging;
+
 sub parse_command {
   my ($command, $childid) = @_;
   $command =~ s/[\r\n]+$//;
-  debug_output("Received API call: $command");
+  debug_log("Received API call: $command");
 
   my $validkey = '[a-zA-Z0-9_#:-]+';
 
@@ -33,7 +39,7 @@ sub parse_command {
   }
 
   elsif ($command =~ /^server_reconnect>$/) {
-    &event_output("API call from $childid asked for a reconnection.");
+    &event_log("API call from $childid asked for a reconnection.");
     &server_reconnect();
   }
 
@@ -126,17 +132,17 @@ sub parse_command {
   }
 
   elsif ($command =~ /^shutdown>$/) {
-    &event_output("API call from $childid asked for a shutdown.");
+    &event_log("API call from $childid asked for a shutdown.");
     exit;
   }
 
   elsif ($command =~ /^reload_config>$/) {
-    event_output("API call from $childid asked for a configuration reload.");
+    event_log("API call from $childid asked for a configuration reload.");
     &read_configuration_file(&value_get('core','home_directory') . '/configurations/' . &value_get('core','configuration_file'));
   }
 
   elsif ($command =~ /^log>($validkey)>(.+)$/) {
-    &normal_output($1,$2);
+    &normal_log($1,$2);
   }
 
   elsif ($command =~ /^event_schedule>($validkey)>(.+)$/) {
@@ -160,7 +166,7 @@ sub parse_command {
   }
 
   else {
-    &error_output("Unknown API call: $command");
+    &error_log("Unknown API call: $command");
   }
 }
 
