@@ -131,6 +131,22 @@ sub parse_command {
     &child_add($1,$2);
   }
 
+  elsif ($command =~ /^log_error>(.+)$/) {
+    &error_log($1);
+  }
+
+  elsif ($command =~ /^log_event>(.+)$/) {
+    &event_log($1);
+  }
+
+  elsif ($command =~ /^log_normal>($validkey)>(.+)$/) {
+    &normal_log($1,$2);
+  }
+
+  elsif ($command =~ /^log_debug>(.+)$/) {
+    &debug_log($1);
+  }
+
   elsif ($command =~ /^sleep>([0-9.]+)$/) {
     select(undef,undef,undef,$1);
   }
@@ -143,10 +159,6 @@ sub parse_command {
   elsif ($command =~ /^reload_config>$/) {
     event_log("API call from $childid asked for a configuration reload.");
     &read_configuration_file(&value_get('core','home_directory') . '/configurations/' . &value_get('core','configuration_file'));
-  }
-
-  elsif ($command =~ /^log>($validkey)>(.+)$/) {
-    &normal_log($1,$2);
   }
 
   elsif ($command =~ /^event_schedule>($validkey)>(.+)$/) {

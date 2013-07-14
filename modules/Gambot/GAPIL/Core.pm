@@ -53,20 +53,20 @@ our @EXPORT = qw(
   event_exists
   delay_schedule
   delay_fire
-  %dicts
-  %pid_pipes
-  %read_pipes
-  %write_pipes
+  debug_log
+  error_log
+  normal_log
+  event_log
+
+  %dictionaries
+  %children
+
   $irc_connection
   $last_received_IRC_message_time
   $last_sent_IRC_message_time
   $IRC_messages_sent_this_second
   $IRC_messages_received_this_connection
   @pending_outgoing_IRC_messages
-  debug_log
-  error_log
-  normal_log
-  event_log
 );
 our @EXPORT_OK = qw();
 
@@ -75,19 +75,25 @@ our @EXPORT_OK = qw();
 ## %events allows children to schedule GAPIL calls to be run when an event is fired
 ## %delays allows children to schedule GAPIL calls to be run a certain number of seconds in the future
 ## %autosave contains a list of all manually saved and loaded members of %dict to be autosaved at shutdown
-our %dicts;
-$dicts{'core'} = {};
-$dicts{'config'} = {};
-$dicts{'events'} = {};
-$dicts{'delay_timers'} = {};
-$dicts{'delay_events'} = {};
+our %dictionaries;
+$dictionaries{'core'} = {};
+$dictionaries{'config'} = {};
+$dictionaries{'events'} = {};
+$dictionaries{'delay_timers'} = {};
+$dictionaries{'delay_events'} = {};
 
-## %pid_pipes store the process ids of child processes
-## %read_pipes are for getting data from child processes
-## %write_pipes are for sending data to child processes
-our %pid_pipes;
-our %read_pipes;
-our %write_pipes;
+## %children is an associative array of child processes
+## %children{name}{name} will store the name of the child process
+## %children{name}{pid} will store the pid of the child process
+## %children{name}{read} is for reading data from child processes
+## %children{name}{write} is for sending data to child processes
+our %children;
+
+## Register STDIN and STDOUT as a fake child process
+$children{'terminal'}{'name'} = 'terminal';
+$children{'terminal'}{'pid'} = 1;
+$children{'terminal'}{'read'} = \*STDIN;
+$children{'terminal'}{'write'} = \*STDOUT;
 
 our $irc_connection; # The connection to the IRC server
 
@@ -114,13 +120,13 @@ sub server_reconnect {
 
 sub dict_exists {
   my $dict = shift;
-  return exists $dicts{$dict};
+  return exists $dictionaries{$dict};
 }
 
 sub dict_save {
   my $dict = shift;
   open(my $file, '>' .value_get('core','home_directory') . '/persistent/' . $dict);
-  while (my ($key, $value) = each %{$dicts{$dict}}) {
+  while (my ($key, $value) = each %{$dictionaries{$dict}}) {
     print $file "$key = \"$value\"\n";
   }
   close($file);
@@ -156,55 +162,55 @@ sub dict_save_all {
 
 sub dict_delete {
   my $dict = shift;
-  delete $dicts{$dict};
+  delete $dictionaries{$dict};
 }
 
 sub value_exists {
   my ($dict,$key) = @_;
-  return (dict_exists($dict) && exists $dicts{$dict}{$key});
+  return (dict_exists($dict) && exists $dictionaries{$dict}{$key});
 }
 
 sub value_get {
   my ($dict,$key) = @_;
-  if(value_exists($dict,$key)) { return $dicts{$dict}{$key}; }
+  if(value_exists($dict,$key)) { return $dictionaries{$dict}{$key}; }
   else { return ''; }
 }
 
 sub value_add {
   my ($dict,$key,$value) = @_;
   if(value_exists($dict,$key)) { return ''; }
-  else { $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key}; }
+  else { $dictionaries{$dict}{$key} = $value; return $dictionaries{$dict}{$key}; }
 }
 
 sub value_replace {
   my ($dict,$key,$value) = @_;
-  if(value_exists($dict,$key)) { $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key}; }
+  if(value_exists($dict,$key)) { $dictionaries{$dict}{$key} = $value; return $dictionaries{$dict}{$key}; }
   else { return ''; }
 }
 
 sub value_set {
   my ($dict,$key,$value) = @_;
-  $dicts{$dict}{$key} = $value; return $dicts{$dict}{$key};
+  $dictionaries{$dict}{$key} = $value; return $dictionaries{$dict}{$key};
 }
 
 sub value_append {
   my ($dict,$key,$value) = @_;
-  if(value_exists($dict,$key)) { $dicts{$dict}{$key} .= $value; return $dicts{$dict}{$key}; }
+  if(value_exists($dict,$key)) { $dictionaries{$dict}{$key} .= $value; return $dictionaries{$dict}{$key}; }
   else { return ''; }
 }
 
 sub value_prepend {
   my ($dict,$key,$value) = @_;
-  if(value_exists($dict,$key)) { $dicts{$dict}{$key} = $value . $dicts{$dict}{$key}; return $dicts{$dict}{$key}; }
+  if(value_exists($dict,$key)) { $dictionaries{$dict}{$key} = $value . $dictionaries{$dict}{$key}; return $dictionaries{$dict}{$key}; }
   else { return ''; }
 }
 
 sub value_increment {
   my ($dict,$key,$value) = @_;
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
-    if($dicts{$dict}{$key} =~ /^-?[0-9]+$/) { $dicts{$dict}{$key} += $value; }
-    else { $dicts{$dict}{$key} = 0; }
-    return $dicts{$dict}{$key};
+    if($dictionaries{$dict}{$key} =~ /^-?[0-9]+$/) { $dictionaries{$dict}{$key} += $value; }
+    else { $dictionaries{$dict}{$key} = 0; }
+    return $dictionaries{$dict}{$key};
   }
   else { return ''; }
 }
@@ -212,24 +218,24 @@ sub value_increment {
 sub value_decrement {
   my ($dict,$key,$value) = @_;
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
-    if($dicts{$dict}{$key} =~ /^-?[0-9]+$/) { $dicts{$dict}{$key} -= $value; }
-    else { $dicts{$dict}{$key} = 0; }
-    return $dicts{$dict}{$key};
+    if($dictionaries{$dict}{$key} =~ /^-?[0-9]+$/) { $dictionaries{$dict}{$key} -= $value; }
+    else { $dictionaries{$dict}{$key} = 0; }
+    return $dictionaries{$dict}{$key};
   }
   else { return ''; }
 }
 
 sub value_delete {
   my ($dict,$key) = @_;
-  if(value_exists($dict,$key)) { my $value = $dicts{$dict}{$key}; delete $dicts{$dict}{$key}; return $value; }
+  if(value_exists($dict,$key)) { my $value = $dictionaries{$dict}{$key}; delete $dictionaries{$dict}{$key}; return $value; }
   else { return ''; }
 }
 
 sub child_send {
   my ($childid, $message) = @_;
-  if(&child_exists($childid) && filehandle_status($read_pipes{$childid}) ne 'dead') {
+  if(&child_exists($childid) && filehandle_status($children{$childid}{'read'}) ne 'dead') {
     debug_log("Sending \"$message\" to child named $childid.");
-    my $write_pipe = $write_pipes{$childid};
+    my $write_pipe = $children{$childid}{'write'};
     print $write_pipe $message."\n";
   }
   else {
@@ -241,10 +247,8 @@ sub child_delete {
   my $childid = shift;
   if(&child_exists($childid)) {
     debug_log("Deleting child named $childid.");
-    kill 1, $pid_pipes{$childid};
-    delete $pid_pipes{$childid};
-    delete $read_pipes{$childid};
-    delete $write_pipes{$childid};
+    kill 1, $children{$childid}{'pid'};
+    delete $children{$childid};
   }
   else {
     error_log("Tried to delete child named $childid, but it doesn't exist.");
@@ -253,7 +257,7 @@ sub child_delete {
 
 sub child_exists {
   my $childid = shift;
-  return (defined $pid_pipes{$childid});
+  return (defined $children{$childid});
 }
 
 sub child_add {
@@ -263,7 +267,8 @@ sub child_add {
   }
   else {
     debug_log("Adding child named $childid with the command: $command");
-    $pid_pipes{$childid} = open2($read_pipes{$childid},$write_pipes{$childid},$command);
+    $children{$childid}{'name'} = $childid;
+    $children{$childid}{'pid'} = open2($children{$childid}{'read'},$children{$childid}{'write'},$command);
     &child_send($childid,$childid);
   }
 }

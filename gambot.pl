@@ -23,10 +23,10 @@ use FindBin;
 use lib "$FindBin::Bin/modules/";
 
 use Gambot::GAPIL::Core;
+use Gambot::GAPIL::Parse;
 use Gambot::IO;
 use Gambot::Configure;
 use Gambot::Connect;
-use Gambot::GAPIL::Parse;
 
 ####-----#----- Setup -----#-----####
 $| = 1; # Unbuffered IO
@@ -57,12 +57,7 @@ fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
 dict_load('delay_timers');
 dict_load('delay_events');
 
-## An awesome trick to register STDIN and STDOUT as children just like the message parsers and scripts
-## No extra work involved in reading STDIN now.
-$pid_pipes{'terminal'} = 1;
-$read_pipes{'terminal'} = \*STDIN;
-$write_pipes{'terminal'} = \*STDOUT;
-
+####-----#----- Main Loop -----#-----####
 while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_second')))) {
 
   ####-----#----- Read from the IRC connection -----#-----####
@@ -95,23 +90,23 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
   }
 
   ####-----#----- Read from children -----#-----####
-  while(my ($id, $pipe) = each %read_pipes) {
-    my $pipe_status = &filehandle_status($pipe);
+  foreach my $childid (keys %children) {
+    my $pipe_status = &filehandle_status($children{$childid}{'read'});
 
     ## Clean up dead children
-    if ($pipe_status eq 'dead') { child_delete($id); }
+    if ($pipe_status eq 'dead') { child_delete($childid); }
 
     ## Run responses from living children through the GAPIL parser
     elsif ($pipe_status eq 'ready') {
-      my @commands = filehandle_multiread($pipe);
+      my @commands = filehandle_multiread($children{$childid}{'read'});
       foreach my $current_command (@commands) {
-        parse_command($current_command,$id) if $current_command;
+        parse_command($current_command,$childid) if $current_command;
       }
     }
   }
 
   ####-----#----- Check delay events -----#-----####
-  while(my ($time, $array) = each %{$dicts{'delay_timers'}}) {
+  while(my ($time, $array) = each %{$dictionaries{'delay_timers'}}) {
     if(time >= $time) { delay_fire($time); }
   }
 
@@ -134,7 +129,7 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
 }
 
 END {
-  &event_log("Saving persistent dicts.");
+  &event_log("Saving persistent dictionaries.");
   &dict_save_all();
   &event_log("Shutting down.");
 }
