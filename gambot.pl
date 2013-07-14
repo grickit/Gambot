@@ -19,7 +19,6 @@ use strict;
 use warnings;
 
 use Fcntl qw(F_SETFL O_NONBLOCK);
-use Digest::MD5 qw(md5_hex);
 use FindBin;
 use lib "$FindBin::Bin/modules/";
 

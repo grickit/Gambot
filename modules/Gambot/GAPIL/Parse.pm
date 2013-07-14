@@ -22,7 +22,6 @@ use strict;
 use warnings;
 
 use Gambot::GAPIL::Core;
-use Gambot::Logging;
 
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);
