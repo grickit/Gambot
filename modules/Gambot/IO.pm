@@ -34,20 +34,22 @@ my %back_buffers;
 
 sub filehandle_status {
   no warnings 'unopened';
+
   my $pipe = shift;
-  fcntl($pipe, F_SETFL(), O_NONBLOCK());
-  my $bytes_read = sysread($pipe,my $buffer,1,0);
-  if (defined $bytes_read) {
-    if ($bytes_read == 0) {
+  fcntl($pipe, F_SETFL(), O_NONBLOCK()); # Set the pipe to nonblocking
+  my $bytes_read = sysread($pipe,my $buffer,1,0); # Attempt to read 1 byte from the pipe
+
+  if(defined $bytes_read) {
+    if($bytes_read == 0) { # Successfully read empty byte; pipe is dead
       return 'dead';
     }
-    else {
+    else { # Successfully read non-empty byte; pipe has data
       if($back_buffers{$pipe}) { $back_buffers{$pipe} .= $buffer; }
       else { $back_buffers{$pipe} = $buffer; }
       return 'ready';
     }
   }
-  else {
+  else { # Failed to read any bytes; pipe is empty
     return 'later';
   }
 }
@@ -56,15 +58,20 @@ sub filehandle_multiread {
   my ($pipe,$buffer) = (shift,'');
   fcntl($pipe,F_SETFL(),O_NONBLOCK());
 
-  if($back_buffers{$pipe}) {
+  if($back_buffers{$pipe}) { # We already have some data stored
     $buffer = $back_buffers{$pipe};
   }
 
-  while(my $bytes_read = sysread($pipe,$buffer,1024,length($buffer))) { 1; }
-  my @lines = split(/[\r\n]+/,$buffer);
+  while(my $bytes_read = sysread($pipe,$buffer,1024,length($buffer))) { 1; } # Read as much data as we can
+  my @lines = split(/[\r\n]+/,$buffer); # Split the data we read into lines
 
-  if($buffer =~ /[\r\n]+$/) { $back_buffers{$pipe} = undef; delete $back_buffers{$pipe}; }
-  else { $back_buffers{$pipe} = pop(@lines); }
+  if($buffer =~ /[\r\n]+$/) { # Clear the buffer if it ends on a complete line
+    $back_buffers{$pipe} = undef;
+    delete $back_buffers{$pipe};
+  }
+  else { # Stick and incomplete line back into the buffer
+    $back_buffers{$pipe} = pop(@lines);
+  }
 
   return @lines;
 }
