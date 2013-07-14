@@ -1,3 +1,22 @@
+# Copyright (C) 2010-2013 by Derek Hoagland <grickit@gmail.com>
+# This file is part of Gambot.
+#
+# Gambot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Gambot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
+
+### This file provides functions for child processes to read messages
+### from the Gambot core.
+
 package Gambot::GAPILChild;
 
 use strict;
@@ -22,7 +41,7 @@ sub strip_newlines {
   return '';
 }
 
-sub stdin_read { #none
+sub stdin_read {
   my $message = <STDIN>;
   return strip_newlines($message);
 }
