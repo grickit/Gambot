@@ -21,8 +21,6 @@ package Gambot::GAPILCore;
 use strict;
 use warnings;
 use IPC::Open2;
-use FindBin;
-use lib "$FindBin::Bin";
 
 use Gambot::IO;
 use Gambot::Logging;

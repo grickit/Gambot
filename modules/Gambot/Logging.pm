@@ -21,9 +21,6 @@ package Gambot::Logging;
 use strict;
 use warnings;
 
-use FindBin;
-use lib "$FindBin::Bin";
-
 use Gambot::GAPILCore;
 
 our $VERSION = 1.0;
