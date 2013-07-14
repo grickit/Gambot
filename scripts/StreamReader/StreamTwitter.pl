@@ -9,45 +9,23 @@ use lib "$FindBin::Bin/../../modules/";
 use lib "$FindBin::Bin";
 
 use JSON::JSON;
+use Gambot::GAPILChild;
 use StreamReader;
 
-sub stripNewlines { #string
-  my $string = shift;
-  if($string) {
-    $string =~ s/[\r\n\s\t]+$//;
-    return $string;
-  }
-  return '';
+my $childid = stdin_read();
+
+if(!gapil_call('dict_exists>feed_reader:subscribers',1)) {
+  gapil_call('dict_load>feed_reader:subscribers',0);
 }
 
-sub readInput { #NONE
-  my $message = <STDIN>;
-  return stripNewlines($message);
+if(!gapil_call('dict_exists>twittercredentials',1)) {
+  gapil_call('dict_load>twitter_credentials',0);
 }
 
-sub gapilCall {
-  my ($call,$returns) = @_;
-  print "$call\n";
-  if($returns) {
-    return readInput();
-  }
-  return 1;
-}
-
-my $childid = readInput();
-
-if(!gapilCall('dict_exists>feed_reader:subscribers',1)) {
-  gapilCall('dict_load>feed_reader:subscribers',0);
-}
-
-if(!gapilCall('dict_exists>twittercredentials',1)) {
-  gapilCall('dict_load>twitter_credentials',0);
-}
-
-$StreamReader::oauthConsumerKey = gapilCall('value_get>twitter_credentials>consumer_key',1);
-$StreamReader::oauthAccessKey = gapilCall('value_get>twitter_credentials>access_key',1);
-$StreamReader::oauthConsumerSecret = gapilCall('value_get>twitter_credentials>consumer_secret',1);
-$StreamReader::oauthAccessSecret = gapilCall('value_get>twitter_credentials>access_secret',1);
+$StreamReader::oauthConsumerKey = gapil_call('value_get>twitter_credentials>consumer_key',1);
+$StreamReader::oauthAccessKey = gapil_call('value_get>twitter_credentials>access_key',1);
+$StreamReader::oauthConsumerSecret = gapil_call('value_get>twitter_credentials>consumer_secret',1);
+$StreamReader::oauthAccessSecret = gapil_call('value_get>twitter_credentials>access_secret',1);
 
 my %feeds;
 $feeds{'Grickit'} =             165895839;
@@ -128,7 +106,7 @@ while (my $line = <$read_pipe>) {
     $text =~ s/^RT (@\w{1,15}): /(\x0314RT $1\x0F) /; # Color retweets
     $text =~ s/[\r\n]+/ /ig; # Remove newlines
 
-    my $subscribers = gapilCall('value_get>feed_reader:subscribers>Twitter'.$author,1);
+    my $subscribers = gapil_call('value_get>feed_reader:subscribers>Twitter'.$author,1);
     foreach my $channel (split(',',$subscribers)) {
       if($channel ne '#minecraft' || !$tweet->{'in_reply_to_user_id'} || $mojangles{$tweet->{'in_reply_to_user_id'}}) {
         print "server_send>PRIVMSG $channel :\x02Tweet\x02 (by \x0303\@$author\x0F) $text [ http://twitter.com/$author/status/$id ]\n";
