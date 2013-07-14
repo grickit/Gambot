@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 # Copyright (C) 2010-2013 by Derek Hoagland <grickit@gmail.com>
 # This file is part of Gambot.
 #
@@ -18,7 +19,6 @@
 ### from the Gambot core.
 
 package Gambot::GAPILChild;
-
 use strict;
 use warnings;
 
