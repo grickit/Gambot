@@ -24,7 +24,6 @@ use FindBin;
 use lib "$FindBin::Bin/modules/";
 
 use Gambot::GAPIL::Core;
-use Gambot::Logging;
 use Gambot::IO;
 use Gambot::Configure;
 use Gambot::Connect;
