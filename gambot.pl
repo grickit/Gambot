@@ -43,6 +43,11 @@ value_set('config','iterations_per_second',10);
 value_set('config','messages_per_second',3);
 value_set('config','ping_timeout',600);
 
+value_set('stats','last_received_IRC_message_time',time); # Used for client-side ping timeout
+value_set('stats','last_sent_IRC_message_time',time); # Used for throttling IRC messages
+value_set('stats','IRC_messages_received_this_connection',0); # Used for naming child processes
+value_set('stats','IRC_messages_sent_this_second',0); # Used for throttling IRC messages_per_second
+
 ####-----#----- Actual Work -----#-----####
 ## Parse command line arguments
 &load_switches();
@@ -69,7 +74,7 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
     else { server_reconnect(); } # Otherwise automatically reconnect
   }
 
-  elsif($irc_connection_status eq 'later' && time - $last_received_IRC_message_time >= value_get('config','ping_timeout')) {
+  elsif($irc_connection_status eq 'later' && time - value_get('stats','last_received_IRC_message_time') >= value_get('config','ping_timeout')) {
     error_log('IRC connection timed out.');
     if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
     else { server_reconnect(); } # Otherwise automatically reconnect
@@ -79,13 +84,13 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
     my @received_IRC_messages = filehandle_multiread($irc_connection,$irc_connection_status);
     foreach my $current_received_IRC_message (@received_IRC_messages) {
       normal_log('INCOMING',$current_received_IRC_message);
-      my $new_pipe_id = 'fork'.$IRC_messages_received_this_connection;
+      my $new_pipe_id = 'fork'.value_get('stats','IRC_messages_received_this_connection');
       &child_add($new_pipe_id,value_get('config','processor'));
       ## Message parsers need to know the nickname the bot is using, and the incoming message
       &child_send($new_pipe_id,value_get('core','nick'));
       &child_send($new_pipe_id,$current_received_IRC_message);
-      $IRC_messages_received_this_connection++;
-      $last_received_IRC_message_time = time;
+      value_increment('stats','IRC_messages_received_this_connection');
+      value_set('stats','last_received_IRC_message_time',time);
     }
   }
 
@@ -113,17 +118,17 @@ while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_sec
   ####-----#----- Send outgoing messages -----#-----####
   ## Are we under the throttle?
   ## Do we have pending outgoing messages?
-  while($IRC_messages_sent_this_second < value_get('config','messages_per_second') && (my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages))) {
-    debug_log("Sent $IRC_messages_sent_this_second IRC messages this second so far during ".time);
+  while(value_get('stats','IRC_messages_sent_this_second') < value_get('config','messages_per_second') && (my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages))) {
+    debug_log('Sent '.value_get('stats','IRC_messages_sent_this_second IRC messages').' this second so far during '.time);
     normal_log('OUTGOING',$current_pending_IRC_message);
     print $irc_connection $current_pending_IRC_message."\015\012";
-    $IRC_messages_sent_this_second++;
+    value_increment('stats','IRC_messages_sent_this_second');
   }
 
   ## Keep track of how many messages we've sent to the IRC server this second
-  if($last_sent_IRC_message_time != time) {
-    $IRC_messages_sent_this_second = 0;
-    $last_sent_IRC_message_time = time;
+  if(value_get('stats','last_sent_IRC_message_time') != time) {
+    value_set('stats','IRC_messages_sent_this_second',0);
+    value_set('stats','last_sent_IRC_message_time',time);
   }
 
 }

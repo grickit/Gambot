@@ -62,10 +62,6 @@ our @EXPORT = qw(
   %children
 
   $irc_connection
-  $last_received_IRC_message_time
-  $last_sent_IRC_message_time
-  $IRC_messages_sent_this_second
-  $IRC_messages_received_this_connection
   @pending_outgoing_IRC_messages
 );
 our @EXPORT_OK = qw();
@@ -81,6 +77,7 @@ $dictionaries{'config'} = {};
 $dictionaries{'events'} = {};
 $dictionaries{'delay_timers'} = {};
 $dictionaries{'delay_events'} = {};
+$dictionaries{'stats'} = {};
 
 ## %children is an associative array of child processes
 ## %children{name}{name} will store the name of the child process
@@ -96,13 +93,7 @@ $children{'terminal'}{'read'} = \*STDIN;
 $children{'terminal'}{'write'} = \*STDOUT;
 
 our $irc_connection; # The connection to the IRC server
-
-our $last_received_IRC_message_time = time; # Used for client-side ping timeout
-our $last_sent_IRC_message_time = time; # Used for throttling IRC messages
-our $IRC_messages_sent_this_second = 0; # Used for throttling IRC messages
-our $IRC_messages_received_this_connection = 0; # Used for naming child processes
 our @pending_outgoing_IRC_messages; # Used to hold messages that are being throttled
-
 
 my %autosave;
 
@@ -115,7 +106,7 @@ sub server_reconnect {
   event_log('Reconnecting.');
   $irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
   fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
-  $IRC_messages_received_this_connection = 0;
+  value_set('IRC_messages_received_this_connection') = 0;
 }
 
 sub dict_exists {
@@ -207,6 +198,8 @@ sub value_prepend {
 
 sub value_increment {
   my ($dict,$key,$value) = @_;
+  if(!$value) { $value = 1; }
+
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
     if($dictionaries{$dict}{$key} =~ /^-?[0-9]+$/) { $dictionaries{$dict}{$key} += $value; }
     else { $dictionaries{$dict}{$key} = 0; }
@@ -217,6 +210,8 @@ sub value_increment {
 
 sub value_decrement {
   my ($dict,$key,$value) = @_;
+  if(!$value) { $value = 1; }
+
   if(value_exists($dict,$key) && $value =~ /^[0-9]+$/) {
     if($dictionaries{$dict}{$key} =~ /^-?[0-9]+$/) { $dictionaries{$dict}{$key} -= $value; }
     else { $dictionaries{$dict}{$key} = 0; }
