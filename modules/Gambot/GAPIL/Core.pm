@@ -21,6 +21,7 @@ package Gambot::GAPIL::Core;
 use strict;
 use warnings;
 use IPC::Open2;
+use Digest::MD5 qw(md5_hex);
 
 use Gambot::IO;
 
