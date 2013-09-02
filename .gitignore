@@ -1,5 +1,5 @@
 .gitignore
-configurations/*.txt
+configuration/*.txt
 parsers/plugin_parser/plugins_private/*
 logs/*
 persistent/*

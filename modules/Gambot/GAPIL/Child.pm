@@ -15,42 +15,69 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-### This file provides functions making GAPIL calls to the core.
+### This file provides an object for storing and managing child
+### processes.
 
 package Gambot::GAPIL::Child;
 use strict;
 use warnings;
+use IPC::Open2;
+
+use Gambot::IO;
 
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);
-our @EXPORT = qw(
-  strip_newlines
-  stdin_read
-  gapil_call
-);
+our @EXPORT = qw();
 our @EXPORT_OK = qw();
 
-sub strip_newlines {
-  my $string = shift;
+## Constructor
+sub new {
+  my $class = shift;
+  my $self = {};
 
-  if($string) {
-    $string =~ s/[\r\n\s\t]+$//;
-    return $string;
-  }
-  return '';
+  $self->{'name'} = shift;
+  $self->{'command'} = shift;
+  $self->{'pid'} = open2($self->{'read_pipe'},$self->{'write_pipe'},$self->{'command'});
+  $self->{'status'} = 'later';
+
+  bless($self,$class);
+  return $self;
 }
 
-sub stdin_read {
-  my $message = <STDIN>;
-  return strip_newlines($message);
+sub status {
+  my($self) = @_;
+
+  $self->{'status'} = pipe_status($self->{'name'},$self->{'read_pipe'});
+  return $self->{'status'};
 }
 
-sub gapil_call {
-  my ($call,$returns) = @_;
+sub kill {
+  my($self) = @_;
 
-  print "$call\n";
-  if($returns) { return stdin_read(); }
+  close $self->{'read_pipe'};
+  close $self->{'write_pipe'};
+  kill 1, $self->{'pid'};
   return 1;
+}
+
+sub read {
+  my ($self) = @_;
+
+  my @received_messages = ();
+  $self->status();
+
+  if($self->{'status'} eq 'ready') {
+    @received_messages = pipe_multiread($self->{'name'},$self->{'read_pipe'});
+  }
+
+  return @received_messages;
+}
+
+sub send {
+  my ($self,$message) = @_;
+
+  my $write_pipe = $self->{'write_pipe'};
+  print $write_pipe $message."\n";
 }
 
 1;

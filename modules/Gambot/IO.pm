@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-### This file handles read/write operations on filehandles.
+### This provides functions for handling read/write operations
+### on filehandles.
 
 package Gambot::IO;
 use strict;
@@ -25,52 +26,55 @@ use Fcntl qw(F_SETFL O_NONBLOCK);
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);
 our @EXPORT = qw(
-  filehandle_status
-  filehandle_multiread
+  pipe_status
+  pipe_multiread
 );
 our @EXPORT_OK = qw();
 
 my %back_buffers;
 
-sub filehandle_status {
+sub pipe_status {
   no warnings 'unopened';
-
-  my $pipe = shift;
+  my($name,$pipe) = @_;
+  my $buffer = '';
   fcntl($pipe, F_SETFL(), O_NONBLOCK()); # Set the pipe to nonblocking
-  my $bytes_read = sysread($pipe,my $buffer,1,0); # Attempt to read 1 byte from the pipe
+
+  my $bytes_read = sysread($pipe,$buffer,1,0); # Attempt to read 1 byte from the pipe
 
   if(defined $bytes_read) {
     if($bytes_read == 0) { # Successfully read empty byte; pipe is dead
       return 'dead';
     }
     else { # Successfully read non-empty byte; pipe has data
-      if($back_buffers{$pipe}) { $back_buffers{$pipe} .= $buffer; }
-      else { $back_buffers{$pipe} = $buffer; }
+      if($back_buffers{$name}) { $back_buffers{$name} .= $buffer; }
+      else { $back_buffers{$name} = $buffer; }
       return 'ready';
     }
   }
-  else { # Failed to read any bytes; pipe is empty
-    return 'later';
-  }
+
+  # Failed to read any bytes; pipe is empty
+  return 'later';
 }
 
-sub filehandle_multiread {
-  my ($pipe,$buffer) = (shift,'');
-  fcntl($pipe,F_SETFL(),O_NONBLOCK());
+sub pipe_multiread {
+  my ($name,$pipe) = @_;
+  my $buffer = '';
+  fcntl($pipe,F_SETFL(),O_NONBLOCK()); # Set the pipe to nonblocking
 
-  if($back_buffers{$pipe}) { # We already have some data stored
-    $buffer = $back_buffers{$pipe};
+  if($back_buffers{$name}) { # We already have some data stored
+    $buffer = $back_buffers{$name};
   }
 
   while(my $bytes_read = sysread($pipe,$buffer,1024,length($buffer))) { 1; } # Read as much data as we can
+
   my @lines = split(/[\r\n]+/,$buffer); # Split the data we read into lines
 
   if($buffer =~ /[\r\n]+$/) { # Clear the buffer if it ends on a complete line
-    $back_buffers{$pipe} = undef;
-    delete $back_buffers{$pipe};
+    $back_buffers{$name} = undef;
+    delete $back_buffers{$name};
   }
   else { # Stick and incomplete line back into the buffer
-    $back_buffers{$pipe} = pop(@lines);
+    $back_buffers{$name} = pop(@lines);
   }
 
   return @lines;

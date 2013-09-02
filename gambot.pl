@@ -22,11 +22,13 @@ use Fcntl qw(F_SETFL O_NONBLOCK);
 use FindBin;
 use lib "$FindBin::Bin/modules/";
 
-use Gambot::GAPIL::Core;
-use Gambot::GAPIL::Parse;
 use Gambot::IO;
-use Gambot::Configure;
-use Gambot::Connect;
+use Gambot::ServerIRC;
+use Gambot::LoggerBasic;
+use Gambot::GAPIL::CommandCore;
+use Gambot::GAPIL::CommandParser;
+use Gambot::GAPIL::Dictionary;
+
 
 ####-----#----- Setup -----#-----####
 $| = 1; # Unbuffered IO
@@ -35,106 +37,185 @@ $SIG{INT} = sub { exit; }; # Exit gracefully and save data on SIGINT
 $SIG{HUP} = sub { exit; }; # Exit gracefully and save data on SIGHUP
 $SIG{TERM} = sub { exit; }; # Exit gracefully and save data on SIGTERM
 
-## Set some default values necessary for the bot to function.
-## Any of these might be overwritten by the config file or command line arguments.
-value_set('core','home_directory',$FindBin::Bin);
-value_set('core','configuration_file','config.txt');
-value_set('config','iterations_per_second',10);
-value_set('config','messages_per_second',3);
-value_set('config','ping_timeout',600);
+my $core = new Gambot::GAPIL::CommandCore();
 
-value_set('stats','last_received_IRC_message_time',time); # Used for client-side ping timeout
-value_set('stats','last_sent_IRC_message_time',time); # Used for throttling IRC messages
-value_set('stats','IRC_messages_received_this_connection',0); # Used for naming child processes
-value_set('stats','IRC_messages_sent_this_second',0); # Used for throttling IRC messages_per_second
 
-####-----#----- Actual Work -----#-----####
-## Parse command line arguments
-&load_switches();
-## Load the config file
-&read_configuration_file(value_get('core','home_directory') . '/configurations/' . value_get('core','configuration_file'));
-value_set('core','nick',value_get('config','base_nick'));
-$irc_connection = &create_socket_connection(value_get('config','server'),value_get('config','port'),value_get('core','nick'),value_get('config','password'));
-fcntl(\*STDIN, F_SETFL(), O_NONBLOCK());
-fcntl($irc_connection, F_SETFL(), O_NONBLOCK());
+# Set up the logger
+my $logger = new Gambot::LoggerBasic($core);
+$core->{'logger'} = $logger;
+$core->log_event('Basic logging online.');
 
-## Load any delayed events
-dict_load('delay_timers');
-dict_load('delay_events');
+
+# Set up the parser
+my $parser = new Gambot::GAPIL::CommandParser($core);
+$core->{'parser'} = $parser;
+$core->log_event('GAPIL parser online.');
+
+
+# Set up the irc server
+my $ircserver = new Gambot::ServerIRC($core);
+$core->{'ircserver'} = $ircserver;
+$core->log_event('IRC online.');
+
+
+# Ugly hack to register the terminal as a pseudo child process
+$core->child_add('terminal','ls');
+$core->{'children'}->{'terminal'}->kill();
+$core->{'children'}->{'terminal'}->{'read_pipe'} = \*STDIN;
+$core->{'children'}->{'terminal'}->{'write_pipe'} = \*STDOUT;
+$core->log_event('Terminal pseudo child online.');
+
+
+# Load command line arguments
+for (my $current_arg = 0; $current_arg < @ARGV; $current_arg++) {
+  my $current_arg_value = $ARGV[$current_arg];
+
+  if($current_arg_value eq '-v' || $current_arg_value eq '--verbose') {
+    $core->value_set('core','verbose',1);
+  }
+
+  elsif($current_arg_value eq '--debug') {
+    $core->value_set('core','debug',1);
+  }
+
+  elsif($current_arg_value eq '--unlogged') {
+    $core->value_set('core','unlogged',1);
+  }
+
+  elsif($current_arg_value eq '--staydead') {
+    $core->value_set('core','staydead',1);
+  }
+
+  elsif($current_arg_value eq '--config') {
+    $current_arg++;
+    $core->value_set('core','configuration_file',$ARGV[$current_arg]);
+  }
+
+  elsif($current_arg_value eq '-h' || $current_arg_value eq '--help') {
+    print "Usage: perl Gambot.pl [OPTION]...\n";
+    print "A flexible IRC bot framework that can be updated and fixed while running.\n\n";
+    print "-v, --verbose        Prints all messages to the terminal.\n";
+    print "                     perl gambot.pl --verbose\n\n";
+    print "--debug              Enables debug message logging\n";
+    print "                     perl gambot.pl --debug\n\n";
+    print "--unlogged           Disables logging of messages to files.\n";
+    print "                     perl gambot.pl --unlogged\n\n";
+    print "--config             The argument after this specifies the configuration file to use.\n";
+    print "                     These are stored in \$script_location/configuration/\n";
+    print "                     Only give a file name. Not a path.\n";
+    print "                     perl gambot.pl --config foo.txt\n\n";
+    print "--staydead           The bot will not automatically reconnect.\n";
+    print "                     perl gambot.pl --staydead\n\n";
+    print "-h, --help           Displays this help.\n";
+    print "                     perl gambot.pl --help\n\n";
+    print "Ordinarily Gambot will not print much output to the terminal, but will log everything to files.\n";
+    print "\$script_location/configuration/config.txt is the default configuration file.\n\n";
+    print "For more help, try our IRC channel: ##Gambot at chat.freenode.net\n";
+    print "<http://webchat.freenode.net/?channels=\%23\%23Gambot>\n";
+    exec('true');
+  }
+}
+$core->log_event('Command line switches loaded.');
+
+
+# Set up default core values
+$core->value_add('core','home_directory',$FindBin::Bin); # Default location to store files
+$core->value_add('core','configuration_file','config.txt'); # Default name for the bot config file
+$core->value_add('core','nick','aGambot');
+$core->log_event('Default core values set.');
+
+
+# Load the config file
+my $config = new Gambot::GAPIL::Dictionary($core,'config');
+$config->load($core->value_get('core','home_directory').'/configuration/'.$core->value_get('core','configuration_file'));
+$core->{'dictionaries'}->{'config'} = $config;
+$core->value_set('core','nick',$core->value_get('config','base_nick'));
+$core->log_event('Config file loaded.');
+
+
+# Set up default config values
+$core->value_add('config','server','chat.freenode.net');
+$core->value_add('config','port',6667);
+$core->value_add('config','base_nick','aGambot');
+$core->value_add('config','password','');
+$core->value_add('config','log_directory',$core->value_get('config','home_directory'));
+$core->value_add('config','irc_parser','perl '.$core->value_get('config','home_directory').'/parsers/plugin_parser/example.pl');
+$core->value_add('config','iterations_per_second',10); # Default max number of times to run the main loop per second
+$core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
+$core->value_add('config','ping_timeout',600); # Default max number of seconds between received IRC messages
+$core->value_add('config','key_characters','A-Za-z0-9{}_|\-:'); # Default allowed characters for stored values and such
+$core->log_event('Default config values set.');
+
+
+# Set up default IRC stats
+$core->value_add('ircserver','last_received_IRC_message_time',time); # Used for client-side ping timeout
+$core->value_add('ircserver','last_sent_IRC_message_time',time); # Used for throttling IRC messages
+$core->value_add('ircserver','IRC_messages_received_this_connection',0); # Used for naming child processes
+$core->value_add('ircserver','IRC_messages_sent_this_second',0); # Used for throttling IRC messages
+$core->log_event('Default IRC stats set.');
+
+
+$core->value_add('core','setup_complete',1);
+$core->log_event('Setup complete.');
+
+$ircserver->connect();
 
 ####-----#----- Main Loop -----#-----####
-while(defined select(undef,undef,undef,(1/value_get('config','iterations_per_second')))) {
+while(defined select(undef,undef,undef,(1/$core->value_get('config','iterations_per_second')))) {
 
-  ####-----#----- Read from the IRC connection -----#-----####
-  my $irc_connection_status = &filehandle_status($irc_connection);
+  ####-----#----- Read from the IRC server -----#-----####
+  foreach my $current_received_message ($core->{'ircserver'}->read()) {
+    $core->log_normal('INCOMING',$current_received_message);
 
-  if ($irc_connection_status eq 'dead') {
-    error_log('IRC connection died.');
-    if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
-    else { server_reconnect(); } # Otherwise automatically reconnect
+    my $name = 'fork'.$core->value_get('ircserver','IRC_messages_received_this_connection');
+    $core->child_add($name,$core->value_get('config','irc_parser'));
+    ## Message parsers need to know the nickname the bot is using, and the incoming message
+    $core->child_send($name,$core->value_get('core','nick'));
+    $core->child_send($name,$current_received_message);
+    $core->value_increment('ircserver','IRC_messages_received_this_connection',1);
+    $core->value_set('ircserver','last_received_IRC_message_time',time);
   }
 
-  elsif($irc_connection_status eq 'later' && time - value_get('stats','last_received_IRC_message_time') >= value_get('config','ping_timeout')) {
-    error_log('IRC connection timed out.');
-    if(&value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
-    else { server_reconnect(); } # Otherwise automatically reconnect
-  }
-
-  elsif ($irc_connection_status eq 'ready') {
-    my @received_IRC_messages = filehandle_multiread($irc_connection,$irc_connection_status);
-    foreach my $current_received_IRC_message (@received_IRC_messages) {
-      normal_log('INCOMING',$current_received_IRC_message);
-      my $new_pipe_id = 'fork'.value_get('stats','IRC_messages_received_this_connection');
-      &child_add($new_pipe_id,value_get('config','processor'));
-      ## Message parsers need to know the nickname the bot is using, and the incoming message
-      &child_send($new_pipe_id,value_get('core','nick'));
-      &child_send($new_pipe_id,$current_received_IRC_message);
-      value_increment('stats','IRC_messages_received_this_connection');
-      value_set('stats','last_received_IRC_message_time',time);
-    }
-  }
 
   ####-----#----- Read from children -----#-----####
-  foreach my $childid (keys %children) {
-    my $pipe_status = &filehandle_status($children{$childid}{'read'});
+  foreach my $name ($core->child_list()) {
+    my $status = $core->child_status($name);
 
     ## Clean up dead children
-    if ($pipe_status eq 'dead') { child_delete($childid); }
+    if($status eq 'dead') { $core->child_delete($name); }
 
     ## Run responses from living children through the GAPIL parser
-    elsif ($pipe_status eq 'ready') {
-      my @commands = filehandle_multiread($children{$childid}{'read'});
-      foreach my $current_command (@commands) {
-        parse_command($current_command,$childid) if $current_command;
+    elsif($status eq 'ready') {
+      foreach my $current_received_message ($core->child_read($name)) {
+        if($current_received_message) {
+          $logger->log_debug($name.': '.$current_received_message);
+          $core->{'parser'}->parse_message($name,$current_received_message);
+        }
       }
     }
   }
 
-  ####-----#----- Check delay events -----#-----####
-  while(my ($time, $array) = each %{$dictionaries{'delay_timers'}}) {
-    if(time >= $time) { delay_fire($time); }
+  ####-----#----- Read from delays -----#-----####
+  foreach my $timestamp ($core->delay_list()) {
+    if($timestamp <= time) {
+      $core->delay_fire($timestamp);
+    }
   }
 
-  ####-----#----- Send outgoing messages -----#-----####
-  ## Are we under the throttle?
-  ## Do we have pending outgoing messages?
-  while(value_get('stats','IRC_messages_sent_this_second') < value_get('config','messages_per_second') && (my $current_pending_IRC_message = shift(@pending_outgoing_IRC_messages))) {
-    debug_log('Sent '.value_get('stats','IRC_messages_sent_this_second IRC messages').' this second so far during '.time);
-    normal_log('OUTGOING',$current_pending_IRC_message);
-    print $irc_connection $current_pending_IRC_message."\015\012";
-    value_increment('stats','IRC_messages_sent_this_second');
-  }
-
-  ## Keep track of how many messages we've sent to the IRC server this second
-  if(value_get('stats','last_sent_IRC_message_time') != time) {
-    value_set('stats','IRC_messages_sent_this_second',0);
-    value_set('stats','last_sent_IRC_message_time',time);
-  }
+  ####-----#----- Send to the IRC server -----#-----####
+  $core->{'ircserver'}->spool();
 
 }
 
 END {
-  &event_log("Saving persistent dictionaries.");
-  &dict_save_all();
-  &event_log("Shutting down.");
+  $core->log_event('Saving persistent dictionaries.');
+  my @dictionaries = $core->dictionary_list();
+  foreach my $current_dictionary (@dictionaries) {
+    if($core->value_get($current_dictionary,'autosave')) {
+      $core->dictionary_save($current_dictionary);
+    }
+  }
+  $core->log_event('Shutting down.');
 }
+
+
