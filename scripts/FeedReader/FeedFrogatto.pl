@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use FindBin;
 use lib $FindBin::Bin;
-use feed_reader;
+use FeedReader;
 
 my $link_regex = qr!\n<id>(.+)</id>\n!;
 my $item_id_regex = qr!\n<id>http://www.frogatto.com/forum/index.php\?topic=[0-9]+.msg([0-9]+)#msg[0-9]+</id>\n!;
@@ -27,11 +27,10 @@ push(@feed_array, '6'); #Translations
 
 push(@feed_array, '5'); #Off-Topic
 
-start_read($data_site);
 foreach my $current_feed (@feed_array) {
   my @subscribers_array = get_subscribers($data_site,$current_feed);
   my $current_feed_url = "http://www.frogatto.com/forum/index.php?action=.xml&board=$current_feed".".0&type=atom";
-  my @entries_array = &url_to_entries($current_feed_url,'<entry>','</entry>');
+  my @entries_array = url_to_entries($current_feed_url,'<entry>','</entry>');
 
   foreach my $i (1..scalar(@entries_array)) {
     my $current_entry = $entries_array[-$i];
@@ -42,12 +41,11 @@ foreach my $current_feed (@feed_array) {
     my $data_date = "$2-$3-$1";
     my $data_time = "$4:$5";
 
-    if(&check_new($data_site,$current_feed,$item_id)) {
-      &commit_entry($data_site,$current_feed,$item_id);
+    if(check_new($data_site,$current_feed,$item_id)) {
+      commit_entry($data_site,$current_feed,$item_id);
       foreach my $current_subscriber (@subscribers_array) {
-        print "send_server_message>PRIVMSG $current_subscriber :\x02Frogatto Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]\n";
+        $FeedReader::core->server_send("PRIVMSG $current_subscriber :\x02Frogatto Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]");
       }
     }
   }
 }
-end_read($data_site);
