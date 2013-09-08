@@ -108,7 +108,7 @@ sub log_event() {
 sub log_normal() {
   my ($self,$prefix,$message) = @_;
 
-  return gapil_call('log_normal>'.prefix.'>'.$message);
+  return gapil_call('log_normal>'.$prefix.'>'.$message);
 }
 
 sub log_debug() {
