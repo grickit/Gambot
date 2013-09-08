@@ -1,38 +1,39 @@
 #!/usr/bin/perl -I/usr/share/perl5/ -I/usr/lib/perl5/
+
+package FeedReader;
 use strict;
 use warnings;
 use LWP::UserAgent;
 use HTML::Entities;
-use Benchmark;
+use lib "$FindBin::Bin/../../modules/";
+use Gambot::GAPIL::CommandChild;
+
+our $VERSION = 1.0;
+our @ISA = qw(Exporter);
+our @EXPORT = qw(
+  url_to_entries
+  shorten_url
+  entry_to_data
+  check_new
+  commit_entry
+  get_subscribers
+);
+our @EXPORT_OK = qw(
+  $core
+  $childName
+);
 
 $| = 1;
 binmode STDOUT, ":utf8";
 
-my ($pipeid,$time_start,$time_end,%last_reported);
+our $childName = stdin_read();
+our $core = new Gambot::GAPIL::CommandChild();
+my %last_reported;
 
-sub start_read {
-  $pipeid = <STDIN>;
-  $time_start = Benchmark->new();
-  my $loaded = get_from_core('dict_exists>feed_reader:subscribers');
-  if(!$loaded || $loaded eq '') {
-    print "dict_load>feed_reader:subscribers\n";
-    print "dict_load>feed_reader:last_reported\n";
-  }
-  print "log>FEEDREAD>$_[0] beginning\n";
-}
-
-sub end_read {
-  $time_end = Benchmark->new();
-  my $time_difference = timestr(timediff($time_end,$time_start));
-  print "log>FEEDREAD>$_[0] finished. $time_difference\n";
-}
-
-sub get_from_core {
-  print "$_[0]\n";
-  my $response = <STDIN>;
-  $response =~ s/[\r\n]+//g;
-  return $response;
-}
+if(!$core->dictionary_exists('feed_reader:subscribers')) { $core->dictionary_load('feed_reader:subscribers'); }
+if(!$core->dictionary_exists('feed_reader:last_reported')) { $core->dictionary_load('feed_reader:last_reported'); }
+$core->log_normal('FEEDREAD',"$childName beginning.");
+$core->event_subscribe("child_deleted:$childName","log_normal>FEEDREAD>$childName ended.");
 
 sub url_to_entries {
   my ($url, $container_start, $container_end) = @_;
@@ -86,13 +87,9 @@ sub shorten_url {
   my $content = $response->decoded_content;
   $content =~ s/[\r\n]*//;
 
-  if ($content =~ /^http/) {
-    return $content;
-  }
-  else {
-    print "$content\n";
-    return $original_url;
-  }
+  if($content =~ /^http/) { return $content; }
+
+  return $original_url;
 }
 
 sub entry_to_data {
@@ -128,23 +125,27 @@ sub entry_to_data {
 sub check_new {
   my ($site_name,$feed_id,$item_id) = @_;
   my $subscription_name = $site_name.$feed_id;
-  if(!$last_reported{$subscription_name}) { $last_reported{$subscription_name} = get_from_core("value_get>feed_reader:last_reported>$subscription_name"); }
+
+  if(!$last_reported{$subscription_name}) { $last_reported{$subscription_name} = $core->value_get('feed_reader:last_reported',$subscription_name); }
   if(!$last_reported{$subscription_name} || $item_id > $last_reported{$subscription_name}) { return 1; }
-  else { return 0; }
+
+  return '';
 }
 
 sub commit_entry {
   my ($site_name,$feed_id,$item_id) = @_;
   my $subscription_name = $site_name.$feed_id;
-  print "value_set>feed_reader:last_reported>$subscription_name>$item_id\n";
+
+  $core->value_set('feed_reader:last_reported',$subscription_name,$item_id);
   $last_reported{$subscription_name} = $item_id;
 }
 
 sub get_subscribers {
   my ($site_name,$feed_id) = @_;
-
   my $subscription_name = $site_name.$feed_id;
-  my $subscriber_list = get_from_core("value_get>feed_reader:subscribers>$subscription_name\n");
+
+  my $subscriber_list = $core->value_get('feed_reader:subscribers',$subscription_name);
   return split(',',$subscriber_list);
 }
+
 1;
