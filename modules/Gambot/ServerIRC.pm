@@ -105,7 +105,7 @@ sub read {
 
   ## irc connection timed out
   elsif($status eq 'later' && time - $self->{'core'}->value_get('ircserver','last_received_IRC_message_time') >= $self->{'core'}->value_get('config','ping_timeout')) {
-    $self->{'core'}->log('IRC connection timed out.');
+    $self->{'core'}->log_error('IRC connection timed out.');
 
     if($self->{'core'}->value_get('core','staydead')) { exit; } # Exit if the bot was started with --staydead
     else { # Otherwise automatically reconnect
