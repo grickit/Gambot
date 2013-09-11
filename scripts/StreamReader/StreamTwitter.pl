@@ -109,7 +109,7 @@ while (my $line = <$read_pipe>) {
     my $subscribers = $core->value_get('feed_reader:subscribers',"Twitter$author");
     foreach my $channel (split(',',$subscribers)) {
       if($channel ne '#minecraft' || !$tweet->{'in_reply_to_user_id'} || $mojangles{$tweet->{'in_reply_to_user_id'}}) {
-        $core->server_send("PRIVMSG $channel :\x02Tweet\x02 (by \x0303\@$author\x0F) $text [ http://twitter.com/$author/status/$id ]");
+        $core->server_send("PRIVMSG $channel :\x02Tweet\x02 (by \x0303\@$author\x0F) $text [ https://twitter.com/$author/status/$id ]");
       }
     }
   }
