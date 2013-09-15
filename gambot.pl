@@ -51,6 +51,7 @@ my $parser = new Gambot::GAPIL::CommandParser($core);
 $core->{'parser'} = $parser;
 $core->log_event('GAPIL parser online.');
 
+
 # Load command line arguments
 for (my $current_arg = 0; $current_arg < @ARGV; $current_arg++) {
   my $current_arg_value = $ARGV[$current_arg];
@@ -110,7 +111,7 @@ $core->log_event('IRC online.');
 
 
 # Ugly hack to register the terminal as a pseudo child process
-$core->child_add('terminal','ls');
+$core->child_add('terminal','cat');
 $core->{'children'}->{'terminal'}->kill();
 $core->{'children'}->{'terminal'}->{'read_pipe'} = \*STDIN;
 $core->{'children'}->{'terminal'}->{'write_pipe'} = \*STDOUT;
