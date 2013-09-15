@@ -15,7 +15,7 @@ if($core->child_exists('feed_unknown-horizons')) { $core->child_delete('feed_unk
 if($core->child_exists('feed_wesnoth')) { $core->child_delete('feed_wesnoth'); }
 if($core->child_exists('feed_tribalhero')) { $core->child_delete('feed_tribalhero'); }
 
-$core->child_add('feed_frogatto',"perl $FindBin::RealBin/FeedReader/FeedFrogato.pl");
+$core->child_add('feed_frogatto',"perl $FindBin::RealBin/FeedReader/FeedFrogatto.pl");
 $core->child_add('feed_unknownhorizons',"perl $FindBin::RealBin/FeedReader/FeedUnknownHorizons.pl");
 $core->child_add('feed_wesnoth',"perl $FindBin::RealBin/FeedReader/FeedWesnoth.pl");
 $core->child_add('feed_tribalhero',"perl $FindBin::RealBin/FeedReader/FeedTribalHero.pl");
