@@ -21,4 +21,4 @@ $core->child_add('feed_wesnoth',"perl $FindBin::RealBin/FeedReader/FeedWesnoth.p
 $core->child_add('feed_tribalhero',"perl $FindBin::RealBin/FeedReader/FeedTribalHero.pl");
 
 ## Start this script again in 10 minutes
-$core->delay_subscribe('600',"perl $FindBin::RealBin/feed_timer.pl");
+$core->delay_subscribe('600',"child_add>$childName>perl $FindBin::RealBin/feed_timer.pl");
