@@ -1,4 +1,4 @@
-if ($message =~ /^ACTION ([a-zA-Z]+) $botName$/i) {
+if ($message =~ /^ACTION ([a-zA-Z]+) $botName\s*$/i) {
   if ($1 =~ /^kicks$/i) {
     actOut('ACTION',$target,"kicks $sender");
   }
