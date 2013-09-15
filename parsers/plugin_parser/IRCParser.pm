@@ -4,21 +4,21 @@ use strict;
 use warnings;
 use FindBin;
 use lib $FindBin::Bin;
-use Exporter;
-use base 'Exporter';
+use lib "$FindBin::Bin/../../modules/";
+use Gambot::GAPIL::CommandChild;
 
+our $VERSION = 1.0;
+our @ISA = qw(Exporter);
 our @EXPORT = qw(
   beginParsing
-  stripNewlines
-  readInput
   actOut
   authCheck
   authError
   parseMessage
   runPlugin
 );
-
 our @EXPORT_OK = qw(
+  $core
   $nickCharacters
   $serverCharacters
   $channelCharacters
@@ -47,6 +47,7 @@ our @EXPORT_OK = qw(
   $sentOutput
 );
 
+our $core = new Gambot::GAPIL::CommandChild();
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
 our $serverCharacters = 'a-zA-Z0-9\.';
 our $channelCharacters = '#A-Za-z0-9[\]\\`_^{}|-';
@@ -57,48 +58,63 @@ our $validHostmask = '(['.$hostmaskCharacters.']+)';
 our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
 our $validServerSender = '(['.$serverCharacters.']+)';
 
-our $pipeID = readInput();
-our $botName = readInput();
-our $incomingMessage = readInput();
+our $pipeID = stdin_read();
+our $botName = stdin_read();
+our $incomingMessage = stdin_read();
 
 our($sender,$account,$hostname,$command,$target,$message,$event,$receiver) = parseMessage($incomingMessage);
 
 our $sl = $botName.'[;,]';
 our $cm = '!';
-our $version = 'Gambot Core MK III | Plugin Parser 6 | <http://grickit.github.com/>';
+our $version = 'Gambot Core MK IV | Plugin Parser 7 | <http://grickit.github.com/>';
 our $about = 'I am a basic Gambot. <http://grickit.github.com/> <irc://chat.freenode.net/%23%23Gambot>';
 our $sentOutput = 0;
 
 our %permissions;
 
-sub stripNewlines { #string
-  my $string = shift;
-  if($string) {
-    $string =~ s/[\r\n\s\t]+$//;
-    return $string;
-  }
-  return '';
-}
-
-sub readInput { #NONE
-  my $message = <STDIN>;
-  return stripNewlines($message);
-}
-
 sub actOut { #action,target,message
   my @args = @_;
-  foreach my $i (0..$#args) { $args[$i] = stripNewlines($args[$i]); }
+  foreach my $i (0..$#args) { $args[$i] = strip_newlines($args[$i]); }
 
-  if($_[0] eq 'MESSAGE')    { print "server_send>PRIVMSG $args[1] :$args[2]\n"; $sentOutput = 1;}
-  elsif($_[0] eq 'ACTION')  { print "server_send>PRIVMSG $args[1] :ACTION $args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'NOTICE')  { print "server_send>NOTICE $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'JOIN')    { print "server_send>JOIN $args[1]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'PART')    { print "server_send>PART $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'KICK')    { print "server_send>KICK $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'INVITE')  { print "server_send>INVITE $args[1] :$args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'MODE')    { print "server_send>MODE $args[1] $args[2]\n"; $sentOutput = 1; }
-  elsif($_[0] eq 'LITERAL') { print "$args[2]\n"; }
-  else { print "log>ACTERROR>Unrecognized action: $args[1]"; return ''; }
+  if($_[0] eq 'MESSAGE') {
+    $core->server_send("PRIVMSG $args[1] :$args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'ACTION') {
+    $core->server_send("PRIVMSG $args[1] :ACTION $args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'NOTICE') {
+    $core->server_send("NOTICE $args[1] :$args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'JOIN') {
+    $core->server_send("JOIN $args[1]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'PART') {
+    $core->server_send("PART $args[1] :$args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'KICK') {
+    $core->server_send("KICK $args[1] :$args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'INVITE') {
+    $core->server_send("INVITE $args[1] :$args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'MODE') {
+    $core->server_send("MODE $args[1] $args[2]");
+    $sentOutput = 1;
+  }
+  elsif($_[0] eq 'LITERAL') {
+    print "$args[2]\n";
+  }
+  else {
+    $core->log_normal('ACTERROR',"Unrecognized action: $args[1]");
+    return '';
+  }
   return 1;
 }
 
