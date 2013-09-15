@@ -275,7 +275,9 @@ sub child_add {
     $self->log_debug("Adding child named $name with the command: \"$command\"");
     $self->{'children'}{$name} = new Gambot::GAPIL::Child($name,$command);
     $self->child_send($name,$name);
-    $self->event_fire('child_added:'.$name);
+    if($self->event_exists('child_added:'.$name)) {
+      $self->event_fire('child_added:'.$name);
+    }
     return 1;
   }
   else {
@@ -291,7 +293,9 @@ sub child_delete {
     $self->log_debug("Deleting child named $name.");
     $self->{'children'}{$name}->kill();
     delete $self->{'children'}{$name};
-    $self->event_fire('child_deleted:'.$name);
+    if($self->event_exists('child_deleted:'.$name)) {
+      $self->event_fire('child_deleted:'.$name);
+    }
     return 1;
   }
   else {
