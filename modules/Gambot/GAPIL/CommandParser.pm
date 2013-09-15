@@ -65,7 +65,7 @@ sub parse_message {
     $result = $self->{'core'}->log_event($1);
   }
 
-  elsif($message =~ /^log_error>$validKey>(.+)$/) {
+  elsif($message =~ /^log_normal>$validKey>(.+)$/) {
     $result = $self->{'core'}->log_normal($1,$2);
   }
 
