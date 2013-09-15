@@ -143,7 +143,7 @@ $core->value_add('config','irc_parser','perl '.$core->value_get('config','home_d
 $core->value_add('config','iterations_per_second',10); # Default max number of times to run the main loop per second
 $core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
 $core->value_add('config','ping_timeout',600); # Default max number of seconds between received IRC messages
-$core->value_add('config','key_characters','A-Za-z0-9{}_|\-:'); # Default allowed characters for stored values and such
+$core->value_add('config','key_characters','A-Za-z0-9_:.#|`[\]{}()\\/\^\-'); # Default allowed characters for stored values and such
 $core->log_event('Default config values set.');
 
 
