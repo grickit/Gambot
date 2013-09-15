@@ -39,7 +39,7 @@ $feeds{'shikadilord'} =         165991694;
 $feeds{'StatusMinecraft'} =     901296078;
 $feeds{'kairibot'} =            369296792;
 $feeds{'_grum'} =               432311300;
-$feeds{'notch'} =               63485337;
+$feeds{'frogatto'} =            162971133;
 
 my %mojangles;
 $mojangles{'716689700'} = 'PoiPoiChen';
