@@ -16,9 +16,9 @@ our @EXPORT = qw(
   authError
   parseMessage
   runPlugin
+  $core
 );
 our @EXPORT_OK = qw(
-  $core
   $nickCharacters
   $serverCharacters
   $channelCharacters
