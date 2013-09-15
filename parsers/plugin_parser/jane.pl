@@ -48,7 +48,6 @@ if($IRCParser::pipeID eq 'fork10') {
   if($IRCParser::botName =~ /^janebot/) {
     actOut('JOIN','#wesnoth',undef);
     actOut('JOIN','#wesnoth-dev',undef);
-    actOut('JOIN','#wesnoth-offtopic',undef);
     actOut('JOIN','##shadowm',undef);
     actOut('JOIN','#merc',undef);
     actOut('JOIN','#frogatto',undef);
@@ -56,9 +55,8 @@ if($IRCParser::pipeID eq 'fork10') {
     actOut('JOIN','#unknown-horizons',undef);
     actOut('JOIN','#minecraft',undef);
     actOut('JOIN','#tribalhero',undef);
-    actOut('LITERAL',undef,'child_add>feed_timer>perl /home/gambit/source/Gambot/scripts/gambot_timer.pl');
-    actOut('LITERAL',undef,'child_add>uh_timer>perl /home/gambit/source/Gambot/scripts/uhmeeting.pl');
-    actOut('LITERAL',undef,'dict_load>hostnames');
+    actOut('LITERAL',undef,'child_add>feed_timer>perl /home/gambit/source/Gambot/scripts/feed_timer.pl');
+    actOut('LITERAL',undef,'child_add>uh_meeting>perl /home/gambit/source/Gambot/scripts/uh_meeting.pl');
   }
 }
 
@@ -82,7 +80,6 @@ sub on_public_message {
   runPlugin("$FindBin::Bin/plugins/staff/quiet.pm");
   runPlugin("$FindBin::Bin/plugins/staff/kick.pm");
   runPlugin("$FindBin::Bin/plugins/staff/ban.pm");
-  runPlugin("$FindBin::Bin/plugins/staff/masktrack.pm");
 
   runPlugin("$FindBin::Bin/plugins/conversation/ed-block.pm");
   runPlugin("$FindBin::Bin/plugins/conversation/memes.pm");
