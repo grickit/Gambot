@@ -138,8 +138,8 @@ $core->value_add('config','server','chat.freenode.net');
 $core->value_add('config','port',6667);
 $core->value_add('config','base_nick','aGambot');
 $core->value_add('config','password','');
-$core->value_add('config','log_directory',$core->value_get('config','home_directory'));
-$core->value_add('config','irc_parser','perl '.$core->value_get('config','home_directory').'/parsers/plugin_parser/example.pl');
+$core->value_add('config','log_directory',$core->value_get('core','home_directory'));
+$core->value_add('config','irc_parser','perl '.$core->value_get('core','home_directory').'/parsers/plugin_parser/example.pl');
 $core->value_add('config','iterations_per_second',10); # Default max number of times to run the main loop per second
 $core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
 $core->value_add('config','ping_timeout',600); # Default max number of seconds between received IRC messages
