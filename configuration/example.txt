@@ -18,6 +18,6 @@
     # Where to store logs?
     log_directory = "/home/username/source/Gambot/logs/"
     # What command to run when a new message is received
-    processor = "perl /home/username/source/Gambot/parsers/plugin_parser/example.pl"
+    irc_parser = "perl /home/username/source/Gambot/parsers/plugin_parser/example.pl"
   [/local]
 [/bot]
