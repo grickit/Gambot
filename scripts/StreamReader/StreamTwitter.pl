@@ -70,6 +70,8 @@ $mojangles{'17989826'} = 'bopogamel';
 $mojangles{'16952295'} = 'jonkagstrom';
 $mojangles{'14796299'} = 'xlson';
 $mojangles{'8032822'} = 'mollstam';
+$mojangles{'381007605'} = 'SeargeDP';
+$mojangles{'2150950224'} = 'themogminer';
 
 my $url = 'https://stream.twitter.com/1.1/statuses/filter.json';
 my $follow = uri_escape(join(',',values(%feeds)));
