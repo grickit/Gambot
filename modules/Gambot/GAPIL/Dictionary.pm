@@ -166,9 +166,9 @@ sub value_prepend {
 
 sub value_increment {
   my ($self,$key,$value) = @_;
-  if(!$value || $value !~ /^[0-9]+$/) { $value = 1; }
+  if(!$value || $value !~ /^-?[0-9]+$/) { $value = 1; }
 
-  if(!$self->value_exists($key) || $self->value_get($key) !~ /^[0-9]+$/) {
+  if(!$self->value_exists($key) || $self->value_get($key) !~ /^-?[0-9]+$/) {
     $self->value_set($key,0);
   }
 
@@ -178,9 +178,9 @@ sub value_increment {
 
 sub value_decrement {
   my ($self,$key,$value) = @_;
-  if(!$value || $value !~ /^[0-9]+$/) { $value = 1; }
+  if(!$value || $value !~ /^-?[0-9]+$/) { $value = 1; }
 
-  if(!$self->value_exists($key) || $self->value_get($key) !~ /^[0-9]+$/) {
+  if(!$self->value_exists($key) || $self->value_get($key) !~ /^-?[0-9]+$/) {
     $self->value_set($key,0);
   }
 
