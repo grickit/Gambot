@@ -129,7 +129,7 @@ sub dictionary_get {
 sub dictionary_delete {
   my ($self,$dict) = @_;
 
-  if($self->dictonary_exists($dict)) {
+  if($self->dictionary_exists($dict)) {
     $self->{'dictionaries'}{$dict} = undef;
     delete $self->{'dictionaries'}{$dict};
     return $dict;
