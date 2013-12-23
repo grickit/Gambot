@@ -348,6 +348,7 @@
 -Sometimes when I go to the toilet and someone's left their pee in there, I'll just sit for a while and breathe it in. It's very relaxing.
 
 *Dagmar
-#1
+#2
 - So, when you're reading the tutorials if they start talking abouti non-blocking I/O back away slowly.
+- YOUR NATIVE TONGUE IS NOW ASCII
 
