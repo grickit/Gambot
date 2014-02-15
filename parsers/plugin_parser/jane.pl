@@ -84,6 +84,7 @@ sub on_public_message {
   runPlugin("$FindBin::Bin/plugins/conversation/ed-block.pm");
   runPlugin("$FindBin::Bin/plugins/conversation/memes.pm");
   runPlugin("$FindBin::Bin/plugins/conversation/quote.pm");
+  runPlugin("$FindBin::Bin/plugins/conversation/slurs.pm");
 
   runPlugin("$FindBin::Bin/plugins/games/roulette.pm");
   runPlugin("$FindBin::Bin/plugins/games/dice.pm");
