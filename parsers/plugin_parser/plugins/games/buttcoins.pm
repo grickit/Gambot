@@ -34,6 +34,13 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
 
 if ($message =~ /\b$word_chosen\b/i) {
   $core->value_increment('buttcoins','balance:'.$sender,1);
+  my $timestamp = $core->value_get('buttcoins','timestamp');
+  my $difference = (time-$timestamp);
+
+  my $sender_censored = $sender;
+  $sender_censored =~ s/[aeiou]/*/ig;
+
+  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds.");
 
   my @word_list;
   $word_list[0] = 'the';
@@ -48,9 +55,7 @@ if ($message =~ /\b$word_chosen\b/i) {
   $word_list[9] = 'so';
   $word_chosen = $word_list[int(rand(10))];
   $core->value_set('buttcoins','word',$word_chosen);
-  my $sender_censored = $sender;
-  $sender_censored =~ s/[aeiou]/*/ig;
-  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target.");
+  $core->value_set('buttcoins','timestamp',time);
 }
 
 $core->dictionary_save('buttcoins');
