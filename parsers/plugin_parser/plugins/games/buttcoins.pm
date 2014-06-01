@@ -35,6 +35,7 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
 if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   $core->value_increment('buttcoins','balance:'.$sender,1);
   my $timestamp = $core->value_get('buttcoins','timestamp');
+  $timestamp = time unless $timestamp;
   my $difference = (time-$timestamp);
 
   my $count = $core->value_increment('buttcoins','count:'.$word_chosen,1);
@@ -47,17 +48,18 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
 
   my @word_list;
-  $word_list[0] = 'the';
-  $word_list[1] = 'this';
-  $word_list[2] = 'that';
-  $word_list[3] = 'a';
-  $word_list[4] = 'an';
-  $word_list[5] = 'and';
-  $word_list[6] = 'but';
-  $word_list[7] = 'or';
-  $word_list[8] = 'for';
-  $word_list[9] = 'so';
-  $word_chosen = $word_list[int(rand(10))];
+  push(@word_list,'the');
+ #push(@word_list,'this');
+  push(@word_list,'that');
+  push(@word_list,'a');
+ #push(@word_list,'an');
+  push(@word_list,'and');
+ #push(@word_list,'but');
+ #push(@word_list,'or');
+  push(@word_list,'for');
+ #push(@word_list,'so');
+
+  $word_chosen = $word_list[int(rand(5))];
   $core->value_set('buttcoins','word',$word_chosen);
   $core->value_set('buttcoins','timestamp',time);
 }
