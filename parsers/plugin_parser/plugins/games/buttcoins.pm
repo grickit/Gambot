@@ -1,3 +1,10 @@
+if(!$core->dictionary_exists('buttcoins')) {
+  $core->dictionary_load('buttcoins');
+}
+
+my $word_chosen = $core->value_get('buttcoins','word');
+$word_chosen = 'the' unless $word_chosen;
+
 if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
   my $check = $2;
   $check = $sender unless $check;
@@ -25,9 +32,6 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   }
 }
 
-my $word_chosen = $core->value_get('buttcoins','word');
-$word_chosen = 'the' unless $word_chosen;
-
 if ($message =~ /\b$word_chosen\b/i) {
   $core->value_increment('buttcoins','balance:'.$sender,1);
 
@@ -46,3 +50,5 @@ if ($message =~ /\b$word_chosen\b/i) {
   $core->value_set('buttcoins','word',$word_chosen);
   actOut('MESSAGE','##Gambot',"$sender just earned a buttcoin in $target.");
 }
+
+$core->dictionary_save('buttcoins');
