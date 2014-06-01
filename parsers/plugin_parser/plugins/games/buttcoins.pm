@@ -37,10 +37,14 @@ if ($message =~ /\b$word_chosen\b/i) {
   my $timestamp = $core->value_get('buttcoins','timestamp');
   my $difference = (time-$timestamp);
 
+  my $count = $core->value_increment('buttcoins','count:'.$word_chosen,1);
+  my $time = $core->value_increment('buttcoins','time:'.$word_chosen,$difference);
+  my $average = ($time/$count);
+
   my $sender_censored = $sender;
   $sender_censored =~ s/[aeiou]/*/ig;
 
-  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds.");
+  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
 
   my @word_list;
   $word_list[0] = 'the';
