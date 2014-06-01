@@ -89,6 +89,7 @@ sub on_public_message {
   runPlugin("$FindBin::Bin/plugins/games/roulette.pm");
   runPlugin("$FindBin::Bin/plugins/games/dice.pm");
   runPlugin("$FindBin::Bin/plugins/games/eightball.pm");
+  runPlugin("$FindBin::Bin/plugins/games/buttcoins.pm");
 
   runPlugin("$FindBin::Bin/plugins/internet/url-check.pm");
   runPlugin("$FindBin::Bin/plugins/internet/ticket.pm");
