@@ -48,7 +48,9 @@ if ($message =~ /\b$word_chosen\b/i) {
   $word_list[9] = 'so';
   $word_chosen = $word_list[int(rand(10))];
   $core->value_set('buttcoins','word',$word_chosen);
-  actOut('MESSAGE','##Gambot',"$sender just earned a buttcoin in $target.");
+  my $sender_censored = $sender;
+  $sender_censored =~ s/[aeiou]/*/ig;
+  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target.");
 }
 
 $core->dictionary_save('buttcoins');
