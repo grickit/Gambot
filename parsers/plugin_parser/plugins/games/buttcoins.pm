@@ -32,7 +32,7 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   }
 }
 
-if ($message =~ /\b$word_chosen\b/i) {
+if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   $core->value_increment('buttcoins','balance:'.$sender,1);
   my $timestamp = $core->value_get('buttcoins','timestamp');
   my $difference = (time-$timestamp);
