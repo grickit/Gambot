@@ -43,13 +43,16 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   my $time = $core->value_increment('buttcoin:stats','time:'.$word_chosen,$difference);
   my $average = ($time/$count);
 
+  my $sender_backend = uc($sender);
+
   my $sender_censored = $sender;
   $sender_censored =~ s/[aeiou]/*/ig;
-  my $sender_backend = uc($sender);
+  my $target_censored = $target;
+  $target_censored =~ s/[#aeiou]/*/ig;
 
   $core->value_increment('buttcoin:bank','balance:'.$sender_backend,1);
 
-  actOut('DEBUG','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
+  actOut('DEBUG','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target_censored. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
 
   my @word_list;
   push(@word_list,'the');
