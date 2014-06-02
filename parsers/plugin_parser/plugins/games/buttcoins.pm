@@ -45,7 +45,7 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   my $sender_censored = $sender;
   $sender_censored =~ s/[aeiou]/*/ig;
 
-  actOut('MESSAGE','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
+  actOut('DEBUG','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
 
   my @word_list;
   push(@word_list,'the');
