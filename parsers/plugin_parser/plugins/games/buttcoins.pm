@@ -52,7 +52,7 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
 
   $core->value_increment('buttcoin:bank','balance:'.$sender_backend,1);
 
-  actOut('DEBUG','##Gambot',"DEBUG: $sender_censored just earned a buttcoin in $target_censored. The word was \"$word_chosen\" and took $difference seconds (word average is $average).");
+  actOut('DEBUG','##Gambot',"DEBUG: $sender_censored just mined in $target_censored. Chosen word was \"$word_chosen\". It took $difference seconds (word average is $average).");
 
   my @word_list;
   push(@word_list,'the');
