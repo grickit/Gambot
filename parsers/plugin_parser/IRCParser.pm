@@ -108,6 +108,9 @@ sub actOut { #action,target,message
     $core->server_send("MODE $args[1] $args[2]");
     $sentOutput = 1;
   }
+  if($_[0] eq 'DEBUG') {
+    $core->server_send("PRIVMSG $args[1] :$args[2]");
+  }
   elsif($_[0] eq 'LITERAL') {
     print "$args[2]\n";
   }
