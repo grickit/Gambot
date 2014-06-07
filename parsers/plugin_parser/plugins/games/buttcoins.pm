@@ -1,37 +1,57 @@
 if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); }
 if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); }
+my $word_chosen = $core->value_get('buttcoin:stats','word') || 'the';
 
-my $word_chosen = $core->value_get('buttcoin:stats','word');
-$word_chosen = 'the' unless $word_chosen;
+sub buttcoinAccountCheck {
+  return $core->value_get('buttcoin:stats','active:'.uc($_[0])) || 0;
+}
+
+sub buttcoinAccountActivate {
+  return $core->value_set('buttcoin:stats','active:'.uc($_[0]),1);
+}
+
+sub buttcoinBalanceGet {
+  return $core->value_get('buttcoin:bank','balance:'.uc($_[0])) || 0;
+}
+
+sub buttcoinBalanceAdd {
+  return $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),$_[1]);
+}
+
+sub buttcoinBalanceSub {
+  return $core->value_decrement('buttcoin:bank','balance:'.uc($_[0]),$_[1]);
+}
+
+sub buttcoinTransfer {
+  my $receiver = $_[0];
+  my $value = $_[1];
+  my $sender_balance = buttcoinBalanceGet($sender);
+
+  if(!buttcoinAccountCheck($receiver)) { actOut('MESSAGE',$target,"$receiver\'s account is not active."); return 0; }
+  if($sender_balance < $value) { actOut('MESSAGE',$target,"$sender only has $sender_balance buttcoins."); return 0; }
+
+  buttcoinBalanceSub($sender,$value);
+  buttcoinBalanceAdd($receiver,$value);
+  actOut('MESSAGE',$target,"$sender transferred $value buttcoins to $receiver.");
+}
+
+sub buttcoinBalance {
+  my $receiver = $_[0] || $sender;
+
+  my $balance = buttcoinBalanceGet($receiver);
+  my $active = (buttcoinAccountCheck($receiver) ? 'active' : 'inactive');
+
+  actOut('MESSAGE',$target,"$receiver has $balance buttcoins (account $active).");
+}
 
 if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
-  my $check = $2;
-  $check = $sender unless $check;
-  my $check_backend = uc($check);
-
-  my $balance = $core->value_get('buttcoin:bank','balance:'.$check_backend,1);
-  $balance = 0 unless $balance;
-
-  actOut('MESSAGE',$target,"$check"."'s balance is $balance buttcoins.");
+  buttcoinAccountActivate($sender);
+  buttcoinBalance($1);
 }
 
 if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
-  my $value = $1;
-  my $receiver = $2;
-  my $sender_backend = uc($sender);
-  my $receiver_backend = uc($receiver);
-
-  my $sender_balance = $core->value_get('buttcoin:bank','balance:'.$sender_backend);
-  $sender_balance = 0 unless $sender_balance;
-
-  if($sender_balance < $value) {
-    actOut('MESSAGE',$target,"$sender only has $sender_balance buttcoins.");
-  }
-  else {
-    $core->value_decrement('buttcoin:bank','balance:'.$sender_backend,$value);
-    $core->value_increment('buttcoin:bank','balance:'.$receiver_backend,$value);
-    actOut('MESSAGE',$target,"$sender transferred $value buttcoins to $receiver.");
-  }
+  buttcoinAccountActivate($sender);
+  buttcoinTransfer($2,$1);
 }
 
 if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
