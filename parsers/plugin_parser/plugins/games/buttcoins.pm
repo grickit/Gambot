@@ -30,6 +30,9 @@ sub buttcoinBalanceSub {
 
 #===== COMPLEX FUNCS =====#
 sub buttcoinMine {
+  # If this user has no mining stats, assume they are a legacy user and set their mined buttcoins to their current balance
+  if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($_[0]),buttcoinBalanceGet($_[0])); }
+
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
   $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
 
