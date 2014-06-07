@@ -31,7 +31,7 @@ sub buttcoinBalanceSub {
 #===== COMPLEX FUNCS =====#
 sub buttcoinMine {
   # If this user has no mining stats, assume they are a legacy user and set their mined buttcoins to their current balance
-  if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($_[0]),buttcoinBalanceGet($_[0])); }
+  if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($sender),buttcoinBalanceGet($sender)); }
 
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
   $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
@@ -40,6 +40,18 @@ sub buttcoinMine {
   $word_chosen = $word_list[int(rand(5))];
   $core->value_set('buttcoin:stats','word',$word_chosen);
   $core->value_set('buttcoin:stats','timestamp',time);
+}
+
+sub buttcoinStatsAbuse {
+  if($event eq 'on_public_message'
+    and $message =~ /\bthe\b/
+    and $message =~ /\bthat\b/
+    and $message =~ /\ba\b/
+    and $message =~ /\band\b/
+    and $message =~ /\bfor\b/
+  ) {
+    $core->value_increment('buttcoin:stats','abuse:'.uc($sender),1);
+  }
 }
 
 sub buttcoinTransfer {
@@ -77,7 +89,7 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   buttcoinTransfer($2,$1);
 }
 
-if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
+if ($event eq 'on_public_message' and $message =~ /\b$word_chosen\b/i) {
   my $timestamp = $core->value_get('buttcoin:stats','timestamp') || time;
   my $difference = (time-$timestamp);
 
@@ -88,6 +100,7 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
   actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_chosen\".");
 
   buttcoinMine($sender);
+  buttcoinStatsAbuse($sender);
 }
 
 
