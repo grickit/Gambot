@@ -1,6 +1,6 @@
 #===== LOADING =====#
-if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); }
-if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); }
+if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); $core->value_set('buttcoin:bank','autosave',1); }
+if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); $core->value_set('buttcoin:stats','autosave',1); }
 my $word_chosen = $core->value_get('buttcoin:stats','word') || 'the';
 
 
@@ -102,9 +102,3 @@ if ($event eq 'on_public_message' and $message =~ /\b$word_chosen\b/i) {
   buttcoinMine($sender);
   buttcoinStatsAbuse($sender);
 }
-
-
-
-#===== EXIT =====#
-$core->dictionary_save('buttcoin:bank');
-$core->dictionary_save('buttcoin:stats');
