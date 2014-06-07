@@ -1,11 +1,11 @@
-/*===== LOADING =====*/
+#===== LOADING =====#
 if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); }
 if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); }
 my $word_chosen = $core->value_get('buttcoin:stats','word') || 'the';
 
 
 
-/*===== BASIC FUNCS =====*/
+#===== BASIC FUNCS =====#
 sub buttcoinAccountCheck {
   return $core->value_get('buttcoin:stats','active:'.uc($_[0])) || 0;
 }
@@ -28,7 +28,7 @@ sub buttcoinBalanceSub {
 
 
 
-/*===== COMPLEX FUNCS =====*/
+#===== COMPLEX FUNCS =====#
 sub buttcoinMine {
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
   $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
@@ -63,7 +63,7 @@ sub buttcoinBalance {
 
 
 
-/*===== COMMANDS *=====/
+#===== COMMANDS =====#
 if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
   buttcoinAccountActivate($sender);
   buttcoinBalance($1);
@@ -89,6 +89,6 @@ if ($message =~ /\b$word_chosen\b/i and $event eq 'on_public_message') {
 
 
 
-/*===== EXIT =====*/
+#===== EXIT =====#
 $core->dictionary_save('buttcoin:bank');
 $core->dictionary_save('buttcoin:stats');
