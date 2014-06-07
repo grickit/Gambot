@@ -62,10 +62,10 @@ sub buttcoinBalance {
 sub buttcoinStats {
   my $receiver = $_[0] || $sender;
 
-  my $mined = buttcoinGetStatsMined($sender);
-  my $abuse = buttcoinGetStatsAbuse($sender);
-  my $given = buttcoinGetStatsGiven($sender);
-  my $received = buttcoinGetStatsReceived($sender);
+  my $mined = buttcoinGetStatsMined($receiver);
+  my $abuse = buttcoinGetStatsAbuse($receiver);
+  my $given = buttcoinGetStatsGiven($receiver);
+  my $received = buttcoinGetStatsReceived($receiver);
 
   actOut('MESSAGE',$target,"$receiver has mined $mined buttcoins ($abuse abusively), given away $given buttcoins, and received $received as gifts.");
 }
