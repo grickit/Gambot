@@ -59,11 +59,22 @@ sub buttcoinBalance {
   actOut('MESSAGE',$target,"$receiver has $balance buttcoins (account $active).");
 }
 
+sub buttcoinStats {
+  my $receiver = $_[0] || $sender;
+
+  my $mined = buttcoinGetStatsMined($sender);
+  my $abuse = buttcoinGetStatsAbuse($sender);
+  my $given = buttcoinGetStatsGiven($sender);
+  my $received = buttcoinGetStatsReceived($sender);
+
+  actOut('MESSAGE',$target,"$receiver has mined $mined buttcoins ($abuse abusively), given away $given buttcoins, and received $received as gifts.");
+}
+
 
 
 #===== STATS FUNCS =====#
 sub buttcoinGetStatsMined {
-  return $core->value_get('buttcoin:stats','mined:'.uc($_[0]));
+  return $core->value_get('buttcoin:stats','mined:'.uc($_[0])) || 0;
 }
 
 sub buttcoinTrackStatsMined {
@@ -74,7 +85,7 @@ sub buttcoinTrackStatsMined {
 }
 
 sub buttcoinGetStatsAbuse {
-  return $core->value_get('buttcoin:stats','abuse:'.uc($_[0]));
+  return $core->value_get('buttcoin:stats','abuse:'.uc($_[0])) || 0;
 }
 
 sub buttcoinTrackStatsAbuse {
@@ -102,6 +113,22 @@ sub buttcoinTrackStatsWordAverage {
   $core->value_increment('buttcoin:stats','time:'.$_[0],(time-$timestamp));
 }
 
+sub buttcoinGetStatsGiven {
+  return $core->value_get('buttcoin:stats','given:'.uc($_[0])) || 0;
+}
+
+sub buttcoinTrackStatsGiven {
+  return $core->value_increment('buttcoin:stats','given:'.uc($_[0]),$_[1]);
+}
+
+sub buttcoinGetStatsReceived {
+  return $core->value_get('buttcoin:stats','received:'.uc($_[0])) || 0;
+}
+
+sub buttcoinTrackStatsReceived {
+  return $core->value_increment('buttcoin:stats','received:'.uc($_[0]),$_[1]);
+}
+
 
 
 #===== COMMANDS =====#
@@ -110,9 +137,16 @@ if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
   buttcoinBalance($1);
 }
 
+if ($message =~ /^${sl}${cm}buttcoin stats ?($validNick)?$/i) {
+  buttcoinAccountActivate($sender);
+  buttcoinStats($1);
+}
+
 if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   buttcoinAccountActivate($sender);
   buttcoinTransfer($2,$1);
+  buttcoinTrackStatsGiven($sender,$1);
+  buttcoinTrackStatsReceived($2,$1);
 }
 
 if ($event eq 'on_public_message' and $message =~ /\b$word_chosen\b/i) {
