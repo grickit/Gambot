@@ -30,28 +30,11 @@ sub buttcoinBalanceSub {
 
 #===== COMPLEX FUNCS =====#
 sub buttcoinMine {
-  # If this user has no mining stats, assume they are a legacy user and set their mined buttcoins to their current balance
-  if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($sender),buttcoinBalanceGet($sender)); }
-
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
-  $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
 
   my @word_list = ('the','that','a','and','for');
   $word_chosen = $word_list[int(rand(5))];
   $core->value_set('buttcoin:stats','word',$word_chosen);
-  $core->value_set('buttcoin:stats','timestamp',time);
-}
-
-sub buttcoinStatsAbuse {
-  if($event eq 'on_public_message'
-    and $message =~ /\bthe\b/
-    and $message =~ /\bthat\b/
-    and $message =~ /\ba\b/
-    and $message =~ /\band\b/
-    and $message =~ /\bfor\b/
-  ) {
-    $core->value_increment('buttcoin:stats','abuse:'.uc($sender),1);
-  }
 }
 
 sub buttcoinTransfer {
@@ -78,6 +61,49 @@ sub buttcoinBalance {
 
 
 
+#===== STATS FUNCS =====#
+sub buttcoinGetStatsMined {
+  return $core->value_get('buttcoin:stats','mined:'.uc($_[0]));
+}
+
+sub buttcoinTrackStatsMined {
+  # If this user has no mining stats, assume they are a legacy user and set their mined buttcoins to their current balance
+  if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($sender),buttcoinBalanceGet($sender)); }
+
+  $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
+}
+
+sub buttcoinGetStatsAbuse {
+  return $core->value_get('buttcoin:stats','abuse:'.uc($_[0]));
+}
+
+sub buttcoinTrackStatsAbuse {
+  if($event eq 'on_public_message'
+    and $message =~ /\bthe\b/i
+    and $message =~ /\bthat\b/i
+    and $message =~ /\ba\b/i
+    and $message =~ /\band\b/i
+    and $message =~ /\bfor\b/i
+  ) {
+    $core->value_increment('buttcoin:stats','abuse:'.uc($sender),1);
+  }
+}
+
+sub buttcoinGetStatsWordAverage {
+  my $count = $core->value_get('buttcoin:stats','count:'.$_[0]);
+  my $time = $core->value_get('buttcoin:stats','time:'.$_[0]);
+  return ($time/$count);
+}
+
+sub buttcoinTrackStatsWordAverage {
+  my $timestamp = $core->value_get('buttcoin:stats','timestamp') || time;
+  $core->value_set('buttcoin:stats','timestamp',time);
+  $core->value_increment('buttcoin:stats','count:'.$_[0],1);
+  $core->value_increment('buttcoin:stats','time:'.$_[0],(time-$timestamp));
+}
+
+
+
 #===== COMMANDS =====#
 if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
   buttcoinAccountActivate($sender);
@@ -90,15 +116,11 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
 }
 
 if ($event eq 'on_public_message' and $message =~ /\b$word_chosen\b/i) {
-  my $timestamp = $core->value_get('buttcoin:stats','timestamp') || time;
-  my $difference = (time-$timestamp);
-
-  my $count = $core->value_increment('buttcoin:stats','count:'.$word_chosen,1);
-  my $time = $core->value_increment('buttcoin:stats','time:'.$word_chosen,$difference);
-  my $average = ($time/$count);
-
-  actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_chosen\".");
-
   buttcoinMine($sender);
-  buttcoinStatsAbuse($sender);
+  buttcoinTrackStatsMined($sender);
+  buttcoinTrackStatsAbuse($sender);
+  buttcoinTrackStatsWordAverage($word_chosen);
+
+  my $average = buttcoinGetStatsWordAverage($word_chosen);
+  actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_chosen\" ($average seconds average).");
 }
