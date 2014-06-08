@@ -42,6 +42,7 @@ sub buttcoinTransfer {
   my $value = $_[1];
   my $sender_balance = buttcoinBalanceGet($sender);
 
+  if(uc($sender) eq uc($receiver)) { actOut('MESSAGE',$target,"You are $receiver."); return 0; }
   if(!buttcoinAccountCheck($receiver)) { actOut('MESSAGE',$target,"$receiver\'s account is not active."); return 0; }
   if($sender_balance < $value) { actOut('MESSAGE',$target,"$sender only has $sender_balance buttcoins."); return 0; }
 
