@@ -1,7 +1,7 @@
 #===== LOADING =====#
 if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); $core->value_set('buttcoin:bank','autosave',1); }
 if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); $core->value_set('buttcoin:stats','autosave',1); }
-my $word_chosen = $core->value_get('buttcoin:stats','word') || 'the';
+my $word_current = $core->value_get('buttcoin:stats','word') || 'the';
 
 
 
@@ -33,8 +33,8 @@ sub buttcoinMine {
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
 
   my @word_list = ('the','that','a','and','for');
-  $word_chosen = $word_list[int(rand(5))];
-  $core->value_set('buttcoin:stats','word',$word_chosen);
+  my $word_next = $word_list[int(rand(5))];
+  $core->value_set('buttcoin:stats','word',$word_next);
 }
 
 sub buttcoinTransfer {
@@ -149,12 +149,12 @@ if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   buttcoinTrackStatsReceived($2,$1);
 }
 
-if ($event eq 'on_public_message' and $message =~ /\b$word_chosen\b/i) {
+if ($event eq 'on_public_message' and $message =~ /\b$word_current\b/i) {
   buttcoinMine($sender);
   buttcoinTrackStatsMined($sender);
   buttcoinTrackStatsAbuse($sender);
-  buttcoinTrackStatsWordAverage($word_chosen);
+  buttcoinTrackStatsWordAverage($word_current);
 
-  my $average = buttcoinGetStatsWordAverage($word_chosen);
-  actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_chosen\" ($average seconds average).");
+  my $average = buttcoinGetStatsWordAverage($word_current);
+  actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_current\" ($average seconds average).");
 }
