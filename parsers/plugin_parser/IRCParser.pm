@@ -20,10 +20,12 @@ our @EXPORT = qw(
 );
 our @EXPORT_OK = qw(
   $nickCharacters
+  $userCharacters
   $serverCharacters
   $channelCharacters
   $hostmaskCharacters
   $validNick
+  $validUser
   $validChannel
   $validHostmask
   $validHumanSender
@@ -49,13 +51,15 @@ our @EXPORT_OK = qw(
 
 our $core = new Gambot::GAPIL::CommandChild();
 our $nickCharacters = 'A-Za-z0-9[\]\\`_^{}|-';
+our $userCharacters = 'A-Za-z0-9[\]\\`_^{}|.-';
 our $serverCharacters = 'a-zA-Z0-9\.';
 our $channelCharacters = '#A-Za-z0-9[\]\\`_^{}|-';
 our $hostmaskCharacters = ':./A-Za-z0-9[\]\\`_^{}|-';
 our $validNick = '(['.$nickCharacters.']+)';
+our $validUser = '(['.$userCharacters.']+)';
 our $validChannel = '(['.$channelCharacters.']+)';
 our $validHostmask = '(['.$hostmaskCharacters.']+)';
-our $validHumanSender = $validNick.'!~?'.$validNick.'@'.$validHostmask;
+our $validHumanSender = $validNick.'!~?'.$validUser.'@'.$validHostmask;
 our $validServerSender = '(['.$serverCharacters.']+)';
 
 our $pipeID = stdin_read();
