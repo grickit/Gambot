@@ -226,8 +226,8 @@ sub parseMessage { #string
   }
 
   else {
-    actOut('LITERAL',undef,'error>Message did not match preparser.');
-    actOut('LITERAL',undef,"error>$string");
+    actOut('LITERAL',undef,'log_error>Message did not match preparser.');
+    actOut('LITERAL',undef,"log_error>$string");
     return '';
   }
 
