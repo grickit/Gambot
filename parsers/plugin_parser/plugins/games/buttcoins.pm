@@ -37,15 +37,19 @@ sub buttcoinTransfer {
   my $receiver = $_[0];
   my $value = $_[1];
   my $sender_balance = buttcoinBalanceGet($sender);
+  my $receiver_balance = buttcoinBalanceGet($receiver);
 
-  if(uc($sender) eq uc($receiver)) { actOut('MESSAGE',$target,"You are $receiver."); return 0; }
-  if($value <= 0) { actOut('MESSAGE',$target,"You have to send at least 1 buttcoin."); return 0; }
-  if(!buttcoinAccountCheck($receiver)) { actOut('MESSAGE',$target,"$receiver\'s account is not active."); return 0; }
-  if($sender_balance < $value) { actOut('MESSAGE',$target,"$sender only has $sender_balance buttcoins."); return 0; }
+  if(uc($sender) eq uc($receiver)) { actOut('NOTICE',$sender,"Error: You are $receiver."); return 0; }
+  if($value <= 0) { actOut('NOTICE',$sender,"Error: You have to send at least 1 buttcoin."); return 0; }
+  if(!buttcoinAccountCheck($receiver)) { actOut('NOTICE',$sender,"Error: $receiver\'s account is not active."); return 0; }
+  if($sender_balance < $value) { actOut('NOTICE',$sender,"Error: You only have $sender_balance buttcoins."); return 0; }
 
   buttcoinBalanceSub($sender,$value);
   buttcoinBalanceAdd($receiver,$value);
-  actOut('MESSAGE',$target,"$sender transferred $value buttcoins to $receiver.");
+  $sender_balance -= $value;
+  $receiver_balance += $value;
+  actOut('NOTICE',$sender,"Transfer: You ($sender_balance BTC) have sent $value buttcoins to $receiver ($receiver_balance BTC).");
+  actOut('NOTICE',$receiver,"Transfer: You ($receiver_balance BTC) have received $value buttcoins from $sender ($sender_balance BTC).");
   return 1;
 }
 
@@ -55,7 +59,7 @@ sub buttcoinBalance {
   my $balance = buttcoinBalanceGet($receiver);
   my $active = (buttcoinAccountCheck($receiver) ? 'active' : 'inactive');
 
-  actOut('MESSAGE',$target,"$receiver has $balance buttcoins (account $active).");
+  actOut('NOTICE',$sender,"Balance: $receiver has $balance buttcoins (account $active).");
   return 1;
 }
 
@@ -67,7 +71,7 @@ sub buttcoinStats {
   my $given = buttcoinGetStatsGiven($receiver);
   my $received = buttcoinGetStatsReceived($receiver);
 
-  actOut('MESSAGE',$target,"$receiver has mined $mined buttcoins ($abuse abusively), given away $given buttcoins, and received $received as gifts.");
+  actOut('NOTICE',$sender,"Stats: $receiver has mined $mined buttcoins ($abuse abusively), given away $given buttcoins, and received $received as gifts.");
   return 1;
 }
 
