@@ -1,7 +1,6 @@
 #===== LOADING =====#
 if(!$core->dictionary_exists('buttcoin:bank')) { $core->dictionary_load('buttcoin:bank'); $core->value_set('buttcoin:bank','autosave',1); }
 if(!$core->dictionary_exists('buttcoin:stats')) { $core->dictionary_load('buttcoin:stats'); $core->value_set('buttcoin:stats','autosave',1); }
-my $word_current = $core->value_get('buttcoin:stats','word') || 'the';
 
 
 
@@ -31,10 +30,7 @@ sub buttcoinBalanceSub {
 #===== COMPLEX FUNCS =====#
 sub buttcoinMine {
   $core->value_increment('buttcoin:bank','balance:'.uc($_[0]),1);
-
-  my @word_list = ('the','that','a','and','for');
-  my $word_next = $word_list[int(rand(5))];
-  $core->value_set('buttcoin:stats','word',$word_next);
+  return 1;
 }
 
 sub buttcoinTransfer {
@@ -49,6 +45,7 @@ sub buttcoinTransfer {
   buttcoinBalanceSub($sender,$value);
   buttcoinBalanceAdd($receiver,$value);
   actOut('MESSAGE',$target,"$sender transferred $value buttcoins to $receiver.");
+  return 1;
 }
 
 sub buttcoinBalance {
@@ -58,6 +55,7 @@ sub buttcoinBalance {
   my $active = (buttcoinAccountCheck($receiver) ? 'active' : 'inactive');
 
   actOut('MESSAGE',$target,"$receiver has $balance buttcoins (account $active).");
+  return 1;
 }
 
 sub buttcoinStats {
@@ -69,13 +67,43 @@ sub buttcoinStats {
   my $received = buttcoinGetStatsReceived($receiver);
 
   actOut('MESSAGE',$target,"$receiver has mined $mined buttcoins ($abuse abusively), given away $given buttcoins, and received $received as gifts.");
+  return 1;
 }
 
 
 
 #===== STATS FUNCS =====#
+sub buttcoinGetStatsWord {
+  return $core->value_get('buttcoin:stats','word') || 'the';
+}
+
 sub buttcoinGetStatsMined {
   return $core->value_get('buttcoin:stats','mined:'.uc($_[0])) || 0;
+}
+
+sub buttcoinGetStatsAbuse {
+  return $core->value_get('buttcoin:stats','abuse:'.uc($_[0])) || 0;
+}
+
+sub buttcoinGetStatsWordAverage {
+  my $count = $core->value_get('buttcoin:stats','count:'.$_[0]);
+  my $time = $core->value_get('buttcoin:stats','time:'.$_[0]);
+  return ($time/$count);
+}
+
+sub buttcoinGetStatsGiven {
+  return $core->value_get('buttcoin:stats','given:'.uc($_[0])) || 0;
+}
+
+sub buttcoinGetStatsReceived {
+  return $core->value_get('buttcoin:stats','received:'.uc($_[0])) || 0;
+}
+
+
+
+sub buttcoinTrackStatsWord {
+  my @word_list = ('the','that','a','and','for');
+  $core->value_set('buttcoin:stats','word',$word_list[int(rand(5))]);
 }
 
 sub buttcoinTrackStatsMined {
@@ -83,10 +111,6 @@ sub buttcoinTrackStatsMined {
   if(!$core->value_get('buttcoin:stats','mined:'.uc($_[0]))) { $core->value_set('buttcoin:stats','mined:'.uc($sender),buttcoinBalanceGet($sender)); }
 
   $core->value_increment('buttcoin:stats','mined:'.uc($_[0]),1);
-}
-
-sub buttcoinGetStatsAbuse {
-  return $core->value_get('buttcoin:stats','abuse:'.uc($_[0])) || 0;
 }
 
 sub buttcoinTrackStatsAbuse {
@@ -101,12 +125,6 @@ sub buttcoinTrackStatsAbuse {
   }
 }
 
-sub buttcoinGetStatsWordAverage {
-  my $count = $core->value_get('buttcoin:stats','count:'.$_[0]);
-  my $time = $core->value_get('buttcoin:stats','time:'.$_[0]);
-  return ($time/$count);
-}
-
 sub buttcoinTrackStatsWordAverage {
   my $timestamp = $core->value_get('buttcoin:stats','timestamp') || time;
   $core->value_set('buttcoin:stats','timestamp',time);
@@ -114,16 +132,8 @@ sub buttcoinTrackStatsWordAverage {
   $core->value_increment('buttcoin:stats','time:'.$_[0],(time-$timestamp));
 }
 
-sub buttcoinGetStatsGiven {
-  return $core->value_get('buttcoin:stats','given:'.uc($_[0])) || 0;
-}
-
 sub buttcoinTrackStatsGiven {
   return $core->value_increment('buttcoin:stats','given:'.uc($_[0]),$_[1]);
-}
-
-sub buttcoinGetStatsReceived {
-  return $core->value_get('buttcoin:stats','received:'.uc($_[0])) || 0;
 }
 
 sub buttcoinTrackStatsReceived {
@@ -132,7 +142,9 @@ sub buttcoinTrackStatsReceived {
 
 
 
-#===== COMMANDS =====#
+#===== EXECUTION =====#
+my $word_current = buttcoinGetStatsWord();
+
 if ($message =~ /^${sl}${cm}buttcoin balance ?($validNick)?$/i) {
   buttcoinAccountActivate($sender);
   buttcoinBalance($1);
@@ -145,17 +157,20 @@ if ($message =~ /^${sl}${cm}buttcoin stats ?($validNick)?$/i) {
 
 if ($message =~ /^${sl}${cm}buttcoin transfer ([0-9]+) ($validNick)$/i) {
   buttcoinAccountActivate($sender);
-  buttcoinTransfer($2,$1);
-  buttcoinTrackStatsGiven($sender,$1);
-  buttcoinTrackStatsReceived($2,$1);
+  if(buttcoinTransfer($2,$1)) {
+    buttcoinTrackStatsGiven($sender,$1);
+    buttcoinTrackStatsReceived($2,$1);
+  }
 }
 
 if ($event eq 'on_public_message' and $message =~ /\b$word_current\b/i) {
-  buttcoinMine($sender);
-  buttcoinTrackStatsMined($sender);
-  buttcoinTrackStatsAbuse($sender);
-  buttcoinTrackStatsWordAverage($word_current);
+  if(buttcoinMine($sender)) {
+    buttcoinTrackStatsMined($sender);
+    buttcoinTrackStatsAbuse($sender);
+    buttcoinTrackStatsWordAverage($word_current);
 
-  my $average = buttcoinGetStatsWordAverage($word_current);
-  actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_current\" ($average seconds average).");
+    my $average = buttcoinGetStatsWordAverage($word_current);
+    actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_current\" ($average seconds average).");
+    buttcoinTrackStatsWord();
+  }
 }
