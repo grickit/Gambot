@@ -175,7 +175,7 @@ if ($event eq 'on_public_message' and $message =~ /\b$word_current\b/i) {
     buttcoinTrackStatsWordAverage($word_current);
 
     my $average = buttcoinGetStatsWordAverage($word_current);
-    actOut('DEBUG','##Gambot',"DEBUG: Buttcoin mined from \"$word_current\" ($average seconds average).");
+    actOut('DEBUG','##Gambutt',"DEBUG: Buttcoin mined from \"$word_current\" ($average seconds average).");
     buttcoinTrackStatsWord();
   }
 }

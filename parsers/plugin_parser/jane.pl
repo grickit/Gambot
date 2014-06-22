@@ -54,7 +54,8 @@ if($IRCParser::pipeID eq 'fork10') {
     actOut('JOIN','#frogatto-dev',undef);
     actOut('JOIN','#unknown-horizons',undef);
     actOut('JOIN','#minecraft',undef);
-    actOut('JOIN','#tribalhero',undef);
+    actOut('JOIN','#hosercraft',undef);
+    actOut('JOIN','##Gambutt',undef);
     actOut('LITERAL',undef,'child_add>feed_timer>perl /home/gambit/source/Gambot/scripts/feed_timer.pl');
     actOut('LITERAL',undef,'child_add>streamtwitter>perl /home/gambit/source/Gambot/scripts/StreamReader/StreamTwitter.pl');
   }
