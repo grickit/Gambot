@@ -119,7 +119,7 @@ sub actOut { #action,target,message
     print "$args[2]\n";
   }
   else {
-    $core->log_normal('ACTERROR',"Unrecognized action: $args[1] $args[2] $args[3]");
+    $core->log_normal('ACTERROR',"Unrecognized action: $args[1]");
     return '';
   }
   return 1;
