@@ -160,7 +160,7 @@ sub parseMessage { #string
     $event = 'on_server_ping';
   }
 
-  elsif ($string =~ /^:$validHumanSender (PRIVMSG) $validChannel :(.+)$/) {
+  elsif ($string =~ /^:$validHumanSender (PRIVMSG) $validChannel :(.*)$/) {
     ($sender,$account,$hostname,$command,$target,$message) = ($1,$2,$3,$4,$5,$6);
     if($target eq $botName) { $event = 'on_private_message'; $target = $sender; }
     else { $event = 'on_public_message'; }
