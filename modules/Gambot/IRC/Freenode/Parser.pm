@@ -38,12 +38,12 @@ sub new {
   return $self;
 }
 
-sub parse_message {
+sub parse {
   my ($self,$botname,$string) = @_;
   my ($nick,$user,$host,$chan,$command,$message,$event,$redirect) = ('','','','','','','','');
 
-  if ($string =~ /^PING(.*)$/i) {
-    $event = 'on_server_ping';
+  if ($string =~ /^PING (.*)$/i) {
+    ($nick,$event) = ($1,'on_server_ping');
   }
 
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :(.*)$/) {
