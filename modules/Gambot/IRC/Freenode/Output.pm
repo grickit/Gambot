@@ -39,13 +39,45 @@ sub new {
   return $self;
 }
 
-sub send {
-  my ($self,$botname,$string) = @_;
+sub parse {
+  my ($self,$string) = @_;
 
   $string = strip_newlines($string);
 
   if($string =~ /^MESSAGE>$validChan>(.+)$/) {
-    $self->{'core'}->server_send("PRIVMSG $_[0] :$_[1]");
+    $self->{'core'}->server_send("PRIVMSG $1 :$2");
+  }
+
+  elsif($string =~ /^ACTION>$validChan>(.+)$/) {
+    $self->{'core'}->server_send("PRIVMSG $1 :ACTION $2");
+  }
+
+  elsif($string =~ /^NOTICE>$validChan>(.+)$/) {
+    $self->{'core'}->server_send("NOTICE $1 :ACTION $2");
+  }
+
+  elsif($string =~ /^JOIN>$validChan$/) {
+    $self->{'core'}->server_send("JOIN $1");
+  }
+
+  elsif($string =~ /^PART>$validChan>?(.+)?$/) {
+    $self->{'core'}->server_send("PART $1 :$2");
+  }
+
+  elsif($string =~ /^KICK>$validChan>$validNick>?(.+)?$/) {
+    $self->{'core'}->server_send("KICK $1 $2 :$3");
+  }
+
+  elsif($string =~ /^INVITE>$validChan>$validNick$/) {
+    $self->{'core'}->server_send("INVITE $1 $2");
+  }
+
+  elsif($string =~ /^KICK>$validChan>?(.+)?$/) {
+    $self->{'core'}->server_send("MODE $1 $2");
+  }
+
+  elsif($string =~ /^LITERAL>(.+)$/) {
+    gapil_call($1);
   }
 
   else {
