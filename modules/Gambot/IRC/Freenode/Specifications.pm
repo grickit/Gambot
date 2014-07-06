@@ -20,12 +20,6 @@
 package Gambot::IRC::Freenode::Specifications;
 use strict;
 use warnings;
-use FindBin;
-
-our $VERSION = 1.0;
-our @ISA = qw(Exporter);
-our @EXPORT = qw();
-our @EXPORT_OK = qw();
 
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);

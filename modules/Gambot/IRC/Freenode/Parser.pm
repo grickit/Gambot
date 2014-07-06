@@ -38,11 +38,6 @@ sub new {
   return $self;
 }
 
-our $VERSION = 1.0;
-our @ISA = qw(Exporter);
-our @EXPORT = qw();
-our @EXPORT_OK = qw();
-
 sub parse_message {
   my ($self,$botname,$string) = @_;
   my ($nick,$user,$host,$chan,$command,$message,$event,$redirect) = ('','','','','','','','');
@@ -56,7 +51,7 @@ sub parse_message {
     if($chan eq $botname) { $event = 'on_private_message'; $chan = $nick; }
 
     $redirect = $nick;
-    if($message =~ /@ ?([, $nickCharacters]+)$/) {
+    if($message =~ /@ ?([, $charactersNick]+)$/) {
       $redirect = $1;
       $message =~ s/ ?@ ?$redirect$//;
     }
@@ -90,7 +85,7 @@ sub parse_message {
   }
 
   elsif ($string =~ /^:$validSenderHuman (KICK) $validChan ?:?(.+)?$/) {
-    ($nick,$user,$host,$chan,$command,$message,$sevent) = ($1,$2,$3,$5,$4,$6,'on_kick');
+    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_kick');
     $message = '' unless $message;
   }
 
@@ -100,7 +95,7 @@ sub parse_message {
   }
 
   elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) (.+?) ?:?(.+)?$/) {
-    ($nick,$command,$target,$message,$event) = ($1,$2,$3,$4,'on_server_message');
+    ($nick,$command,$chan,$message,$event) = ($1,$2,$3,$4,'on_server_message');
     $message = '' unless $message;
   }
 
@@ -110,8 +105,12 @@ sub parse_message {
   }
 
   else {
+    $self->{'core'}->log_error('IRC message did not match parser.');
+    $self->{'core'}->log_error($string);
     return '';
   }
 
   return ($nick,$user,$host,$chan,$command,$message,$event,$redirect);
 }
+
+1;
