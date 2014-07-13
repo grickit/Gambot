@@ -46,6 +46,17 @@ sub parse {
     ($nick,$event) = ($1,'on_server_ping');
   }
 
+  elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :ACTION (.*)$/) {
+    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_action');
+    if($chan eq $botname) { $event = 'on_private_action'; $chan = $nick; }
+
+    $redirect = $nick;
+    if($message =~ /@ ?([, $charactersNick]+)$/) {
+      $redirect = $1;
+      $message =~ s/ ?@ ?$redirect$//;
+    }
+  }
+
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :(.*)$/) {
     ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_message');
     if($chan eq $botname) { $event = 'on_private_message'; $chan = $nick; }
@@ -55,6 +66,11 @@ sub parse {
       $redirect = $1;
       $message =~ s/ ?@ ?$redirect$//;
     }
+  }
+
+  elsif($string =~ /^:$validSenderHuman (NOTICE) $validChan :(.+)$/) {
+    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_ctcp');
+    if($chan eq $botname) { $event = 'on_private_ctcp'; $chan = $nick; }
   }
 
   elsif($string =~ /^:$validSenderHuman (NOTICE) $validChan :(.+)$/) {
