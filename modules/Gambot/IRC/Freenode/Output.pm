@@ -53,7 +53,7 @@ sub parse {
   }
 
   elsif($string =~ /^NOTICE>$validChan>(.+)$/) {
-    $self->{'core'}->server_send("NOTICE $1 :ACTION $2");
+    $self->{'core'}->server_send("NOTICE $1 :$2");
   }
 
   elsif($string =~ /^JOIN>$validChan$/) {
@@ -62,6 +62,10 @@ sub parse {
 
   elsif($string =~ /^PART>$validChan>?(.+)?$/) {
     $self->{'core'}->server_send("PART $1 :$2");
+  }
+
+  elsif($string =~ /^QUIT>?(.+)?$/) {
+    $self->{'core'}->server_send("QUIT :$1");
   }
 
   elsif($string =~ /^KICK>$validChan>$validNick>?(.+)?$/) {
@@ -74,6 +78,50 @@ sub parse {
 
   elsif($string =~ /^KICK>$validChan>?(.+)?$/) {
     $self->{'core'}->server_send("MODE $1 $2");
+  }
+
+  elsif($string =~ /^RENAME>$validNick$/) {
+    $self->{'core'}->server_send("NICK $1");
+  }
+
+  elsif($string =~ /^PING>$validNick$/ or $string =~ /^PING>$validSenderServer$/) {
+    $self->{'core'}->server_send("PING $1");
+  }
+
+  elsif($string =~ /^PONG>$validNick$/ or $string =~ /^PONG>$validSenderServer$/) {
+    $self->{'core'}->server_send("PONG $1");
+  }
+
+  elsif($string =~ /^AWAY>(.+)/) {
+    $self->{'core'}->server_send("AWAY $1");
+  }
+
+  elsif($string =~ /^BACK>/) {
+    $self->{'core'}->server_send("AWAY");
+  }
+
+  elsif($string =~ /^WHO>$validNick$/ or $string =~ /^WHO>$validChan$/ or $string =~ /^WHO>$validHost$/) {
+    $self->{'core'}->server_send("WHO $1");
+  }
+
+  elsif($string =~ /^WHOIS>$validNick$/) {
+    $self->{'core'}->server_send("WHOIS $1");
+  }
+
+  elsif($string =~ /^WHOWAS>$validNick$/) {
+    $self->{'core'}->server_send("WHOWAS $1");
+  }
+
+  elsif($string =~ /^MOTD>/) {
+    $self->{'core'}->server_send("MOTD");
+  }
+
+  elsif($string =~ /^TOPIC>$validChan/) {
+    $self->{'core'}->server_send("TOPIC $1");
+  }
+
+  elsif($string =~ /^TOPIC>$validChan>(.+)/) {
+    $self->{'core'}->server_send("TOPIC $1 :$2");
   }
 
   elsif($string =~ /^LITERAL>(.+)$/) {
