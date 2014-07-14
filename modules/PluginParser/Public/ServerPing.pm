@@ -1,14 +1,8 @@
-#!/usr/bin/perl
 package PluginParser::Public::ServerPing;
 use strict;
 use warnings;
-
-our $VERSION = 1.0;
 our @ISA = qw(Exporter);
-our @EXPORT = qw();
-our @EXPORT_OK = qw(
-  match
-);
+our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
@@ -25,5 +19,3 @@ sub pong {
 
   $core->{'output'}->parse("LITERAL>server_send>PONG ${nick}");
 }
-
-1;

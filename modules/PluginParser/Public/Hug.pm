@@ -1,14 +1,8 @@
-#!/usr/bin/perl
 package PluginParser::Public::Hug;
 use strict;
 use warnings;
-
-our $VERSION = 1.0;
 our @ISA = qw(Exporter);
-our @EXPORT = qw();
-our @EXPORT_OK = qw(
-  match
-);
+our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
@@ -29,5 +23,3 @@ sub hug {
 
   $core->{'output'}->parse("ACTION>${chan}>hugs ${string}");
 }
-
-1;
