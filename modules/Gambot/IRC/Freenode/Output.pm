@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-### This file provides an object capable of parsing GAPIL.
+### This file provides an object capable of producing valid IRC
+### output for Freenode as parsed from an easy GAPIL-like language.
 
 package Gambot::IRC::Freenode::Output;
 use strict;
@@ -76,7 +77,7 @@ sub parse {
     $self->{'core'}->server_send("INVITE $1 $2");
   }
 
-  elsif($string =~ /^KICK>$validChan>?(.+)?$/) {
+  elsif($string =~ /^MODE>$validChan>?(.+)?$/) {
     $self->{'core'}->server_send("MODE $1 $2");
   }
 

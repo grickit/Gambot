@@ -15,7 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Gambot.  If not, see <http://www.gnu.org/licenses/>.
 
-### This file provides an object capable of parsing GAPIL.
+### This file provides an object capable of parsing IRC received
+### from Freenode.
 
 package Gambot::IRC::Freenode::Parser;
 use strict;
