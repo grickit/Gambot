@@ -33,16 +33,8 @@ $core->{'triggers'} = ();
 sub module_load {
   my ($module) = @_;
   (my $file = $module) =~ s|::|/|g;
-
-  eval {
-    require $file.'.pm';
-    $module->import();
-    $module->match($core);
-    1;
-  } or do {
-    my $error = $@;
-    $core->log_error($error);
-  };
+  require $file.'.pm';
+  $module->match($core);
 }
 
 module_load('PluginParser::Public::ServerPing');
