@@ -26,9 +26,29 @@ $core->{'triggers'} = ();
   $core->{'chan'},
   $core->{'command'},
   $core->{'message'},
-  $core->{'event'},
-  $core->{'redirect'}
+  $core->{'event'}
 ) = $core->{'parser'}->parse($core->{'botname'},$core->{'incoming_message'});
+
+$core->{'pinged'} = '';
+$core->{'target'} = $core->{'nick'};
+
+if($core->{'event'} eq 'on_private_message') {
+  $core->{'pinged'} = 1;
+}
+
+if($core->{'event'} eq 'on_public_message') {
+  my $botname = $core->{'botname'};
+
+  if($core->{'message'} =~ /@([, $charactersNick]+)$/) {
+    $core->{'target'} = $1;
+    $core->{'message'} =~ s/ ?@$1$//;
+  }
+
+  if($core->{'message'} =~ /^(${botname}[:,] )/ or $core->{'message'} =~ /^(&)/) {
+    $core->{'pinged'} = 1;
+    $core->{'message'} =~ s/^$1//;
+  }
+}
 
 sub module_load {
   my ($module) = @_;
@@ -36,6 +56,8 @@ sub module_load {
   require $file.'.pm';
   $module->match($core);
 }
+
+
 
 module_load('PluginParser::Public::ServerPing');
 module_load('PluginParser::Public::Hug');
