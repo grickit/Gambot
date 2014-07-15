@@ -7,11 +7,10 @@ our @EXPORT_OK = qw(match);
 sub match {
   my ($self,$core) = @_;
 
-  if($core->{'event'} eq 'on_public_message' && $core->{'message'} =~ /^hug (.+)$/) {
-    return hug($core,$core->{'chan'},$1);
-  }
+  if(!$core->{'pinged'}) { return ''; }
+  if(!$core->{'event'} eq 'on_public_message' and !$core->{'event'} eq 'on_private_message') { return ''; }
 
-  elsif($core->{'event'} eq 'on_private_message' && $core->{'message'} =~ /^hug (.+)$/) {
+  if($core->{'message'} =~ /^hug (.+)$/) {
     return hug($core,$core->{'chan'},$1);
   }
 
@@ -20,6 +19,8 @@ sub match {
 
 sub hug {
   my ($core,$chan,$string) = @_;
+  my $sender = $core->{'nick'};
+  $string =~ s/\bme\b/${sender}/;
 
   $core->{'output'}->parse("ACTION>${chan}>hugs ${string}");
 }
