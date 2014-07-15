@@ -8,7 +8,7 @@ sub match {
   my ($self,$core) = @_;
 
   if(!$core->{'pinged'}) { return ''; }
-  if(!$core->{'event'} eq 'on_public_message' and !$core->{'event'} eq 'on_private_message') { return ''; }
+  if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /^hug (.+)$/) {
     return hug($core,$core->{'chan'},$1);
