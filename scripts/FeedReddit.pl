@@ -30,7 +30,11 @@ sub fetch_json {
 
 my $last_reported = $core->value_get('feed_metadata:reddit','last_reported');
 
-my $string = fetch_json('http://www.reddit.com/r/minecraft+shittyircquotes+subredditdrama+grickit+shirtredditsays+gaming/new.json?sort=new');
+my $subreddits = $core->value_list('feed_subscriptions:reddit');
+$subreddits =~ s/,?autosave,?//;
+$subreddits =~ s/,/+/g;
+
+my $string = fetch_json("http://www.reddit.com/r/${subreddits}/new.json?sort=new");
 my $json = JSON::decode_json($string);
 
 
@@ -41,15 +45,17 @@ if(scalar($json->{'data'}->{'children'}[0])) {
     my $post = $json->{'data'}->{'children'}[-$i]->{'data'};
     if($post->{'created'} <= $last_reported) { next; }
 
-    my $sub = $post->{'subreddit'};
+    my $subreddit = $post->{'subreddit'};
     my $title = decode_entities($post->{'title'});
     my $author = '/u/'.$post->{'author'};
-    my $domain = $post->{'domain'};
     (my $name = $post->{'name'}) =~ s|^t3_||;
     my $short_url = 'http://redd.it/'.$name;
 
-    $core->server_send("PRIVMSG ##Gambot :\x02${sub}:\x02 ${title} (by \x0303${author}\x0F) ${short_url} (${domain})");
-    $actually_reported = 1;
+    my $subscribers = $core->value_get('feed_subscriptions:reddit',uc($subreddit));
+    foreach my $channel (split(',',$subscribers)) {
+      $core->server_send("PRIVMSG ${channel} :\x02${subreddit}:\x02 ${title} (by \x0303${author}\x0F) ${short_url}");
+      $actually_reported = 1;
+    }
   }
 
   if($actually_reported) { $core->value_set('feed_metadata:reddit','last_reported',$json->{'data'}->{'children'}[0]->{'data'}->{'created'}); }
