@@ -209,7 +209,11 @@ sub value_pull {
     delete $current{$value};
   }
 
-  $self->value_set($key,join(',',keys %current));
+  my $new = join(',',keys %current);
+
+  if($new) { $self->value_set($key,$new); }
+  else { $self->value_delete($key); }
+
   return $self->value_get($key);
 }
 
