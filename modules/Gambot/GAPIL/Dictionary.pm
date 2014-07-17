@@ -89,7 +89,7 @@ sub value_list {
 
   my @list;
   foreach my $key (keys $self->{'values'}) {
-    push(@list,$key);
+    if($key ne 'AUTOSAVE') { push(@list,$key); }
   }
   return @list;
 }

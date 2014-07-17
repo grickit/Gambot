@@ -211,7 +211,7 @@ END {
   $core->log_event('Saving persistent dictionaries.');
   my @dictionaries = $core->dictionary_list();
   foreach my $current_dictionary (@dictionaries) {
-    if($core->value_get($current_dictionary,'autosave')) {
+    if($core->value_get($current_dictionary,'AUTOSAVE')) {
       $core->dictionary_save($current_dictionary);
     }
   }

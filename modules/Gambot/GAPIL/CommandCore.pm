@@ -143,7 +143,7 @@ sub dictionary_load {
 
   $self->dictionary_get($dict)->{'values'} = {};
   $self->dictionary_get($dict)->load($filename);
-  $self->value_add($dict,'autosave',1);
+  $self->value_add($dict,'AUTOSAVE',1);
 
   return 1;
 }
@@ -151,9 +151,9 @@ sub dictionary_load {
 sub dictionary_save {
   my ($self,$dict) = @_;
   my $filename = $self->value_get('core','home_directory').'/persistent/'.$dict.'.txt';
-  $self->value_delete($dict,'autosave');
+  $self->value_delete($dict,'AUTOSAVE');
   $self->dictionary_get($dict)->save($filename);
-  $self->value_add($dict,'autosave',1);
+  $self->value_add($dict,'AUTOSAVE',1);
 
   return 1;
 }
