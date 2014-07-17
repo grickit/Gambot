@@ -44,6 +44,7 @@ if(scalar($json->{'data'}->{'children'}[0])) {
   foreach my $i (1..scalar(@{$json->{'data'}->{'children'}})) {
     my $post = $json->{'data'}->{'children'}[-$i]->{'data'};
     if($post->{'created'} <= $last_reported) { next; }
+    $actually_reported = 1;
 
     my $subreddit = $post->{'subreddit'};
     my $title = decode_entities($post->{'title'});
@@ -51,10 +52,9 @@ if(scalar($json->{'data'}->{'children'}[0])) {
     (my $name = $post->{'name'}) =~ s|^t3_||;
     my $short_url = 'http://redd.it/'.$name;
 
-    my $subscribers = $core->value_get('feed_subscriptions:reddit',uc($subreddit));
+    my $subscribers = $core->value_get('feed_subscriptions:reddit',lc($subreddit));
     foreach my $channel (split(',',$subscribers)) {
       $core->server_send("PRIVMSG ${channel} :\x02${subreddit}:\x02 ${title} (by \x0303${author}\x0F) ${short_url}");
-      $actually_reported = 1;
     }
   }
 
