@@ -226,6 +226,18 @@ sub value_decrement {
   return $self->dictionary_get($dict)->value_decrement($key,$value);
 }
 
+sub value_push {
+  my ($self,$dict,$key,$value) = @_;
+
+  return $self->dictionary_get($dict)->value_push($key,$value);
+}
+
+sub value_pull {
+  my ($self,$dict,$key,$value) = @_;
+
+  return $self->dictionary_get($dict)->value_pull($key,$value);
+}
+
 
 ## Child manipulation
 sub child_exists {

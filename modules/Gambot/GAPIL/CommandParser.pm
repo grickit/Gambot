@@ -143,6 +143,14 @@ sub parse_message {
     $result = $self->{'core'}->value_decrement($1,$2,$3);
   }
 
+  elsif($message =~ /^value_push>$validKey>$validKey>$validKey$/) {
+    $result = $self->{'core'}->value_push($1,$2,$3);
+  }
+
+  elsif($message =~ /^value_pull>$validKey>$validKey>$validKey$/) {
+    $result = $self->{'core'}->value_pull($1,$2,$3);
+  }
+
 
 ## Child manipulation
   elsif($message =~ /^child_exists>$validKey$/) {

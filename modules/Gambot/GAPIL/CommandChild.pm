@@ -217,6 +217,18 @@ sub value_decrement {
   return gapil_call('value_decrement>'.$dict.'>'.$key.'>'.$value);
 }
 
+sub value_push {
+  my ($self,$dict,$key,$value) = @_;
+
+  return gapil_call('value_push>'.$dict.'>'.$key.'>'.$value);
+}
+
+sub value_pull {
+  my ($self,$dict,$key,$value) = @_;
+
+  return gapil_call('value_pull>'.$dict.'>'.$key.'>'.$value);
+}
+
 
 ## Child manipulation
 sub child_exists {

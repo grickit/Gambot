@@ -89,7 +89,7 @@ sub value_list {
 
   my @list;
   foreach my $key (keys $self->{'values'}) {
-    if($key ne 'AUTOSAVE') { push(@list,$key); }
+    push(@list,$key);
   }
   return @list;
 }
@@ -185,6 +185,31 @@ sub value_decrement {
   }
 
   $self->value_set($key,($self->value_get($key)-$value));
+  return $self->value_get($key);
+}
+
+sub value_push {
+  my ($self,$key,$value) = @_;
+  my %current = map { $_ => 1 } split(',',$self->value_get($key));
+
+  if(!exists $current{$value}) {
+    $current{$value} = 1;
+  }
+
+  $self->value_set($key,join(',',keys %current));
+  return $self->value_get($key);
+}
+
+sub value_pull {
+  my ($self,$key,$value) = @_;
+  my %current = map { $_ => 1 } split(',',$self->value_get($key));
+
+  if(exists $current{$value}) {
+    $current{$value} = undef;
+    delete $current{$value};
+  }
+
+  $self->value_set($key,join(',',keys %current));
   return $self->value_get($key);
 }
 
