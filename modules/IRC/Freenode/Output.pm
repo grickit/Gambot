@@ -18,11 +18,11 @@
 ### This file provides an object capable of producing valid IRC
 ### output for Freenode as parsed from an easy GAPIL-like language.
 
-package Gambot::IRC::Freenode::Output;
+package IRC::Freenode::Output;
 use strict;
 use warnings;
 
-use Gambot::IRC::Freenode::Specifications;
+use IRC::Freenode::Specifications;
 use Gambot::GAPIL::CommandChild;
 
 our $VERSION = 1.0;

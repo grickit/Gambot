@@ -4,15 +4,15 @@ use URI::Escape;
 use FindBin;
 use lib "$FindBin::Bin/../../modules/";
 use Gambot::GAPIL::CommandChild;
-use Gambot::IRC::Freenode::Specifications;
-use Gambot::IRC::Freenode::Parser;
-use Gambot::IRC::Freenode::Output;
+use IRC::Freenode::Specifications;
+use IRC::Freenode::Parser;
+use IRC::Freenode::Output;
 
 $| = 1;
 
 my $core = new Gambot::GAPIL::CommandChild;
-$core->{'parser'} = new Gambot::IRC::Freenode::Parser($core);
-$core->{'output'} = new Gambot::IRC::Freenode::Output($core);
+$core->{'parser'} = new IRC::Freenode::Parser($core);
+$core->{'output'} = new IRC::Freenode::Output($core);
 
 $core->{'childid'} = stdin_read();
 $core->{'botname'} = stdin_read();

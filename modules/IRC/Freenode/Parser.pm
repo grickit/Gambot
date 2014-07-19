@@ -18,11 +18,11 @@
 ### This file provides an object capable of parsing IRC received
 ### from Freenode.
 
-package Gambot::IRC::Freenode::Parser;
+package IRC::Freenode::Parser;
 use strict;
 use warnings;
 
-use Gambot::IRC::Freenode::Specifications;
+use IRC::Freenode::Specifications;
 
 our $VERSION = 1.0;
 our @ISA = qw(Exporter);

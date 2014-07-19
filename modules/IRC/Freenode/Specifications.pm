@@ -17,7 +17,7 @@
 
 ### This file provides an specifications for Freenode syntax.
 
-package Gambot::IRC::Freenode::Specifications;
+package IRC::Freenode::Specifications;
 use strict;
 use warnings;
 
