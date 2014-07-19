@@ -62,4 +62,4 @@ if(scalar($json->{'data'}->{'children'}[0])) {
 }
 
 #value_delete>feed_metadata_reddit>last_reported
-$core->delay_subscribe(30,'child_add>feed_reddit>perl /home/derek/source/gambot/scripts/FeedReddit.pl');
+$core->delay_subscribe(30,"child_add>feed_reddit>perl $FindBin::RealBin/FeedReddit.pl");
