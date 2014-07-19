@@ -34,7 +34,6 @@ sub new {
 
   $self->{'core'} = shift;
   $self->{'timestamp'} = shift;
-  $self->{'core'}->value_set('delays',$self->{'timestamp'},0);
 
   bless($self,$class);
   return $self;

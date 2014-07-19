@@ -34,7 +34,6 @@ sub new {
 
   $self->{'core'} = shift;
   $self->{'name'} = shift;
-  $self->{'core'}->value_set('events',$self->{'name'},0);
 
   bless($self,$class);
   return $self;

@@ -122,7 +122,6 @@ $core->log_event('Terminal pseudo child online.');
 $core->value_add('core','home_directory',$FindBin::Bin); # Default location to store files
 $core->value_add('core','configuration_file','config.txt'); # Default name for the bot config file
 $core->value_add('core','nick','aGambot');
-$core->value_add('core','NOSAVE',1);
 $core->log_event('Default core values set.');
 
 
@@ -145,7 +144,6 @@ $core->value_add('config','iterations_per_second',10); # Default max number of t
 $core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
 $core->value_add('config','ping_timeout',300); # Default max number of seconds between received IRC messages
 $core->value_add('config','key_characters','A-Za-z0-9_:.#|`[\]{}()\\/\^\-'); # Default allowed characters for stored values and such
-$core->value_add('config','NOSAVE',1);
 $core->log_event('Default config values set.');
 
 
@@ -154,8 +152,15 @@ $core->value_add('ircserver','last_received_IRC_message_time',time); # Used for 
 $core->value_add('ircserver','last_sent_IRC_message_time',time); # Used for throttling IRC messages
 $core->value_add('ircserver','IRC_messages_received_this_connection',0); # Used for naming child processes
 $core->value_add('ircserver','IRC_messages_sent_this_second',0); # Used for throttling IRC messages
-$core->value_add('ircserver','NOSAVE',1);
 $core->log_event('Default IRC stats set.');
+
+
+# Set up core dictionaries
+$core->value_add('core','NOSAVE',1);
+$core->value_add('config','NOSAVE',1);
+$core->value_add('ircserver','NOSAVE',1);
+$core->dictionary_load('events');
+$core->dictionary_load('delays');
 
 
 $core->value_add('core','setup_complete',1);

@@ -64,14 +64,17 @@ sub load {
 sub save {
   my ($self,$filename) = @_;
 
-  $self->{'core'}->log_debug('Saving '.$filename);
-  open(my $file,'>'.$filename);
-  foreach my $key ($self->value_list()) {
-    my $value = $self->value_get($key);
-    $self->{'core'}->log_debug($key.' = '.$value);
-    print $file $key.' = "'.$value.'"'."\n";
+  if(keys $self->{'values'}) {
+    $self->{'core'}->log_debug('Saving '.$filename);
+    open(my $file,'>'.$filename);
+    foreach my $key ($self->value_list()) {
+      my $value = $self->value_get($key);
+      $self->{'core'}->log_debug($key.' = '.$value);
+      print $file $key.' = "'.$value.'"'."\n";
+    }
+    close($file);
   }
-  close($file);
+
 }
 
 ## Value manipulation

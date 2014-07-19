@@ -118,11 +118,13 @@ sub dictionary_list {
 }
 
 sub dictionary_get {
-  my ($self,$dict) = @_;
+  my ($self,$dict,$autoload) = @_;
 
   if(!$self->dictionary_exists($dict)) {
     $self->{'dictionaries'}{$dict} = new Gambot::GAPIL::Dictionary($self,$dict);
-    $self->dictionary_load($dict);
+    if($autoload) {
+      $self->dictionary_load($dict);
+    }
   }
   return $self->{'dictionaries'}{$dict};
 }
@@ -131,6 +133,8 @@ sub dictionary_delete {
   my ($self,$dict) = @_;
 
   if($self->dictionary_exists($dict)) {
+    my $filename = $self->value_get('core','home_directory').'/persistent/'.$dict.'.txt';
+    unlink($filename);
     $self->{'dictionaries'}{$dict} = undef;
     delete $self->{'dictionaries'}{$dict};
     return $dict;
@@ -165,79 +169,79 @@ sub dictionary_save {
 sub value_exists {
   my ($self,$dict,$key) = @_;
 
-  return $self->dictionary_get($dict)->value_exists($key);
+  return $self->dictionary_get($dict,1)->value_exists($key);
 }
 
 sub value_list {
   my ($self,$dict) = @_;
 
-  return $self->dictionary_get($dict)->value_list();
+  return $self->dictionary_get($dict,1)->value_list();
 }
 
 sub value_get {
   my ($self,$dict,$key) = @_;
 
-  return $self->dictionary_get($dict)->value_get($key);
+  return $self->dictionary_get($dict,1)->value_get($key);
 }
 
 sub value_set {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_set($key,$value);
+  return $self->dictionary_get($dict,1)->value_set($key,$value);
 }
 
 sub value_delete {
   my ($self,$dict,$key) = @_;
 
-  return $self->dictionary_get($dict)->value_delete($key);
+  return $self->dictionary_get($dict,1)->value_delete($key);
 }
 
 sub value_add {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_add($key,$value);
+  return $self->dictionary_get($dict,1)->value_add($key,$value);
 }
 
 sub value_replace {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_replace($key,$value);
+  return $self->dictionary_get($dict,1)->value_replace($key,$value);
 }
 
 sub value_append {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_append($key,$value);
+  return $self->dictionary_get($dict,1)->value_append($key,$value);
 }
 
 sub value_prepend {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_prepend($key,$value);
+  return $self->dictionary_get($dict,1)->value_prepend($key,$value);
 }
 
 sub value_increment {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_increment($key,$value);
+  return $self->dictionary_get($dict,1)->value_increment($key,$value);
 }
 
 sub value_decrement {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_decrement($key,$value);
+  return $self->dictionary_get($dict,1)->value_decrement($key,$value);
 }
 
 sub value_push {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_push($key,$value);
+  return $self->dictionary_get($dict,1)->value_push($key,$value);
 }
 
 sub value_pull {
   my ($self,$dict,$key,$value) = @_;
 
-  return $self->dictionary_get($dict)->value_pull($key,$value);
+  return $self->dictionary_get($dict,1)->value_pull($key,$value);
 }
 
 
@@ -350,7 +354,7 @@ sub child_send {
 sub event_exists {
   my ($self,$name) = @_;
 
-  if($self->value_exists('events',$name)) {
+  if(exists $self->{'events'}{$name}) {
     return 1;
   }
   return '';
@@ -359,11 +363,7 @@ sub event_exists {
 sub event_list {
   my ($self) = @_;
 
-  my @list;
-  foreach my $name (keys $self->{'events'}) {
-    push(@list,$name);
-  }
-  return @list;
+  return $self->value_list('events');
 }
 
 sub event_get {
@@ -379,6 +379,9 @@ sub event_delete {
   my ($self,$name) = @_;
 
   if($self->event_exists($name)) {
+    $self->dictionary_delete('eventChildren:'.$name);
+    $self->dictionary_delete('eventMessages:'.$name);
+    $self->value_delete('events',$name);
     $self->{'events'}{$name} = undef;
     delete $self->{'events'}{$name};
     return $name;
@@ -401,7 +404,9 @@ sub event_unsubscribe {
 sub event_fire {
   my ($self,$name) = @_;
 
-  return $self->event_get($name)->fire();
+  my $result = $self->event_get($name)->fire();
+  $self->event_delete($name);
+  return $result;
 }
 
 
@@ -409,7 +414,7 @@ sub event_fire {
 sub delay_exists {
   my ($self,$timestamp) = @_;
 
-  if($self->value_exists('delays',$timestamp)) {
+  if(exists $self->{'delays'}{$timestamp}) {
     return 1;
   }
   return '';
@@ -438,6 +443,9 @@ sub delay_delete {
   my ($self,$timestamp) = @_;
 
   if($self->delay_exists($timestamp)) {
+    $self->dictionary_delete('delayChildren:'.$timestamp);
+    $self->dictionary_delete('delayMessages:'.$timestamp);
+    $self->value_delete('delays',$timestamp);
     $self->{'delays'}{$timestamp} = undef;
     delete $self->{'delays'}{$timestamp};
     return $timestamp;
@@ -467,9 +475,14 @@ sub delay_fire {
   elsif($timestamp < time) { $self->log_debug('Firing delay '.$timestamp.' late.'); }
   else { $self->log_debug('Firing delay '.$timestamp.' on schedule.'); }
 
-  my $result = $self->delay_get($timestamp)->fire();
-  $self->delay_delete($timestamp);
-  return $result;
+  if($self->delay_exists($timestamp)) {
+    my $result = $self->delay_get($timestamp)->fire();
+    $self->delay_delete($timestamp);
+    return $result;
+  }
+  else { $self->log_debug('Delay '.$timestamp.' had no subscribers.'); }
+
+  return '';
 }
 
 
