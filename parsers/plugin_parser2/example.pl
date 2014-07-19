@@ -58,7 +58,7 @@ sub module_load {
 }
 
 
-
+module_load('PluginParser::Public::Autojoin');
 module_load('PluginParser::Public::ServerPing');
 module_load('PluginParser::Public::Hug');
 module_load('PluginParser::Public::Time');
