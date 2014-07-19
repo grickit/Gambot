@@ -16,5 +16,4 @@ sub pong {
   my ($core,$nick) = @_;
 
   $core->{'output'}->parse("PONG>${nick}");
-  $core->{'output'}->parse("MESSAGE>##Gambot>Got a ping.");
 }
