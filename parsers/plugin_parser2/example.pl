@@ -57,9 +57,9 @@ sub module_load {
   $module->match($core);
 }
 
-
-module_load('PluginParser::Public::Autojoin');
-module_load('PluginParser::Public::ServerPing');
-module_load('PluginParser::Public::Hug');
-module_load('PluginParser::Public::Time');
-module_load('PluginParser::Public::Subreddit');
+module_load('PluginParser::Maintenance::NickBump');
+module_load('PluginParser::Maintenance::Autojoin');
+module_load('PluginParser::Maintenance::ServerPing');
+module_load('PluginParser::Hug');
+module_load('PluginParser::Time');
+module_load('PluginParser::Subreddit');

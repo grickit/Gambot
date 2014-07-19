@@ -1,4 +1,4 @@
-package PluginParser::Public::Autojoin;
+package PluginParser::Maintenance::Autojoin;
 use strict;
 use warnings;
 use IRC::Freenode::Specifications;

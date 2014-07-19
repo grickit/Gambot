@@ -1,4 +1,4 @@
-package PluginParser::Public::Time;
+package PluginParser::Time;
 use strict;
 use warnings;
 use POSIX;

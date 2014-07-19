@@ -1,4 +1,4 @@
-package PluginParser::Public::NickBump;
+package PluginParser::Maintenance::NickBump;
 use strict;
 use warnings;
 use IRC::Freenode::Specifications;

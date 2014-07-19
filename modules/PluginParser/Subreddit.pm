@@ -1,4 +1,4 @@
-package PluginParser::Public::Subreddit;
+package PluginParser::Subreddit;
 use strict;
 use warnings;
 use POSIX;

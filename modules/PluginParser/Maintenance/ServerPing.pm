@@ -1,4 +1,4 @@
-package PluginParser::Public::ServerPing;
+package PluginParser::Maintenance::ServerPing;
 use strict;
 use warnings;
 our @ISA = qw(Exporter);
