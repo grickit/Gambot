@@ -26,35 +26,27 @@ sub match {
   return '';
 }
 
-sub load_dict_feed_reddit {
-  my ($core) = @_;
-  if(!$core->dictionary_exists('feed_metadata:reddit')) { $core->dictionary_load('feed_metadata:reddit'); }
-  if(!$core->dictionary_exists('feed_subscriptions:reddit')) { $core->dictionary_load('feed_subscriptions:reddit'); }
-  if(!$core->dictionary_exists('feed_channels:reddit')) { $core->dictionary_load('feed_channels:reddit'); }
-}
-
 sub subreddit_list {
   my ($core,$chan,$target) = @_;
-  load_dict_feed_reddit($core);
-  my $channels = $core->value_get('feed_channels:reddit',lc($chan));
+  my $subreddits = $core->value_get('feed_channels:reddit',lc($chan));
+  $subreddits =~ s/,?autosave,?//;
+  $subreddits =~ s/,/+/g;
 
-  $core->{'output'}->parse("MESSAGE>${chan}>${target}: ${channels}");
+  $core->{'output'}->parse("MESSAGE>${chan}>${target}: http://www.reddit.com/r/${subreddits}/new");
 }
 
 sub subreddit_add {
   my ($core,$subreddit,$chan,$target) = @_;
-  load_dict_feed_reddit($core);
   $core->value_push('feed_subscriptions:reddit',lc($subreddit),lc($chan));
   $core->value_push('feed_channels:reddit',lc($chan),lc($subreddit));
 
-  $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will now announce new posts from ${subreddit} in ${chan}.");
+  $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will now announce new posts from http://reddit.com/r/${subreddit} in ${chan}.");
 }
 
 sub subreddit_remove {
   my ($core,$subreddit,$chan,$target) = @_;
-  load_dict_feed_reddit($core);
   $core->value_pull('feed_subscriptions:reddit',lc($subreddit),lc($chan));
   $core->value_pull('feed_channels:reddit',lc($chan),lc($subreddit));
 
-  $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will not announce new posts from ${subreddit} in ${chan}.");
+  $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will not announce new posts from http://reddit.com/r/${subreddit} in ${chan}.");
 }
