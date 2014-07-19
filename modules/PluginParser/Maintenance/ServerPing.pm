@@ -15,5 +15,6 @@ sub match {
 sub pong {
   my ($core,$nick) = @_;
 
-  $core->{'output'}->parse("LITERAL>server_send>PONG ${nick}");
+  $core->{'output'}->parse("PONG>${nick}");
+  $core->{'output'}->parse("MESSAGE>##Gambot>Got a ping.");
 }

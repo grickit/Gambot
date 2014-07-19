@@ -43,7 +43,7 @@ sub parse {
   my ($self,$botname,$string) = @_;
   my ($nick,$user,$host,$chan,$command,$message,$event,$redirect) = ('','','','','','','','');
 
-  if ($string =~ /^PING (.*)$/i) {
+  if ($string =~ /^PING :$validSenderServer$/i) {
     ($nick,$event) = ($1,'on_server_ping');
   }
 

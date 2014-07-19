@@ -86,11 +86,11 @@ sub parse {
   }
 
   elsif($string =~ /^PING>$validNick$/ or $string =~ /^PING>$validSenderServer$/) {
-    $self->{'core'}->server_send("PING $1");
+    $self->{'core'}->server_send("PING :$1");
   }
 
   elsif($string =~ /^PONG>$validNick$/ or $string =~ /^PONG>$validSenderServer$/) {
-    $self->{'core'}->server_send("PONG $1");
+    $self->{'core'}->server_send("PONG :$1");
   }
 
   elsif($string =~ /^AWAY>(.+)/) {
