@@ -85,6 +85,10 @@ sub parse {
     ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_mode');
   }
 
+  elsif ($string =~ /^:$validNick (MODE) $validChan (.+)$/) {
+    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_mode');
+  }
+
   elsif ($string =~ /^:$validSenderHuman (NICK) :?$validNick$/) {
     ($nick,$user,$host,$command,$message,$event) = ($1,$2,$3,$4,$5,'on_nick');
   }
