@@ -43,7 +43,7 @@ if(scalar($json->{'data'}->{'children'}[0])) {
 
   foreach my $i (1..scalar(@{$json->{'data'}->{'children'}})) {
     my $post = $json->{'data'}->{'children'}[-$i]->{'data'};
-    if($post->{'created'} <= $last_reported) { next; }
+    if($post->{'created_utc'} <= $last_reported) { next; }
     $actually_reported = 1;
 
     my $subreddit = $post->{'subreddit'};
@@ -58,7 +58,7 @@ if(scalar($json->{'data'}->{'children'}[0])) {
     }
   }
 
-  if($actually_reported) { $core->value_set('feed_metadata:reddit','last_reported',$json->{'data'}->{'children'}[0]->{'data'}->{'created'}); }
+  if($actually_reported) { $core->value_set('feed_metadata:reddit','last_reported',$json->{'data'}->{'children'}[0]->{'data'}->{'created_utc'}); }
 }
 
 #value_delete>feed_metadata_reddit>last_reported
