@@ -60,6 +60,7 @@ sub module_load {
 module_load('PluginParser::Maintenance::NickBump');
 module_load('PluginParser::Maintenance::Autojoin');
 module_load('PluginParser::Maintenance::ServerPing');
-module_load('PluginParser::Hug');
+module_load('PluginParser::Basic::CTCP');
+module_load('PluginParser::Basic::Hug');
 module_load('PluginParser::Time');
 module_load('PluginParser::Subreddit');
