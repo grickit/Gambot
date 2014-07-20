@@ -46,83 +46,83 @@ sub parse {
   $string = strip_newlines($string);
 
   if($string =~ /^MESSAGE>$validChan>(.+)$/) {
-    $self->{'core'}->server_send("PRIVMSG $1 :$2");
+    $self->{'core'}->server_send("PRIVMSG $1 :$2",1);
   }
 
   elsif($string =~ /^ACTION>$validChan>(.+)$/) {
-    $self->{'core'}->server_send("PRIVMSG $1 :ACTION $2");
+    $self->{'core'}->server_send("PRIVMSG $1 :ACTION $2",1);
   }
 
   elsif($string =~ /^NOTICE>$validChan>(.+)$/) {
-    $self->{'core'}->server_send("NOTICE $1 :$2");
+    $self->{'core'}->server_send("NOTICE $1 :$2",1);
   }
 
   elsif($string =~ /^JOIN>$validChan$/) {
-    $self->{'core'}->server_send("JOIN $1");
+    $self->{'core'}->server_send("JOIN $1",1);
   }
 
   elsif($string =~ /^PART>$validChan>?(.+)?$/) {
-    $self->{'core'}->server_send("PART $1 :$2");
+    $self->{'core'}->server_send("PART $1 :$2",1);
   }
 
   elsif($string =~ /^QUIT>?(.+)?$/) {
-    $self->{'core'}->server_send("QUIT :$1");
+    $self->{'core'}->server_send("QUIT :$1",1);
   }
 
   elsif($string =~ /^KICK>$validChan>$validNick>?(.+)?$/) {
-    $self->{'core'}->server_send("KICK $1 $2 :$3");
+    $self->{'core'}->server_send("KICK $1 $2 :$3",1);
   }
 
   elsif($string =~ /^INVITE>$validChan>$validNick$/) {
-    $self->{'core'}->server_send("INVITE $1 $2");
+    $self->{'core'}->server_send("INVITE $1 $2",1);
   }
 
   elsif($string =~ /^MODE>$validChan>?(.+)?$/) {
-    $self->{'core'}->server_send("MODE $1 $2");
+    $self->{'core'}->server_send("MODE $1 $2",1);
   }
 
   elsif($string =~ /^RENAME>$validNick$/) {
-    $self->{'core'}->server_send("NICK $1");
+    $self->{'core'}->server_send("NICK $1",1);
   }
 
   elsif($string =~ /^PING>$validNick$/ or $string =~ /^PING>$validSenderServer$/) {
-    $self->{'core'}->server_send("PING :$1");
+    $self->{'core'}->server_send("PING :$1",1);
   }
 
   elsif($string =~ /^PONG>$validNick$/ or $string =~ /^PONG>$validSenderServer$/) {
-    $self->{'core'}->server_send("PONG :$1");
+    $self->{'core'}->server_send("PONG :$1",1);
   }
 
   elsif($string =~ /^AWAY>(.+)/) {
-    $self->{'core'}->server_send("AWAY $1");
+    $self->{'core'}->server_send("AWAY $1",1);
   }
 
   elsif($string =~ /^BACK>/) {
-    $self->{'core'}->server_send("AWAY");
+    $self->{'core'}->server_send("AWAY",1);
   }
 
   elsif($string =~ /^WHO>$validNick$/ or $string =~ /^WHO>$validChan$/ or $string =~ /^WHO>$validHost$/) {
-    $self->{'core'}->server_send("WHO $1");
+    $self->{'core'}->server_send("WHO $1",1);
   }
 
   elsif($string =~ /^WHOIS>$validNick$/) {
-    $self->{'core'}->server_send("WHOIS $1");
+    $self->{'core'}->server_send("WHOIS $1",1);
   }
 
   elsif($string =~ /^WHOWAS>$validNick$/) {
-    $self->{'core'}->server_send("WHOWAS $1");
+    $self->{'core'}->server_send("WHOWAS $1",1);
   }
 
   elsif($string =~ /^MOTD>/) {
-    $self->{'core'}->server_send("MOTD");
+    $self->{'core'}->server_send("MOTD",1);
   }
 
   elsif($string =~ /^TOPIC>$validChan/) {
-    $self->{'core'}->server_send("TOPIC $1");
+    $self->{'core'}->server_send("TOPIC $1",1);
   }
 
   elsif($string =~ /^TOPIC>$validChan>(.+)/) {
-    $self->{'core'}->server_send("TOPIC $1 :$2");
+    $self->{'core'}->server_send("TOPIC $1 :$2",1);
   }
 
   elsif($string =~ /^LITERAL>(.+)$/) {
@@ -130,8 +130,8 @@ sub parse {
   }
 
   else {
-    $self->{'core'}->log_error('Outgoing message did not match GAPIL parser.');
-    $self->{'core'}->log_error($string);
+    $self->{'core'}->log_error('Outgoing message did not match GAPIL parser.',1);
+    $self->{'core'}->log_error($string,1);
     return '';
   }
 

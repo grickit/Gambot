@@ -54,12 +54,12 @@ if(scalar($json->{'data'}->{'children'}[0])) {
 
     my $subscribers = $core->value_get('feed_subscriptions:reddit',lc($subreddit));
     foreach my $channel (split(',',$subscribers)) {
-      $core->server_send("PRIVMSG ${channel} :\x02${subreddit}:\x02 ${title} (by \x0303${author}\x0F) ${short_url}");
+      $core->server_send("PRIVMSG ${channel} :\x02${subreddit}:\x02 ${title} (by \x0303${author}\x0F) ${short_url}",1);
     }
   }
 
-  if($actually_reported) { $core->value_set('feed_metadata:reddit','last_reported',$json->{'data'}->{'children'}[0]->{'data'}->{'created_utc'}); }
+  if($actually_reported) { $core->value_set('feed_metadata:reddit','last_reported',$json->{'data'}->{'children'}[0]->{'data'}->{'created_utc'},1); }
 }
 
 #value_delete>feed_metadata_reddit>last_reported
-$core->delay_subscribe(30,"child_add>feed_reddit>perl $FindBin::RealBin/FeedReddit.pl");
+$core->delay_subscribe(30,"child_add>feed_reddit>perl $FindBin::RealBin/FeedReddit.pl",1);

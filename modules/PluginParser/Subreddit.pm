@@ -37,16 +37,16 @@ sub subreddit_list {
 
 sub subreddit_add {
   my ($core,$subreddit,$chan,$target) = @_;
-  $core->value_push('feed_subscriptions:reddit',lc($subreddit),lc($chan));
-  $core->value_push('feed_channels:reddit',lc($chan),lc($subreddit));
+  $core->value_push('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
+  $core->value_push('feed_channels:reddit',lc($chan),lc($subreddit),1);
 
   $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will now announce new posts from http://reddit.com/r/${subreddit} in ${chan}.");
 }
 
 sub subreddit_remove {
   my ($core,$subreddit,$chan,$target) = @_;
-  $core->value_pull('feed_subscriptions:reddit',lc($subreddit),lc($chan));
-  $core->value_pull('feed_channels:reddit',lc($chan),lc($subreddit));
+  $core->value_pull('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
+  $core->value_pull('feed_channels:reddit',lc($chan),lc($subreddit),1);
 
   $core->{'output'}->parse("MESSAGE>${chan}>${target}: I will not announce new posts from http://reddit.com/r/${subreddit} in ${chan}.");
 }
