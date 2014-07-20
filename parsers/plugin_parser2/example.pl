@@ -68,4 +68,5 @@ module_load('PluginParser::Basic::CTCP');
 module_load('PluginParser::Basic::Hug');
 module_load('PluginParser::Temperature');
 module_load('PluginParser::Time');
+module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Subreddit');
