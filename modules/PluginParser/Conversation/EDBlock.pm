@@ -1,7 +1,6 @@
 package PluginParser::Conversation::EDBlock;
 use strict;
 use warnings;
-use POSIX;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
