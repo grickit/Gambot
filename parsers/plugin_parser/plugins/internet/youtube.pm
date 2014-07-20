@@ -46,6 +46,6 @@ if ($message =~ /^${sl}${cm}youtube ([a-zA-Z0-9-_]+)(#[a-zA-Z0-9-_=]+)?$/i || $m
       $title = HTML::Entities::decode_entities($title);
     }
 
-    actOut('MESSAGE',$target,"$receiver: \x02\"${title}\"\x02 Length: \x0306${length_m}${length_s}\x0F (by \x0303${uploader}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${vid}${anchor} ${restricted}");
+    actOut('MESSAGE',$target,"$receiver: \x02\"${title}\"\x02 Length: \x0306${length_m}:${length_s}\x0F (by \x0303${uploader}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${vid}${anchor} ${restricted}");
   }
 }
