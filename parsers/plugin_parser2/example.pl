@@ -44,7 +44,7 @@ if($core->{'event'} eq 'on_public_message') {
 
   if($core->{'message'} =~ /@([, $charactersNick]+)$/) {
     $core->{'target'} = $1;
-    $core->{'message'} =~ s/ ?@$1$//;
+    $core->{'message'} =~ s/ ?\@$1$//;
   }
 
   if($core->{'message'} =~ /^(${botname}[:,] )/ or $core->{'message'} =~ /^(&)/) {
