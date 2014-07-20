@@ -53,6 +53,10 @@ sub parse {
     $self->{'core'}->server_send("PRIVMSG $1 :ACTION $2",1);
   }
 
+  elsif($string =~ /^CTCP>$validNick>(.+)$/) {
+    $self->{'core'}->server_send("NOTICE $1 :$2",1);
+  }
+
   elsif($string =~ /^NOTICE>$validChan>(.+)$/) {
     $self->{'core'}->server_send("NOTICE $1 :$2",1);
   }
