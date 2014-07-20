@@ -1,4 +1,4 @@
-package PluginParser::Hug;
+package PluginParser::Basic::Hug;
 use strict;
 use warnings;
 our @ISA = qw(Exporter);
