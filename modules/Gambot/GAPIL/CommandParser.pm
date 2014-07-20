@@ -51,7 +51,8 @@ sub parse_message {
 
 ## Server manipulation
   if ($message =~ /^server_send>(.+)$/) {
-    $self->{'core'}->server_send($1);
+    $result = $self->{'core'}->server_send($1);
+
     if ($1 =~ /^NICK (.+)$/) { $self->{'core'}->value_set('core','nick',$1); }
   }
 
