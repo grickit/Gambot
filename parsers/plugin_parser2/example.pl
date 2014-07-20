@@ -32,6 +32,9 @@ $core->{'triggers'} = ();
 $core->{'pinged'} = '';
 $core->{'target'} = $core->{'nick'};
 
+$core->{'version'} = 'Gambot Core MK V | Plugin Parser 8 | <http://grickit.github.com/>';
+$core->{'about'} = 'I am a basic Gambot that is also tasked with reporting on the twitter, reddit, and forum feeds of various projects around freenode. <http://grickit.github.com/> <irc://chat.freenode.net/%23%23Gambot>';
+
 if($core->{'event'} eq 'on_private_message') {
   $core->{'pinged'} = 1;
 }
@@ -57,9 +60,10 @@ sub module_load {
   $module->match($core);
 }
 
-module_load('PluginParser::Maintenance::NickBump');
 module_load('PluginParser::Maintenance::Autojoin');
+module_load('PluginParser::Maintenance::NickBump');
 module_load('PluginParser::Maintenance::ServerPing');
+module_load('PluginParser::Basic::About');
 module_load('PluginParser::Basic::CTCP');
 module_load('PluginParser::Basic::Hug');
 module_load('PluginParser::Time');

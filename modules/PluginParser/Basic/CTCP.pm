@@ -31,8 +31,9 @@ sub match {
 
 sub ctcp_clientinfo {
   my ($core,$chan,$command) = @_;
+  my $version = $core->{'version'};
 
-  $core->{'output'}->parse("CTCP>${chan}>${command} Gambot PluginParser");
+  $core->{'output'}->parse("CTCP>${chan}>${command} ${version}");
 }
 
 sub ctcp_time {
