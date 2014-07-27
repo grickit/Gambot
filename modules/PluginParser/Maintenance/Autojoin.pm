@@ -18,7 +18,7 @@ sub match {
 sub autojoin {
   my ($core,$botname) = @_;
   $botname =~ s/_+$//;
-  my $channels = $core->value_list("autojoin_channels:${botname}");
+  my $channels = $core->value_list("channels_autojoin:${botname}");
 
   foreach my $channel (split(',',$channels)) {
     if($channel =~ /^$validChan$/) {
