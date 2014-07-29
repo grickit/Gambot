@@ -34,6 +34,7 @@ $feeds{'uhorizonstech'} =       269224038;
 $feeds{'Wesnoth'} =             292527834;
 $feeds{'jeb_'} =                24166202;
 $feeds{'Dinnerbone'} =          83820762;
+$feeds{'SeargeDP'} =            381007605;
 $feeds{'MinecraftAPIBot'} =     718090032;
 $feeds{'shikadilord'} =         165991694;
 $feeds{'StatusMinecraft'} =     901296078;
