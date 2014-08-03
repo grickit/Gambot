@@ -139,7 +139,7 @@ sub dictionary_list {
 sub dictionary_delete {
   my ($self,$dict,$silent) = @_;
 
-  return gapil_call('dictionary_delete>',$silent);
+  return gapil_call('dictionary_delete>'.$dict,$silent);
 }
 
 sub dictionary_load {
