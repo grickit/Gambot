@@ -46,7 +46,7 @@ our $charactersServer = 'a-zA-Z0-9\.';
 our $validNick = '(['.$charactersNick.']+)';
 our $validUser = '(['.$charactersUser.']+)';
 our $validHost = '(['.$charactersHost.']+)';
-our $validChan = '(['.$charactersChan.']+)';
+our $validChan = '(['.$charactersChan.']+|\*)';
 our $validSenderHuman = $validNick.'!~?'.$validUser.'@'.$validHost;
 our $validSenderServer = '(['.$charactersServer.']+)';
 
