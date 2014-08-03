@@ -81,12 +81,8 @@ sub parse {
     $message = '' unless $message;
   }
 
-  elsif ($string =~ /^:$validSenderHuman (MODE) $validChan (.+)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_mode');
-  }
-
-  elsif ($string =~ /^:$validNick (MODE) $validChan (.+)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_mode');
+  elsif ($string =~ /^:$validSenderHuman (MODE) $validChan :?(.+)$/) {
+    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_user_mode');
   }
 
   elsif ($string =~ /^:$validSenderHuman (NICK) :?$validNick$/) {
@@ -103,8 +99,18 @@ sub parse {
     $message = '' unless $message;
   }
 
-  elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) (.+?) ?:?(.+)?$/) {
-    ($nick,$command,$chan,$message,$event) = ($1,$2,$3,$4,'on_server_message');
+  elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validNick = $validChan :?(.+)$/) {
+    ($nick,$chan,$command,$message,$event) = ($1,$4,$2,$5,'on_server_message');
+    $message = '' unless $message;
+  }
+
+  elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validChan :?(.+)$/) {
+    ($nick,$chan,$command,$message,$event) = ($1,$3,$2,$4,'on_server_message');
+    $message = '' unless $message;
+  }
+
+  elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validNick $validChan :?(.+)$/) {
+    ($nick,$chan,$command,$message,$event) = ($1,$4,$2,$5,'on_server_message');
     $message = '' unless $message;
   }
 
