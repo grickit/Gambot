@@ -41,15 +41,20 @@ sub youtube {
   $request->parse_head(0);
   my $json = JSON::decode_json($request->get($url)->decoded_content);
 
-  my $title = $json->{'data'}->{'title'};
-  my $duration = POSIX::strftime('%H:%M:%S',gmtime($json->{'data'}->{'duration'}));
-  my $author = $json->{'data'}->{'uploader'};
-  my $views = $json->{'data'}->{'viewCount'};
-  my $likes = $json->{'data'}->{'likeCount'};
-  my $dislikes = ($json->{'data'}->{'ratingCount'} - $likes);
+  if(!$json->{'error'}) {
+    my $title = $json->{'data'}->{'title'};
+    my $duration = POSIX::strftime('%H:%M:%S',gmtime($json->{'data'}->{'duration'}));
+    my $author = $json->{'data'}->{'uploader'};
+    my $views = $json->{'data'}->{'viewCount'};
+    my $likes = $json->{'data'}->{'likeCount'};
+    my $dislikes = ($json->{'data'}->{'ratingCount'} - $likes);
 
-  my $restrictions = "(\x0314no region restrictions\x0F)";
-  if($json->{'data'}->{'restrictions'}) { $restrictions = "(\x0307unavailable in some regions\x0F)"; }
+    my $restrictions = "(\x0314no region restrictions\x0F)";
+    if($json->{'data'}->{'restrictions'}) { $restrictions = "(\x0307unavailable in some regions\x0F)"; }
 
-  $core->{'output'}->parse("MESSAGE>${chan}>$target: \x02\"${title}\"\x02 \x0306${duration}\x0F (by \x0303${author}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${video} ${restrictions}");
+    $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02\"${title}\"\x02 \x0306${duration}\x0F (by \x0303${author}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${video} ${restrictions}");
+  }
+  else {
+    $core->{'output'}->parse("MESSAGE>${chan}>${target}: That video does not exist.");
+  }
 }
