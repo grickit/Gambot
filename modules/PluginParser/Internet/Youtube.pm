@@ -13,17 +13,17 @@ our @EXPORT_OK = qw(match);
 sub match {
   my ($self,$core) = @_;
 
-  if(!$core->{'pinged'}) { return ''; }
+  if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /^youtube ([a-zA-Z0-9-_]+)$/) {
-    return youtube($core,$core->{'chan'},$core->{'target'},$1);
+    return youtube($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
   elsif($core->{'message'} =~ /^youtube .*youtube\.com.+v=([a-zA-Z0-9-_]+).*$/) {
-    return youtube($core,$core->{'chan'},$core->{'target'},$1);
+    return youtube($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
   elsif($core->{'message'} =~ /^youtube .*youtu\.be\/([a-zA-Z0-9-_]+).*$/) {
-    return youtube($core,$core->{'chan'},$core->{'target'},$1);
+    return youtube($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
   return '';

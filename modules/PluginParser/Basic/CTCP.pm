@@ -11,19 +11,19 @@ sub match {
   if($core->{'event'} ne 'on_private_ctcp') { return ''; }
 
   if($core->{'message'} =~ /^VERSION$/i) {
-    return ctcp_clientinfo($core,$core->{'chan'},'VERSION');
+    return ctcp_clientinfo($core,$core->{'receiver_chan'},'VERSION');
   }
   elsif($core->{'message'} =~ /^CLIENTINFO$/i) {
-    return ctcp_clientinfo($core,$core->{'chan'},'CLIENTINFO');
+    return ctcp_clientinfo($core,$core->{'receiver_chan'},'CLIENTINFO');
   }
   elsif($core->{'message'} =~ /^TIME$/i) {
-    return ctcp_time($core,$core->{'chan'});
+    return ctcp_time($core,$core->{'receiver_chan'});
   }
   elsif($core->{'message'} =~ /^PING ([0-9]+)$/i) {
-    return ctcp_pong($core,$core->{'chan'},$1);
+    return ctcp_pong($core,$core->{'receiver_chan'},$1);
   }
   elsif($core->{'message'} =~ /^FINGER$/i) {
-    return ctcp_finger($core,$core->{'chan'});
+    return ctcp_finger($core,$core->{'receiver_chan'});
   }
 
   return '';

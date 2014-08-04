@@ -23,6 +23,10 @@ sub match {
     return user_remove_all($core,$core->{'nick'});
   }
 
+  if($core->{'event'} eq 'on_kick') {
+    $core->{'output'}->parse("MESSAGE>##Gambot>STATE: ".$core->{'nick'}." kicked from ".$core->{'chan'}.".");
+  }
+
   if($core->{'event'} eq 'on_part' and $core->{'nick'} eq $core->{'botname'}) {
     return channel_remove_all($core,$core->{'chan'});
   }

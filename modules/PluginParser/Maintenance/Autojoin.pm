@@ -22,7 +22,7 @@ sub autojoin {
 
   foreach my $channel (split(',',$channels)) {
     if($channel =~ /^$validChan$/) {
-      $core->{'output'}->parse("JOIN>$channel");
+      $core->{'output'}->parse("JOIN>${channel}");
     }
   }
 }

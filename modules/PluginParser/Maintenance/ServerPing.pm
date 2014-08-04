@@ -9,7 +9,7 @@ sub match {
 
   if($core->{'event'} ne 'on_server_ping') { return ''; }
 
-  return pong($core,$core->{'nick'});
+  return pong($core,$core->{'sender_nick'});
 }
 
 sub pong {

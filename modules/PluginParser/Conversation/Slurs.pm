@@ -10,7 +10,7 @@ sub match {
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /\b(bitch|cunt)/i) {
-    return shout($core,$core->{'chan'},$core->{'nick'},$1);
+    return shout($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
   }
 
   return '';

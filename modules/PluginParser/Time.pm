@@ -8,27 +8,27 @@ our @EXPORT_OK = qw(match);
 sub match {
   my ($self,$core) = @_;
 
-  if(!$core->{'pinged'}) { return ''; }
+  if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /^time$/) {
-    return time_offset($core,'+0',$core->{'chan'},$core->{'target'});
+    return time_offset($core,'+0',$core->{'receiver_chan'},$core->{'target'});
   }
 
   elsif($core->{'message'} =~ /^time utc$/) {
-    return time_offset($core,'+0',$core->{'chan'},$core->{'target'});
+    return time_offset($core,'+0',$core->{'receiver_chan'},$core->{'target'});
   }
 
   elsif($core->{'message'} =~ /^time ([+-][0-9]+)$/) {
-    return time_offset($core,$1,$core->{'chan'},$core->{'target'});
+    return time_offset($core,$1,$core->{'receiver_chan'},$core->{'target'});
   }
 
   elsif($core->{'message'} =~ /^time unix$/) {
-    return time_unix($core,$core->{'chan'},$core->{'target'});
+    return time_unix($core,$core->{'receiver_chan'},$core->{'target'});
   }
 
   elsif($core->{'message'} =~ /^timestamp$/) {
-    return time_unix($core,$core->{'chan'},$core->{'target'});
+    return time_unix($core,$core->{'receiver_chan'},$core->{'target'});
   }
 
   return '';

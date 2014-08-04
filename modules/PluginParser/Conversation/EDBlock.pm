@@ -11,7 +11,7 @@ sub match {
 
   #http://encyclopediadramatica.ch/Accidentally
   if($core->{'message'} =~ /encyclopediadramatica\.[a-z]{2,3}+/i) {
-    return shout($core,$core->{'chan'},uc($core->{'nick'}));
+    return shout($core,$core->{'receiver_chan'},uc($core->{'sender_nick'}));
   }
 
   return '';

@@ -41,76 +41,80 @@ sub new {
 
 sub parse {
   my ($self,$botname,$string) = @_;
-  my ($nick,$user,$host,$chan,$command,$message,$event,$redirect) = ('','','','','','','','');
+  my ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ('','','','','','','','');
 
-  if ($string =~ /^PING :$validSenderServer$/i) {
-    ($nick,$event) = ($1,'on_server_ping');
+  if ($string =~ /^(PING) :$validSenderServer$/i) {
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($2,$2,$2,$botname,'',$1,'','on_server_ping');
   }
 
   elsif($string =~ /^:$validSenderHuman (NOTICE|PRIVMSG) $validChan :(.+)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_ctcp');
-    if($chan eq $botname) { $event = 'on_private_ctcp'; $chan = $nick; }
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_ctcp');
+    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_ctcp'); }
   }
 
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :ACTION (.*)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_action');
-    if($chan eq $botname) { $event = 'on_private_action'; $chan = $nick; }
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_action');
+    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_action'); }
   }
 
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :(.*)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_message');
-    if($chan eq $botname) { $event = 'on_private_message'; $chan = $nick; }
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_message');
+    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_message'); }
   }
 
   elsif($string =~ /^:$validSenderHuman (NOTICE) $validChan :(.+)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_public_notice');
-    if($chan eq $botname) { $event = 'on_private_notice'; $chan = $nick; }
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_notice');
+    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_notice'); }
   }
 
-  elsif($string =~ /^:$validSenderHuman (JOIN) :?$validChan$/) {
-    ($nick,$user,$host,$chan,$command,$event) = ($1,$2,$3,$5,$4,'on_join');
+  elsif($string =~ /^:$validSenderHuman (JOIN) $validChan$/) {
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,'','on_join');
   }
 
   elsif ($string =~ /^:$validSenderHuman (PART) $validChan ?:?(.+)?$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_part');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_part');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderHuman (QUIT) ?:?(.+)?$/) {
-    ($nick,$user,$host,$command,$message,$event) = ($1,$2,$3,$4,$5,'on_quit');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'','',$4,$5,'on_quit');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderHuman (MODE) $validChan :?(.+)$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_user_mode');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_mode');
+  }
+
+  elsif ($string =~ /^:$validNick (MODE) $validNick :?(.+)$/) {
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,'','','',$3,'',$4,'on_user_mode');
   }
 
   elsif ($string =~ /^:$validSenderHuman (NICK) :?$validNick$/) {
-    ($nick,$user,$host,$command,$message,$event) = ($1,$2,$3,$4,$5,'on_nick');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,$5,'',$4,'','on_nick');
   }
 
-  elsif ($string =~ /^:$validSenderHuman (KICK) $validChan ?:?(.+)?$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$5,$4,$6,'on_kick');
+  elsif ($string =~ /^:$validSenderHuman (KICK) $validChan $validNick ?:?(.+)?$/) {
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,$6,$5,$4,$7,'on_kick');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderHuman (TOPIC) $validChan ?:?(.+)?$/) {
-    ($nick,$user,$host,$chan,$command,$message,$event) = ($1,$2,$3,$4,$5,$6,'on_topic');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_topic');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validNick = $validChan :?(.+)$/) {
-    ($nick,$chan,$command,$message,$event) = ($1,$4,$2,$5,'on_server_message');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$1,$1,$3,$4,$2,$5,'on_server_message');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validChan :?(.+)$/) {
-    ($nick,$chan,$command,$message,$event) = ($1,$3,$2,$4,'on_server_message');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$1,$1,$3,'',$2,$4,'on_server_message');
     $message = '' unless $message;
   }
 
   elsif ($string =~ /^:$validSenderServer ([a-zA-Z0-9]+) $validNick $validChan :?(.+)$/) {
-    ($nick,$chan,$command,$message,$event) = ($1,$4,$2,$5,'on_server_message');
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$1,$1,$3,$4,$2,$5,'on_server_message');
     $message = '' unless $message;
   }
 
@@ -122,10 +126,9 @@ sub parse {
   else {
     $self->{'core'}->log_error('IRC message did not match parser.');
     $self->{'core'}->log_error($string);
-    return '';
   }
 
-  return ($nick,$user,$host,$chan,$command,$message,$event,$redirect);
+  return ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event);
 }
 
 1;
