@@ -47,14 +47,14 @@ sub parse {
     ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($2,$2,$2,$botname,'',$1,'','on_server_ping');
   }
 
-  elsif($string =~ /^:$validSenderHuman (NOTICE|PRIVMSG) $validChan :(.+)$/) {
-    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_ctcp');
-    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_ctcp'); }
-  }
-
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :ACTION (.*)$/) {
     ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_action');
     if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_action'); }
+  }
+
+  elsif($string =~ /^:$validSenderHuman (NOTICE|PRIVMSG) $validChan :(.+)$/) {
+    ($sender_nick,$sender_user,$sender_host,$receiver_nick,$receiver_chan,$command,$message,$event) = ($1,$2,$3,'',$5,$4,$6,'on_public_ctcp');
+    if($receiver_chan eq $botname) { ($receiver_nick,$receiver_chan,$event) = ($botname,$sender_nick,'on_private_ctcp'); }
   }
 
   elsif($string =~ /^:$validSenderHuman (PRIVMSG) $validChan :(.*)$/) {
