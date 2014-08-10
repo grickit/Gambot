@@ -12,15 +12,15 @@ sub match {
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /^time$/) {
-    return time_offset($core,'+0',$core->{'receiver_chan'},$core->{'target'});
+    return time_offset($core,$core->{'receiver_chan'},$core->{'target'},'+0');
   }
 
   elsif($core->{'message'} =~ /^time utc$/) {
-    return time_offset($core,'+0',$core->{'receiver_chan'},$core->{'target'});
+    return time_offset($core,$core->{'receiver_chan'},$core->{'target'},'+0');
   }
 
   elsif($core->{'message'} =~ /^time ([+-][0-9]+)$/) {
-    return time_offset($core,$1,$core->{'receiver_chan'},$core->{'target'});
+    return time_offset($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
   elsif($core->{'message'} =~ /^time unix$/) {
@@ -35,7 +35,7 @@ sub match {
 }
 
 sub time_offset {
-  my ($core,$offset,$chan,$target) = @_;
+  my ($core,$chan,$target,$offset) = @_;
   my $time = POSIX::strftime('%H:%M:%S',(gmtime(time+$offset*3600)));
 
   $core->{'output'}->parse("MESSAGE>${chan}>${target}: ${time} (UTC${offset})");

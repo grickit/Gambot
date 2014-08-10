@@ -11,18 +11,18 @@ sub match {
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
   if($core->{'message'} =~ /^d([0-9]+)$/) {
-    return roll_dice($core,$1,1,$core->{'receiver_chan'},$core->{'target'});
+    return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$1,1);
   }
 
   elsif($core->{'message'} =~ /^([0-9]+)d([0-9]+)$/) {
-    return roll_dice($core,$2,$1,$core->{'receiver_chan'},$core->{'target'});
+    return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$2,$1);
   }
 
   return '';
 }
 
 sub roll_dice {
-  my ($core,$size,$number,$chan,$target) = @_;
+  my ($core,$chan,$target,$size,$number) = @_;
   my $total = int(rand($number*$size-$number))+$number;
 
   $core->{'output'}->parse("MESSAGE>${chan}>${target}: Rolled ${number} d${size} dice and got ${total}.");

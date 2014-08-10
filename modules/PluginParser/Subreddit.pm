@@ -15,11 +15,11 @@ sub match {
   }
 
   elsif($core->{'message'} =~ /^subreddit add ([A-Za-z0-9][A-Za-z0-9_]{2,20})$/) {
-    return subreddit_add($core,$1,$core->{'receiver_chan'},$core->{'target'});
+    return subreddit_add($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
   elsif($core->{'message'} =~ /^subreddit remove ([A-Za-z0-9][A-Za-z0-9_]{2,20})$/) {
-    return subreddit_remove($core,$1,$core->{'receiver_chan'},$core->{'target'});
+    return subreddit_remove($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
   return '';
@@ -35,7 +35,7 @@ sub subreddit_list {
 }
 
 sub subreddit_add {
-  my ($core,$subreddit,$chan,$target) = @_;
+  my ($core,$chan,$target,$subreddit) = @_;
   if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
 
   $core->value_push('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
@@ -45,7 +45,7 @@ sub subreddit_add {
 }
 
 sub subreddit_remove {
-  my ($core,$subreddit,$chan,$target) = @_;
+  my ($core,$chan,$target,$subreddit) = @_;
   if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
 
   $core->value_pull('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
