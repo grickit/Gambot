@@ -7,12 +7,14 @@ use Gambot::GAPIL::CommandChild;
 use IRC::Freenode::Specifications;
 use IRC::Freenode::Parser;
 use IRC::Freenode::Output;
+use IRC::Freenode::AuthBasic;
 
 $| = 1;
 
 my $core = new Gambot::GAPIL::CommandChild;
 $core->{'parser'} = new IRC::Freenode::Parser($core);
 $core->{'output'} = new IRC::Freenode::Output($core);
+$core->{'auth'} = new IRC::Freenode::AuthBasic($core);
 
 $core->{'childid'} = stdin_read();
 $core->{'botname'} = stdin_read();
@@ -62,6 +64,7 @@ module_load('PluginParser::Maintenance::ServerPing');
 module_load('PluginParser::Basic::About');
 module_load('PluginParser::Basic::CTCP');
 module_load('PluginParser::Basic::Hug');
+module_load('PluginParser::Staff::JoinPart');
 module_load('PluginParser::Temperature');
 module_load('PluginParser::Time');
 module_load('PluginParser::Conversation::EDBlock');
