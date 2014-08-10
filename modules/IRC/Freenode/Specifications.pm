@@ -33,6 +33,7 @@ our @EXPORT = qw(
   $validUser
   $validHost
   $validChan
+  $validChanStrict
   $validSenderHuman
   $validSenderServer
 );
@@ -43,11 +44,12 @@ our $charactersUser = 'A-Za-z0-9[\]\\`_^{}|.-';
 our $charactersHost = ':./A-Za-z0-9[\]\\`_^{}|-';
 our $charactersChan = '#A-Za-z0-9[\]\\`_^{}|-';
 our $charactersServer = 'a-zA-Z0-9\.';
-our $validNick = '(['.$charactersNick.']+)';
-our $validUser = '(['.$charactersUser.']+)';
-our $validHost = '(['.$charactersHost.']+)';
-our $validChan = '(['.$charactersChan.']+|\*)';
-our $validSenderHuman = $validNick.'!~?'.$validUser.'@'.$validHost;
-our $validSenderServer = '(['.$charactersServer.']+)';
+our $validNick = "([${charactersNick}]+)";
+our $validUser = "([${charactersUser}]+)";
+our $validHost = "([${charactersHost}]+)";
+our $validChan = "([${charactersChan}]+|\\*)";
+our $validChanStrict = "(#[${charactersChan}]+)";
+our $validSenderHuman = "${validNick}!~?${validUser}\@${validHost}";
+our $validSenderServer = "([${charactersServer}]+)";
 
 1;

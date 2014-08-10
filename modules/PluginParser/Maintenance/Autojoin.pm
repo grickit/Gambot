@@ -18,11 +18,11 @@ sub match {
 sub autojoin {
   my ($core,$botname) = @_;
   $botname =~ s/_+$//;
-  my $channels = $core->value_list("channels_autojoin:${botname}");
+  my $channel_list = $core->value_list("channels_autojoin:${botname}");
 
-  foreach my $channel (split(',',$channels)) {
-    if($channel =~ /^$validChan$/) {
-      $core->{'output'}->parse("JOIN>${channel}");
+  foreach my $current_channel (split(',',$channel_list)) {
+    if($current_channel =~ /^$validChanStrict$/) {
+      $core->{'output'}->parse("JOIN>${current_channel}");
     }
   }
 }
