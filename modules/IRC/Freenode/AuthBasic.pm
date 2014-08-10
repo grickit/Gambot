@@ -47,7 +47,8 @@ sub test_sender {
   $botname =~ s/_+$//;
 
   my $auth_list = $core->value_get("${botname}:channels_permissions",lc($chan));
-  foreach my $current_auth (split(',',$auth_list)) {
+  my $admin_list = $core->value_get('config','global_staff');
+  foreach my $current_auth (split(',',$admin_list),split(',',$auth_list)) {
     $current_auth =~ s/\./\./;
     $current_auth =~ s/\*/.*/;
     if($current_auth =~ /^N:$validNick$/ and $core->{'sender_nick'} =~ /^$1$/) { return 1; }

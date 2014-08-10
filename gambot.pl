@@ -144,6 +144,7 @@ $core->value_add('config','iterations_per_second',10); # Default max number of t
 $core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
 $core->value_add('config','ping_timeout',300); # Default max number of seconds between received IRC messages
 $core->value_add('config','key_characters','A-Za-z0-9_:.#|`[\]{}()\\/\^\-'); # Default allowed characters for stored values and such
+$core->value_add('config','global_staff','H:wesnoth/developer/grickit'); # Default list of permission masks for users who are staff in every channel
 #A-Z a-z 0-9 _ : . # | | ` [ ] { } ( ) / \ ^ -
 $core->log_event('Default config values set.');
 
