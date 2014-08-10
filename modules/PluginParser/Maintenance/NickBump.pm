@@ -1,7 +1,6 @@
 package PluginParser::Maintenance::NickBump;
 use strict;
 use warnings;
-use IRC::Freenode::Specifications;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 

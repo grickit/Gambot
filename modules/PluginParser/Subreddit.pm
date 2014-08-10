@@ -1,7 +1,6 @@
 package PluginParser::Subreddit;
 use strict;
 use warnings;
-use POSIX;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -37,6 +36,8 @@ sub subreddit_list {
 
 sub subreddit_add {
   my ($core,$subreddit,$chan,$target) = @_;
+  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
+
   $core->value_push('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
   $core->value_push('feed_channels:reddit',lc($chan),lc($subreddit),1);
 
@@ -45,6 +46,8 @@ sub subreddit_add {
 
 sub subreddit_remove {
   my ($core,$subreddit,$chan,$target) = @_;
+  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
+
   $core->value_pull('feed_subscriptions:reddit',lc($subreddit),lc($chan),1);
   $core->value_pull('feed_channels:reddit',lc($chan),lc($subreddit),1);
 
