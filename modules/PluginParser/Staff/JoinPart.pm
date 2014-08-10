@@ -28,7 +28,7 @@ sub match {
   }
 
   elsif($core->{'message'} =~ /^part (.+)$/) {
-    return part_order($core,$core->{'receiver_chan'},$core->{'sender_nick'},$2);
+    return part_order($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
   }
 
   return '';
