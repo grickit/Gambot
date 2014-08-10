@@ -46,7 +46,7 @@ sub test_sender {
   my $botname = $core->{'botname'};
   $botname =~ s/_+$//;
 
-  my $auth_list = $core->value_get("channels_permissions:${botname}",lc($chan));
+  my $auth_list = $core->value_get("${botname}:channels_permissions",lc($chan));
   foreach my $current_auth (split(',',$auth_list)) {
     $current_auth =~ s/\./\./;
     $current_auth =~ s/\*/.*/;
