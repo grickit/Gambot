@@ -52,6 +52,6 @@ sub part_order {
     $core->{'output'}->parse("PART>${chan}>${message} [requested by ${nick}]");
   }
   else {
-    $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'});
+    $core->{'auth'}->error($core,$chan);
   }
 }

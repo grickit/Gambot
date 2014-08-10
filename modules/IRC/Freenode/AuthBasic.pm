@@ -59,9 +59,10 @@ sub test_sender {
 }
 
 sub error {
-  my ($self,$core,$nick,$chan) = @_;
+  my ($self,$core,$chan) = @_;
+  my ($sender_nick,$receiver_chan) = ($core->{'sender_nick'},$core->{'receiver_chan'});
 
-  $core->{'output'}->parse("MESSAGE>${chan}>${nick}: You are not authorized as staff in ${chan}.");
+  $core->{'output'}->parse("MESSAGE>${receiver_chan}>${sender_nick}: You are not authorized as staff in ${chan}.");
 }
 
 1;
