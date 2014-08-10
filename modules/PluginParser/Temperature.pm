@@ -13,18 +13,23 @@ sub match {
   if($core->{'message'} =~ /^ftc (-?[0-9]*\.?[0-9]*)$/) {
     return ftc($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
   elsif($core->{'message'} =~ /^ctf (-?[0-9]*\.?[0-9]*)$/) {
     return ctf($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
   elsif($core->{'message'} =~ /^convert (-?[0-9]*\.?[0-9]*)°F$/) {
     return ftc($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
   elsif($core->{'message'} =~ /^convert (-?[0-9]*\.?[0-9]*)°C$/) {
     return ctf($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
   elsif($core->{'message'} =~ /^convert (-?[0-9]*\.?[0-9]*)F$/) {
     return ftc($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
   elsif($core->{'message'} =~ /^convert (-?[0-9]*\.?[0-9]*)C$/) {
     return ctf($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }

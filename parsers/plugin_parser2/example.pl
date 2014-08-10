@@ -70,4 +70,5 @@ module_load('PluginParser::Time');
 module_load('PluginParser::Conversation::EDBlock');
 module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Games::Dice');
+module_load('PluginParser::Games::Eightball');
 module_load('PluginParser::Subreddit');
