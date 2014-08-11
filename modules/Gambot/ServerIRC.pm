@@ -53,6 +53,7 @@ sub connect {
   $self->{'core'}->log_event('Connecting to IRC.');
 
   $self->{'core'}->value_set('ircserver','IRC_messages_received_this_connection',0);
+  $self->{'core'}->value_set('ircserver','last_received_IRC_message_time',time);
   $self->{'connection'} = new IO::Socket::INET(
     PeerAddr => $addr,
     PeerPort => $port,
