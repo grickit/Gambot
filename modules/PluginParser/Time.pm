@@ -7,9 +7,9 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^time$/) {
     return time_offset($core,$core->{'receiver_chan'},$core->{'target'},'+0');
@@ -30,6 +30,7 @@ sub match {
   elsif($core->{'message'} =~ /^timestamp$/) {
     return time_unix($core,$core->{'receiver_chan'},$core->{'target'});
   }
+
 
   return '';
 }

@@ -6,9 +6,9 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^subreddit list$/) {
     return subreddit_list($core,$core->{'receiver_chan'},$core->{'target'});
@@ -21,6 +21,7 @@ sub match {
   elsif($core->{'message'} =~ /^subreddit remove ([A-Za-z0-9][A-Za-z0-9_]{2,20})$/) {
     return subreddit_remove($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
 
   return '';
 }

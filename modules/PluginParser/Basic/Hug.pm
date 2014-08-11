@@ -6,13 +6,14 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^hug (.+)$/) {
     return hug($core,$core->{'receiver_chan'},$1);
   }
+
 
   return '';
 }

@@ -6,9 +6,9 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^eightball (.+)\?$/) {
     return roll_eightball($core,$core->{'receiver_chan'},$core->{'target'});
@@ -17,6 +17,7 @@ sub match {
   elsif($core->{'message'} =~ /^8ball (.+)\?$/) {
     return roll_eightball($core,$core->{'receiver_chan'},$core->{'target'});
   }
+
 
   return '';
 }

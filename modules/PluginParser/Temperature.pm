@@ -6,9 +6,9 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^ftc (-?[0-9]*\.?[0-9]*)$/) {
     return ftc($core,$core->{'receiver_chan'},$core->{'target'},$1);
@@ -33,6 +33,7 @@ sub match {
   elsif($core->{'message'} =~ /^convert (-?[0-9]*\.?[0-9]*)C$/) {
     return ctf($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
+
 
   return '';
 }

@@ -7,24 +7,29 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'event'} ne 'on_private_ctcp') { return ''; }
+
 
   if($core->{'message'} =~ /^VERSION$/i) {
     return ctcp_clientinfo($core,$core->{'receiver_chan'},'VERSION');
   }
+
   elsif($core->{'message'} =~ /^CLIENTINFO$/i) {
     return ctcp_clientinfo($core,$core->{'receiver_chan'},'CLIENTINFO');
   }
+
   elsif($core->{'message'} =~ /^TIME$/i) {
     return ctcp_time($core,$core->{'receiver_chan'});
   }
+
   elsif($core->{'message'} =~ /^PING ([0-9]+)$/i) {
     return ctcp_pong($core,$core->{'receiver_chan'},$1);
   }
+
   elsif($core->{'message'} =~ /^FINGER$/i) {
     return ctcp_finger($core,$core->{'receiver_chan'});
   }
+
 
   return '';
 }

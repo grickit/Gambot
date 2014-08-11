@@ -6,17 +6,18 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
+
   if($core->{'message'} =~ /\b(bitch|cunt)/i) {
-    return shout($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
+    return shout_slurs($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
   }
+
 
   return '';
 }
 
-sub shout {
+sub shout_slurs {
   my ($core,$chan,$nick,$word) = @_;
 
   my @response;

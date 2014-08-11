@@ -6,12 +6,13 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'event'} ne 'on_server_message') { return ''; }
+
 
   if($core->{'command'} eq '433') {
     return bump($core,$core->{'botname'});
   }
+
 
   return '';
 }

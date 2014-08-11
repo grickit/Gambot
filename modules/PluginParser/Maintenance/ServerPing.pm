@@ -6,8 +6,8 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'event'} ne 'on_server_ping') { return ''; }
+
 
   return pong($core,$core->{'sender_nick'});
 }

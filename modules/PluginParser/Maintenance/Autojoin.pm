@@ -8,9 +8,11 @@ our @EXPORT_OK = qw(match);
 sub match {
   my ($self,$core) = @_;
 
+
   if($core->{'childid'} eq 'fork10') {
     return autojoin($core,$core->{'botname'});
   }
+
 
   return '';
 }

@@ -6,9 +6,9 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
+
 
   if($core->{'message'} =~ /^d([0-9]+)$/) {
     return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$1,1);
@@ -17,6 +17,7 @@ sub match {
   elsif($core->{'message'} =~ /^([0-9]+)d([0-9]+)$/) {
     return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$2,$1);
   }
+
 
   return '';
 }

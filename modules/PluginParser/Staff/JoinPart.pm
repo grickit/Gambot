@@ -7,41 +7,42 @@ our @EXPORT_OK = qw(match);
 
 sub match {
   my ($self,$core) = @_;
-
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
+
   if($core->{'message'} =~ /^join $validChanStrict$/) {
-    return join_order($core,$1);
+    return order_join($core,$1);
   }
 
   elsif($core->{'message'} =~ /^part$/) {
-    return part_order($core,$core->{'receiver_chan'},$core->{'sender_nick'},'leaving');
+    return order_part($core,$core->{'receiver_chan'},$core->{'sender_nick'},'leaving');
   }
 
   elsif($core->{'message'} =~ /^part $validChanStrict$/) {
-    return part_order($core,$1,$core->{'sender_nick'},'leaving');
+    return order_part($core,$1,$core->{'sender_nick'},'leaving');
   }
 
   elsif($core->{'message'} =~ /^part $validChanStrict (.+)$/) {
-    return part_order($core,$1,$core->{'sender_nick'},$2);
+    return order_part($core,$1,$core->{'sender_nick'},$2);
   }
 
   elsif($core->{'message'} =~ /^part (.+)$/) {
-    return part_order($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
+    return order_part($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
   }
+
 
   return '';
 }
 
-sub join_order {
+sub order_join {
   my ($core,$chan) = @_;
   if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
 
   $core->{'output'}->parse("JOIN>${chan}");
 }
 
-sub part_order {
+sub order_part {
   my ($core,$chan,$nick,$message) = @_;
   if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
 
