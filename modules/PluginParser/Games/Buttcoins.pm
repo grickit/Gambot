@@ -42,17 +42,27 @@ sub match {
 
   elsif($core->{'message'} =~ /^buttcoin transfer ([0-9]+) $validNick$/) {
     buttcoin_set_stat_active($core,$core->{'sender_nick'});
-    return buttcoin_transfer($core,$core->{'sender_nick'},$2,$1);
+    return buttcoin_transfer($core,$core->{'sender_nick'},$2,$1,'No reason given.');
+  }
+
+  elsif($core->{'message'} =~ /^buttcoin transfer ([0-9]+) $validNick (.+)$/) {
+    buttcoin_set_stat_active($core,$core->{'sender_nick'});
+    return buttcoin_transfer($core,$core->{'sender_nick'},$2,$1,$3);
   }
 
   elsif($core->{'message'} =~ /^buttcoin tip $validNick$/) {
     buttcoin_set_stat_active($core,$core->{'sender_nick'});
-    return buttcoin_transfer($core,$core->{'sender_nick'},$1,10);
+    return buttcoin_transfer($core,$core->{'sender_nick'},$1,10,'No reason given.');
   }
 
-  elsif($core->{'message'} =~ /^$validNick\+\+/) {
+  elsif($core->{'message'} =~ /^buttcoin tip $validNick (.+)$/) {
     buttcoin_set_stat_active($core,$core->{'sender_nick'});
-    return buttcoin_transfer($core,$core->{'sender_nick'},$1,10);
+    return buttcoin_transfer($core,$core->{'sender_nick'},$1,10,$2);
+  }
+
+  elsif($core->{'message'} =~ /^$validNick\+\+$/) {
+    buttcoin_set_stat_active($core,$core->{'sender_nick'});
+    return buttcoin_transfer($core,$core->{'sender_nick'},$1,1,'Plus plus.');
   }
 
   return '';
@@ -94,8 +104,9 @@ sub buttcoin_mine {
 }
 
 sub buttcoin_transfer {
-  my ($core,$sender,$receiver,$value) = @_;
-  my ($sender_balance,$receiver_balance) = (buttcoin_get_balance($core,$sender),buttcoin_get_balance($core,$receiver));
+  my ($core,$sender,$receiver,$value,$message) = @_;
+  my $sender_balance = buttcoin_get_balance($core,$sender);
+  my $receiver_balance = buttcoin_get_balance($core,$receiver);
 
   if(lc($sender) eq lc($receiver)) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You are ${receiver}."); return ''; }
   if($value <= 0) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You must send at least 1 buttcoin."); return ''; }
@@ -110,7 +121,7 @@ sub buttcoin_transfer {
   buttcoin_track_stat_received($core,$receiver,$value);
 
   $core->{'output'}->parse("NOTICE>$sender>[TRANSFER] You (${sender_balance}) have sent $value buttcoins to $receiver (${receiver_balance}).");
-  $core->{'output'}->parse("NOTICE>$receiver>[TRANSFER] You (${receiver_balance}) have received $value buttcoins from $sender (${sender_balance}).");
+  $core->{'output'}->parse("NOTICE>$receiver>[TRANSFER] You (${receiver_balance}) have received $value buttcoins from $sender (${sender_balance}). [${message}]");
 }
 
 #===== GETTERS =====#
