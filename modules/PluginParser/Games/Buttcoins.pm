@@ -50,6 +50,11 @@ sub match {
     return buttcoin_transfer($core,$core->{'sender_nick'},$1,10);
   }
 
+  elsif($core->{'message'} =~ /^$validNick\+\+/) {
+    buttcoin_set_stat_active($core,$core->{'sender_nick'});
+    return buttcoin_transfer($core,$core->{'sender_nick'},$1,10);
+  }
+
   return '';
 }
 
