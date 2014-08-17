@@ -5,7 +5,7 @@ use lib "$FindBin::Bin/../../modules/";
 use PluginParser::Parser;
 
 if($core->{'childid'} eq 'fork10' && $core->{'botname'} =~ /^janebot_*$/) {
-  $core->child_add('streamtwitter','perl /home/grickit/source/Gambot/scripts/StreamReader/StreamTwitter.pl');
+  $core->child_add('streamtwitter',"perl $FindBin::Bin/../../scripts/StreamReader/StreamTwitter.pl");
 }
 
 module_load('PluginParser::Maintenance::Autojoin');
