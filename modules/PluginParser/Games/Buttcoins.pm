@@ -8,12 +8,14 @@ our @EXPORT_OK = qw(match);
 sub match {
   my ($self,$core) = @_;
 
-  my $word_chosen = buttcoin_get_stat_word_chosen($core);
-  if ($core->{'event'} eq 'on_public_message' and $core->{'message'} =~ /\b$word_chosen\b/i) {
-    if($core->{'message'} =~ /\bthe\b/i and $core->{'message'} =~ /\bthat\b/i and $core->{'message'} =~ /\ba\b/i and $core->{'message'} =~ /\band\b/i and $core->{'message'} =~ /\bfor\b/i) {
-      buttcoin_track_stat_abuse($core,$core->{'sender_nick'});
+  if($core->{'event'} eq 'on_public_message') {
+    my $word_chosen = buttcoin_get_stat_word_chosen($core);
+    if($core->{'message'} =~ /\b$word_chosen\b/i) {
+      if($core->{'message'} =~ /\bthe\b/i and $core->{'message'} =~ /\bthat\b/i and $core->{'message'} =~ /\ba\b/i and $core->{'message'} =~ /\band\b/i and $core->{'message'} =~ /\bfor\b/i) {
+        buttcoin_track_stat_abuse($core,$core->{'sender_nick'});
+      }
+      return buttcoin_mine($core,$core->{'sender_nick'},$word_chosen);
     }
-    return buttcoin_mine($core,$core->{'sender_nick'},$word_chosen);
   }
 
   if($core->{'receiver_nick'} ne $core->{'botname'}) { return ''; }
