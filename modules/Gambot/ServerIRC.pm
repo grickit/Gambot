@@ -37,7 +37,8 @@ sub new {
   $self->{'core'} = shift;
   $self->{'connection'} = '';
   $self->{'status'} = 'later';
-  $self->{'pending_outgoing_messages'} = ();
+  $self->{'pending_outgoing_messages'} = [];
+  $self->{'pending_incoming_messages'} = [];
 
   bless($self,$class);
   return $self;
@@ -117,7 +118,33 @@ sub read {
 
   ## irc connection has content
   elsif($status eq 'ready') {
-    @received_IRC_messages = pipe_multiread('ircserver',$self->{'connection'},$status);
+    foreach my $new_IRC_message (pipe_multiread('ircserver',$self->{'connection'},$status)) {
+      push(@{$self->{'pending_incoming_messages'}},$new_IRC_message);
+    }
+  }
+
+  while(my $current_pending_IRC_message = shift(@{$self->{'pending_incoming_messages'}})) {
+    my $IRC_messages_received_this_second = $self->{'core'}->value_get('ircserver','IRC_messages_received_this_second');
+    my $messages_per_second = $self->{'core'}->value_get('config','incoming_messages_per_second');
+
+    if($IRC_messages_received_this_second < $messages_per_second) {
+      $self->{'core'}->log_debug('Received '.$IRC_messages_received_this_second.'/'.$messages_per_second.' messages so far during '.time);
+      $self->{'core'}->log_normal('INCOMING',$current_pending_IRC_message);
+
+      push(@received_IRC_messages,$current_pending_IRC_message);
+
+      $self->{'core'}->value_increment('ircserver','IRC_messages_received_this_second',1);
+      $self->{'core'}->value_set('ircserver','last_received_IRC_message_time',time);
+    }
+    else {
+      unshift(@{$self->{'pending_incoming_messages'}},$current_pending_IRC_message);
+      last;
+    }
+  }
+
+  ## Keep track of how many messages we've received from the IRC server this second
+  if($self->{'core'}->value_get('ircserver','last_received_IRC_message_time') != time) {
+    $self->{'core'}->value_set('ircserver','IRC_messages_received_this_second',0);
   }
 
   return @received_IRC_messages;
@@ -135,7 +162,7 @@ sub spool {
 
   while(my $current_pending_IRC_message = shift(@{$self->{'pending_outgoing_messages'}})) {
     my $IRC_messages_sent_this_second = $self->{'core'}->value_get('ircserver','IRC_messages_sent_this_second');
-    my $messages_per_second = $self->{'core'}->value_get('config','messages_per_second');
+    my $messages_per_second = $self->{'core'}->value_get('config','outgoing_messages_per_second');
 
     if($IRC_messages_sent_this_second < $messages_per_second) {
       $self->{'core'}->log_debug('Sent '.$IRC_messages_sent_this_second.'/'.$messages_per_second.' messages so far during '.time);

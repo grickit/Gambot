@@ -4,15 +4,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../modules/";
 use PluginParser::Parser;
 
-if($core->{'childid'} eq 'fork0') {
-  $core->value_set('config','iterations_per_second',3);
-}
-
-if($core->{'childid'} eq 'fork30') {
-  $core->value_set('config','iterations_per_second',30);
-}
-
-if($core->{'childid'} eq 'fork30' && $core->{'botname'} =~ /^clairebot_*$/) {
+if($core->{'childid'} eq 'fork10' && $core->{'botname'} =~ /^janebot_*$/) {
   $core->child_add('streamtwitter',"perl $FindBin::Bin/../../scripts/StreamReader/StreamTwitter.pl");
 }
 

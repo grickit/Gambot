@@ -73,7 +73,7 @@ sub pipe_multiread {
     $back_buffers{$name} = undef;
     delete $back_buffers{$name};
   }
-  else { # Stick and incomplete line back into the buffer
+  else { # Stick any incomplete line back into the buffer
     $back_buffers{$name} = pop(@lines);
   }
 

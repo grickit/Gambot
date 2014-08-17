@@ -141,7 +141,8 @@ $core->value_add('config','password','');
 $core->value_add('config','log_directory',$core->value_get('core','home_directory'));
 $core->value_add('config','irc_parser','perl '.$core->value_get('core','home_directory').'/parsers/plugin_parser/example.pl');
 $core->value_add('config','iterations_per_second',10); # Default max number of times to run the main loop per second
-$core->value_add('config','messages_per_second',3); # Default max number of IRC messages to send per second
+$core->value_add('config','outgoing_messages_per_second',3); # Default max number of IRC messages to send per second
+$core->value_add('config','incoming_messages_per_second',5); # Default max number of IRC messages to process per second
 $core->value_add('config','ping_timeout',300); # Default max number of seconds between received IRC messages
 $core->value_add('config','key_characters','A-Za-z0-9_:.#|`[\]{}()\\/\^\-'); # Default allowed characters for stored values and such
 $core->value_add('config','global_staff','H:wesnoth/developer/grickit'); # Default list of permission masks for users who are staff in every channel
@@ -152,8 +153,9 @@ $core->log_event('Default config values set.');
 # Set up default IRC stats
 $core->value_add('ircserver','last_received_IRC_message_time',time); # Used for client-side ping timeout
 $core->value_add('ircserver','last_sent_IRC_message_time',time); # Used for throttling IRC messages
-$core->value_add('ircserver','IRC_messages_received_this_connection',0); # Used for naming child processes
+$core->value_add('ircserver','IRC_messages_handled_this_connection',0); # Used for naming child processes
 $core->value_add('ircserver','IRC_messages_sent_this_second',0); # Used for throttling IRC messages
+$core->value_add('ircserver','IRC_messages_received_this_second',0); # Used for throttling IRC messages
 $core->log_event('Default IRC stats set.');
 
 
@@ -175,15 +177,12 @@ while(defined select(undef,undef,undef,(1/$core->value_get('config','iterations_
 
   ####-----#----- Read from the IRC server -----#-----####
   foreach my $current_received_message ($core->{'ircserver'}->read()) {
-    $core->log_normal('INCOMING',$current_received_message);
-
-    my $name = 'fork'.$core->value_get('ircserver','IRC_messages_received_this_connection');
+    my $name = 'fork'.$core->value_get('ircserver','IRC_messages_handled_this_connection');
     $core->child_add($name,$core->value_get('config','irc_parser'));
     ## Message parsers need to know the nickname the bot is using, and the incoming message
     $core->child_send($name,$core->value_get('core','nick'));
     $core->child_send($name,$current_received_message);
-    $core->value_increment('ircserver','IRC_messages_received_this_connection',1);
-    $core->value_set('ircserver','last_received_IRC_message_time',time);
+    $core->value_increment('ircserver','IRC_messages_handled_this_connection',1);
   }
 
 
