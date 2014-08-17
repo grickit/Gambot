@@ -127,43 +127,43 @@ sub buttcoin_transfer {
 #===== GETTERS =====#
 sub buttcoin_get_stat_active {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:stats','active:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:stats:active',lc($nick)) || 0;
 }
 
 sub buttcoin_get_balance {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:bank','balance:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:balance',lc($nick)) || 0;
 }
 
 sub buttcoin_get_stat_mined {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:stats','mined:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:stats:mined',lc($nick)) || 0;
 }
 
 sub buttcoin_get_stat_abuse {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:stats','abuse:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:stats:abuse',lc($nick)) || 0;
 }
 
 sub buttcoin_get_stat_given {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:stats','given:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:stats:gifted',lc($nick)) || 0;
 }
 
 sub buttcoin_get_stat_received {
   my ($core,$nick) = @_;
-  return $core->value_get('buttcoin:stats','received:'.lc($nick)) || 0;
+  return $core->value_get('buttcoin:stats:received',lc($nick)) || 0;
 }
 
 sub buttcoin_get_stat_word_chosen {
   my ($core) = @_;
-  return $core->value_get('buttcoin:stats','word_chosen') || 'the';
+  return $core->value_get('buttcoin:metadata','word_chosen') || 'the';
 }
 
 sub buttcoin_get_stat_word_average {
   my ($core,$word) = @_;
-  my $count = $core->value_get('buttcoin:stats','word_count:'.$word);
-  my $time = $core->value_get('buttcoin:stats','word_time:'.$word);
+  my $count = $core->value_get('buttcoin:metadata','word_count:'.$word);
+  my $time = $core->value_get('buttcoin:metadata','word_time:'.$word);
   return ($time/$count);
 }
 
@@ -172,51 +172,51 @@ sub buttcoin_get_stat_word_average {
 #===== SETTERS =====#
 sub buttcoin_set_stat_active {
   my ($core,$nick) = @_;
-  return $core->value_set('buttcoin:stats','active:'.lc($nick),1);
+  return $core->value_set('buttcoin:stats:active',lc($nick),1);
 }
 
 sub buttcoin_add_balance {
   my ($core,$nick,$value) = @_;
-  return $core->value_increment('buttcoin:bank','balance:'.lc($nick),$value);
+  return $core->value_increment('buttcoin:balance',lc($nick),$value);
 }
 
 sub buttcoin_sub_balance {
   my ($core,$nick,$value) = @_;
-  return $core->value_decrement('buttcoin:bank','balance:'.lc($nick),$value);
+  return $core->value_decrement('buttcoin:balance',lc($nick),$value);
 }
 
 sub buttcoin_track_stat_word_chosen {
   my ($core) = @_;
   my @word_list = ('the','that','a','and','for');
-  return $core->value_set('buttcoin:stats','word_chosen',$word_list[int(rand(5))]);
+  return $core->value_set('buttcoin:metadata','word_chosen',$word_list[int(rand(5))]);
 }
 
 sub buttcoin_track_stat_mined {
   my ($core,$nick) = @_;
-  return $core->value_increment('buttcoin:stats','mined:'.lc($nick),1);
+  return $core->value_increment('buttcoin:stats:mined',lc($nick),1);
 }
 
 sub buttcoin_track_stat_given {
   my ($core,$nick,$value) = @_;
-  return $core->value_increment('buttcoin:stats','given:'.lc($nick),$value);
+  return $core->value_increment('buttcoin:stats:gifted',lc($nick),$value);
 }
 
 sub buttcoin_track_stat_received {
   my ($core,$nick,$value) = @_;
-  return $core->value_increment('buttcoin:stats','received:'.lc($nick),$value);
+  return $core->value_increment('buttcoin:stats:received',lc($nick),$value);
 }
 
 sub buttcoin_track_stat_abuse {
   my ($core,$nick) = @_;
-  return $core->value_increment('buttcoin:stats','abuse:'.lc($nick),1);
+  return $core->value_increment('buttcoin:stats:abuse',lc($nick),1);
 }
 
 sub buttcoin_track_stat_word_average {
   my ($core,$word) = @_;
 
-  my $timestamp = $core->value_get('buttcoin:stats','timestamp') || time;
-  $core->value_set('buttcoin:stats','timestamp',time);
-  $core->value_increment('buttcoin:stats','word_count:'.$word,1);
-  $core->value_increment('buttcoin:stats','word_time:'.$word,(time-$timestamp));
+  my $timestamp = $core->value_get('buttcoin:metadata','timestamp') || time;
+  $core->value_set('buttcoin:metadata','timestamp',time);
+  $core->value_increment('buttcoin:metadata','word_count:'.$word,1);
+  $core->value_increment('buttcoin:metadata','word_time:'.$word,(time-$timestamp));
   return 1;
 }
