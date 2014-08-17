@@ -15,10 +15,6 @@ use StreamReader;
 my $childName = stdin_read();
 my $core = new Gambot::GAPIL::CommandChild();
 
-if(!$core->dictionary_exists('feed_reader:subscribers')) { $core->dictionary_load('feed_reader:subscribers'); }
-if(!$core->dictionary_exists('twitter_credentials')) { $core->dictionary_load('twitter_credentials'); }
-$core->log_normal('FEEDREAD',"$childName beginning.");
-$core->event_subscribe("child_deleted:$childName","log_normal>FEEDREAD>$childName ended.");
 ## Make this script undead
 $core->event_subscribe("child_deleted:$childName","child_add>$childName>perl $FindBin::Bin/StreamTwitter.pl");
 
@@ -35,7 +31,6 @@ $feeds{'Wesnoth'} =             292527834;
 $feeds{'jeb_'} =                24166202;
 $feeds{'Dinnerbone'} =          83820762;
 $feeds{'SeargeDP'} =            381007605;
-$feeds{'MinecraftAPIBot'} =     718090032;
 $feeds{'shikadilord'} =         165991694;
 $feeds{'StatusMinecraft'} =     901296078;
 $feeds{'kairibot'} =            369296792;
@@ -109,7 +104,7 @@ while (my $line = <$read_pipe>) {
     $text =~ s/^RT (@\w{1,15}): /(\x0314RT $1\x0F) /; # Color retweets
     $text =~ s/[\r\n]+/ /ig; # Remove newlines
 
-    my $subscribers = $core->value_get('feed_reader:subscribers',"Twitter$author");
+    my $subscribers = $core->value_get('feed_subscriptions:twitter',lc($author));
     foreach my $channel (split(',',$subscribers)) {
       if($channel ne '#minecraft' || !$tweet->{'in_reply_to_user_id'} || $mojangles{$tweet->{'in_reply_to_user_id'}}) {
         $core->server_send("PRIVMSG $channel :\x02Tweet\x02 (by \x0303\@$author\x0F) $text [ https://twitter.com/$author/status/$id ]");
