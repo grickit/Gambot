@@ -35,6 +35,7 @@ sub new {
   my $self = {};
 
   $self->{'core'} = shift;
+  $self->{'lines_sent'} = 0;
 
   bless($self,$class);
   return $self;
@@ -139,6 +140,7 @@ sub parse {
     return '';
   }
 
+  $self->{'lines_sent'}++;
   return 1;
 }
 
