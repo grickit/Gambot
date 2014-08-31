@@ -1,12 +1,6 @@
 package PluginParser::Internet::Youtube;
 use strict;
 use warnings;
-use LWP::Simple;
-use LWP::UserAgent;
-use POSIX;
-use FindBin;
-use lib "$FindBin::Bin/../../modules/";
-use JSON::JSON;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -33,6 +27,12 @@ sub match {
 }
 
 sub youtube {
+  use FindBin;
+  use lib "$FindBin::Bin/../../modules/";
+  require POSIX;
+  require LWP::Simple;
+  require LWP::UserAgent;
+  require JSON::JSON;
   my ($core,$chan,$target,$video) = @_;
 
   my $url = "http://gdata.youtube.com/feeds/api/videos/${video}?v=2&alt=jsonc";

@@ -1,7 +1,6 @@
 package PluginParser::Time;
 use strict;
 use warnings;
-use POSIX;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -36,6 +35,7 @@ sub match {
 }
 
 sub time_offset {
+  require POSIX;
   my ($core,$chan,$target,$offset) = @_;
   my $time = POSIX::strftime('%H:%M:%S',(gmtime(time+$offset*3600)));
 
@@ -43,6 +43,7 @@ sub time_offset {
 }
 
 sub time_unix {
+  require POSIX;
   my ($core,$chan,$target) = @_;
   my $time = time;
 

@@ -1,8 +1,6 @@
 package PluginParser::Internet::QMarkAPI;
 use strict;
 use warnings;
-use LWP::Simple;
-use LWP::UserAgent;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -21,6 +19,8 @@ sub match {
 }
 
 sub qmark {
+  require LWP::Simple;
+  require LWP::UserAgent;
   my ($core,$chan,$target,$message) = @_;
 
   my $request = LWP::UserAgent->new;

@@ -1,7 +1,6 @@
 package PluginParser::Basic::CTCP;
 use strict;
 use warnings;
-use POSIX;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -42,6 +41,7 @@ sub ctcp_clientinfo {
 }
 
 sub ctcp_time {
+  require POSIX;
   my ($core,$chan) = @_;
   my $time = POSIX::strftime('%Y-%m-%d %H:%M:%S',localtime);
 
