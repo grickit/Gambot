@@ -159,7 +159,8 @@ sub parse_message {
   }
 
   elsif($message =~ /^child_list>$/) {
-    $result = $self->{'core'}->child_list();
+    my @list = $self->{'core'}->child_list();
+    $result = join(',',@list);
   }
 
   elsif($message =~ /^child_delete>$validKey$/) {
