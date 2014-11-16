@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use LWP::UserAgent;
-use URI::Escape;
 use HTML::Entities;
 use FindBin;
 use lib "$FindBin::Bin/../modules/";
@@ -37,9 +36,9 @@ $subreddits =~ s/,/+/g;
 my $string = fetch_json("http://www.reddit.com/r/${subreddits}/new.json?sort=new");
 my $json = JSON::decode_json($string);
 
-
 if(scalar($json->{'data'}->{'children'}[0])) {
-  my $actually_reported = '';
+  my $actually_reported = 0;
+  my %subscribers;
 
   foreach my $i (1..scalar(@{$json->{'data'}->{'children'}})) {
     my $post = $json->{'data'}->{'children'}[-$i]->{'data'};
@@ -50,10 +49,11 @@ if(scalar($json->{'data'}->{'children'}[0])) {
     my $title = decode_entities($post->{'title'});
     my $author = '/u/'.$post->{'author'};
     (my $name = $post->{'name'}) =~ s|^t3_||;
-    my $short_url = 'http://redd.it/'.$name;
+    my $short_url = "https://reddit.com/r/${subreddit}/${name}";
+    my $lcsubreddit = lc($subreddit);
 
-    my $subscribers = $core->value_get('feed_subscriptions:reddit',lc($subreddit));
-    foreach my $channel (split(',',$subscribers)) {
+    if(!$subscribers{$lcsubreddit}) { $subscribers{$lcsubreddit} = $core->value_get('feed_subscriptions:reddit',$lcsubreddit); }
+    foreach my $channel (split(',',$subscribers{$lcsubreddit})) {
       $core->server_send("PRIVMSG ${channel} :\x02${subreddit}:\x02 ${title} (by \x0303${author}\x0F) ${short_url}",1);
     }
   }
@@ -62,4 +62,4 @@ if(scalar($json->{'data'}->{'children'}[0])) {
 }
 
 #value_delete>feed_metadata_reddit>last_reported
-$core->delay_subscribe(30,"child_add>feed_reddit>perl $FindBin::RealBin/FeedReddit.pl",1);
+$core->delay_subscribe(60,"child_add>feed_reddit>perl $FindBin::RealBin/FeedReddit.pl",1);
