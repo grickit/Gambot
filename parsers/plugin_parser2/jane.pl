@@ -5,7 +5,9 @@ use lib "$FindBin::Bin/../../modules/";
 use PluginParser::Parser;
 
 if($core->{'childid'} eq 'fork10' && $core->{'botname'} =~ /^janebot_*$/) {
-  $core->child_add('streamtwitter',"perl $FindBin::Bin/../../scripts/StreamReader/StreamTwitter.pl");
+  if(!$core->child_exists('streamtwitter')) {
+    $core->child_add('streamtwitter',"perl $FindBin::Bin/../../scripts/StreamReader/StreamTwitter.pl");
+  }
 }
 
 module_load('PluginParser::Maintenance::Autojoin');
@@ -26,5 +28,4 @@ module_load('PluginParser::Games::Buttcoins');
 module_load('PluginParser::Games::Dice');
 module_load('PluginParser::Games::Eightball');
 module_load('PluginParser::Subreddit');
-
-module_load('PluginParser::Internet::QMarkAPI');
+#module_load('PluginParser::Internet::QMarkAPI');
