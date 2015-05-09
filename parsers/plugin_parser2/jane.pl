@@ -23,6 +23,7 @@ module_load('PluginParser::Time');
 module_load('PluginParser::Conversation::EDBlock');
 module_load('PluginParser::Internet::FetchTitle');
 module_load('PluginParser::Internet::Youtube');
+module_load('PluginParser::Internet::Steam');
 module_load('PluginParser::Games::Actions');
 module_load('PluginParser::Games::Buttcoins');
 module_load('PluginParser::Games::Dice');
