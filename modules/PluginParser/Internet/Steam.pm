@@ -47,13 +47,12 @@ sub steam {
     my $price = '0.00';
     if($json->{'price_overview'}->{'final'}) { $price = sprintf("%.2f",$json->{'price_overview'}->{'final'}/100); }
 
-    my $platforms = $json->{'platforms'}->{'windows'}.' '.$json->{'platforms'}->{'mac'}.' '.$json->{'platforms'}->{'linux'};
-    if($platforms eq "true true true") { $platforms = 'all platforms!'; }
-    elsif($platforms eq "true false false") { $platforms = 'Windows only :('; }
-    elsif($platforms eq "true true false") { $platforms = 'Windows & Mac'; }
-    elsif($platforms eq "true false true") { $platforms = 'Windows & Linux'; }
-    elsif($platforms eq "false true true") { $platforms = 'Mac & Linux'; }
-    else { $platforms = 'platforms unknown'; }
+    my $platforms = 'platforms unknown';
+    if($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'all platforms!'; }
+    elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows only :('; }
+    elsif($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows & Mac'; }
+    elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'Windows & Linux'; }
+    elsif(!$json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'Mac & Linux'; }
 
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02\"${title}\"\x02 \x0303\$${price}\x0F, available for ${platforms} http://store.steampowered.com/app/${app}");
   }
