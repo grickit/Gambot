@@ -25,6 +25,7 @@ module_load('PluginParser::Internet::FetchTitle');
 module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Internet::Steam');
 module_load('PluginParser::Games::Actions');
+module_load('PluginParser::Games::Memes');
 module_load('PluginParser::Games::Buttcoins');
 module_load('PluginParser::Games::Dice');
 module_load('PluginParser::Games::Eightball');
