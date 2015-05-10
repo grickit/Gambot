@@ -47,14 +47,22 @@ sub steam {
     my $price = '0.00';
     if($json->{'price_overview'}->{'final'}) { $price = sprintf("%.2f",$json->{'price_overview'}->{'final'}/100); }
 
-    my $platforms = 'platforms unknown';
-    if($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'all platforms!'; }
+    my $platforms = '';
+    if($json->{'platforms'}->{'windows'}) { $platforms = 'all platforms!'; }
     elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows only :('; }
     elsif($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows and Mac'; }
     elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'Windows and Linux'; }
     elsif(!$json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'Mac and Linux'; }
 
-    $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02\"${title}\"\x02 \x0303\$${price}\x0F, available for ${platforms} http://store.steampowered.com/app/${app}");
+    my $discount = "(\x0314not on sale\x0F)";
+    if($json->{'price_overview'}->{'discount_percent'}) { $discount = "(-".($json->{'price_overview'}->{'discount_percent'})."%)"; }
+
+    my $genres = '';
+    foreach my $genre (@{$json->{'genres'}}) {
+      $genres .= "[".$genre->{'description'}."] ";
+    }
+
+    $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02${title}\x02 \x0303\$${price}\x0F ${discount}, available for ${platforms} http://store.steampowered.com/app/${app} ${genres}");
   }
   else {
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: That app does not exist.");
