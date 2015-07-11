@@ -72,25 +72,25 @@ sub server_disconnect {
 
 
 ## Logging
-sub log_error() {
+sub log_error {
   my ($self,$message) = @_;
 
   return $self->{'logger'}->log_error($message);
 }
 
-sub log_event() {
+sub log_event {
   my ($self,$message) = @_;
 
   return $self->{'logger'}->log_event($message);
 }
 
-sub log_normal() {
+sub log_normal {
   my ($self,$prefix,$message) = @_;
 
   return $self->{'logger'}->log_normal($prefix,$message);
 }
 
-sub log_debug() {
+sub log_debug {
   my ($self,$message) = @_;
 
   return $self->{'logger'}->log_debug($message);
@@ -162,6 +162,12 @@ sub dictionary_save {
   }
 
   return '';
+}
+
+sub dictionary_count {
+  my ($self) = @_;
+
+  return keys $self->{'dictionaries'};
 }
 
 
@@ -242,6 +248,12 @@ sub value_pull {
   my ($self,$dict,$key,$value) = @_;
 
   return $self->dictionary_get($dict,1)->value_pull($key,$value);
+}
+
+sub value_count {
+  my ($self,$dict) = @_;
+
+  return $self->dictionary_get($dict,1)->value_count();
 }
 
 

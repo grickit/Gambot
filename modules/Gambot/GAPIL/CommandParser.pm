@@ -97,6 +97,10 @@ sub parse_message {
     $result = $self->{'core'}->dictionary_save($1);
   }
 
+  elsif($message =~ /^dictionary_count>$/) {
+    $result = $self->{'core'}->dictionary_count();
+  }
+
 
 ## Value manipulation
   elsif($message =~ /^value_exists>$validKey>$validKey$/) {
@@ -150,6 +154,10 @@ sub parse_message {
 
   elsif($message =~ /^value_pull>$validKey>$validKey>$validKey$/) {
     $result = $self->{'core'}->value_pull($1,$2,$3);
+  }
+
+  elsif($message =~ /^value_count>$validKey$/) {
+    $result = $self->{'core'}->value_count($1);
   }
 
 

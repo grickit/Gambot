@@ -220,4 +220,10 @@ sub value_pull {
   return $self->value_get($key);
 }
 
+sub value_count {
+  my ($self) = @_;
+
+  return keys $self->{'values'};
+}
+
 1;

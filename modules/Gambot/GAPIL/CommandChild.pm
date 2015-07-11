@@ -98,25 +98,25 @@ sub server_disconnect {
 
 
 ## Logging
-sub log_error() {
+sub log_error {
   my ($self,$message,$silent) = @_;
 
   return gapil_call('log_error>'.$message,$silent);
 }
 
-sub log_event() {
+sub log_event {
   my ($self,$message,$silent) = @_;
 
   return gapil_call('log_event>'.$message,$silent);
 }
 
-sub log_normal() {
+sub log_normal {
   my ($self,$prefix,$message,$silent) = @_;
 
   return gapil_call('log_normal>'.$prefix.'>'.$message,$silent);
 }
 
-sub log_debug() {
+sub log_debug{
   my ($self,$message,$silent) = @_;
 
   return gapil_call('log_debug>'.$message,$silent);
@@ -152,6 +152,12 @@ sub dictionary_save {
   my ($self,$dict,$silent) = @_;
 
   return gapil_call('dictionary_save>'.$dict,$silent);
+}
+
+sub dictionary_count {
+  my ($self,$silent) = @_;
+
+  return gapil_call('dictionary_count>',$silent);
 }
 
 
@@ -232,6 +238,12 @@ sub value_pull {
   my ($self,$dict,$key,$value,$silent) = @_;
 
   return gapil_call('value_pull>'.$dict.'>'.$key.'>'.$value,$silent);
+}
+
+sub value_count {
+  my ($self,$dict,$silent) = @_;
+
+  return gapil_call('value_count>'.$dict,$silent);
 }
 
 
