@@ -13,6 +13,7 @@ if($core->{'childid'} eq 'fork10' && $core->{'botname'} =~ /^janebot_*$/) {
 module_load('PluginParser::Maintenance::Autojoin');
 module_load('PluginParser::Maintenance::NickBump');
 module_load('PluginParser::Maintenance::ServerPing');
+module_load('PluginParser::Maintenance::Memory');
 #module_load('PluginParser::Maintenance::StateManagement');
 module_load('PluginParser::Basic::About');
 module_load('PluginParser::Basic::CTCP');
@@ -21,6 +22,7 @@ module_load('PluginParser::Staff::JoinPart');
 module_load('PluginParser::Temperature');
 module_load('PluginParser::Time');
 module_load('PluginParser::Conversation::EDBlock');
+module_load('PluginParser::Conversation::Quotes');
 module_load('PluginParser::Internet::FetchTitle');
 module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Internet::Steam');
