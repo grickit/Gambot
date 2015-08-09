@@ -34,9 +34,14 @@ $subreddits =~ s/,?autosave,?//;
 $subreddits =~ s/,/+/g;
 
 my $string = fetch_json("http://www.reddit.com/r/${subreddits}/new.json?sort=new");
-my $json = JSON::decode_json($string);
+my $json = eval { JSON::decode_json($string) };
 
-if(scalar($json->{'data'}->{'children'}[0])) {
+if($@) {
+  $json = 0;
+  $core->log_error($@);
+}
+
+if($json && scalar($json->{'data'}->{'children'}[0])) {
   my $actually_reported = 0;
   my %subscribers;
 
