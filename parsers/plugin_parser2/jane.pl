@@ -7,6 +7,7 @@ use PluginParser::Parser;
 if($core->{'childid'} eq 'fork10' && $core->{'botname'} =~ /^janebot_*$/) {
   if(!$core->child_exists('streamtwitter')) {
     $core->child_add('streamtwitter',"perl $FindBin::Bin/../../scripts/StreamReader/StreamTwitter.pl");
+    $core->child_add('feed_reddit',"perl $FindBin::Bin/../../scripts/FeedReddit.pl");
   }
 }
 
@@ -26,6 +27,7 @@ module_load('PluginParser::Conversation::Quotes');
 module_load('PluginParser::Internet::FetchTitle');
 module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Internet::Steam');
+#module_load('PluginParser::Internet::GithubIssue');
 module_load('PluginParser::Games::Actions');
 module_load('PluginParser::Games::Memes');
 module_load('PluginParser::Games::Buttcoins');
