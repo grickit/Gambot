@@ -116,7 +116,7 @@ sub remember_quote {
   my @messages = retrieve_messages($core,$chan);
   my $match;
 
-  for my $log (@messages) {
+  for my $log (reverse(@messages)) {
     next unless $log->{'author'} eq $author;
     next unless $log->{'message'} =~ /\Q$message/i;
     $match = $log;
