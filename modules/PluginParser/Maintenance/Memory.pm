@@ -30,7 +30,7 @@ sub retrieve_messages {
 sub record_line {
   my ($core,$channel,$nick,$message) = @_;
 
-  my $maxCount = 20;
+  my $maxCount = 100;
   my $count = $core->value_get('memory:messages',$channel.':count') || 0;
   my $pointer = $core->value_get('memory:messages',$channel.':pointer') || 0;
   $core->value_set('memory:messages',$channel.':'.$pointer.':author',$nick);
