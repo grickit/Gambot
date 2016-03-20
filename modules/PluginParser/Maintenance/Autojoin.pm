@@ -9,7 +9,7 @@ sub match {
   my ($self,$core) = @_;
 
 
-  if($core->{'childid'} eq 'fork10') {
+  if($core->{'forkid'} == 10) {
     return autojoin($core,$core->{'botname'});
   }
 
