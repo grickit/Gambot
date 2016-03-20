@@ -23,6 +23,12 @@ $core->{'childid'} = stdin_read();
 $core->{'botname'} = stdin_read();
 $core->{'incoming_message'} = stdin_read();
 
+if (my ($forkid) = $core->{'childid'} =~ /^fork(\d+)$/) {
+  $core->{'forkid'} = $forkid;
+} else {
+  $core->{'forkid'} = 0;
+}
+
 (
   $core->{'sender_nick'},
   $core->{'sender_user'},

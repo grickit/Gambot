@@ -15,6 +15,7 @@ module_load('PluginParser::Maintenance::Autojoin');
 module_load('PluginParser::Maintenance::NickBump');
 module_load('PluginParser::Maintenance::ServerPing');
 module_load('PluginParser::Maintenance::Memory');
+module_load('PluginParser::Maintenance::PersistentNick');
 #module_load('PluginParser::Maintenance::StateManagement');
 module_load('PluginParser::Basic::About');
 module_load('PluginParser::Basic::CTCP');
