@@ -31,14 +31,13 @@ foreach my $current_feed (@feed_array) {
 
     my ($data_link,$item_id,$data_author,$data_title,$data_date_full) = entry_to_data($current_entry,$link_regex,$item_id_regex,$author_regex,$title_regex,$date_regex);
     #2011-06-04T14:23:22-05:00
-    $data_date_full =~ m/^([0-9]+)-([0-9]+)-([0-9]+)T([0-9]+):([0-9]+):([0-9]+)[+-][0-9]+:[0-9]+$/i;
-    my $data_date = "$2-$3-$1";
-    my $data_time = "$4:$5";
+    $data_date_full =~ m/^([0-9]+-[0-9]+-[0-9]+)T([0-9]+:[0-9]+):[0-9]+([+-][0-9]+:[0-9]+)$/i;
+    my $data_time = "$1 $2 $3";
 
     if(check_new($data_site,$current_feed,$item_id)) {
       commit_entry($data_site,$current_feed,$item_id);
       foreach my $current_subscriber (@subscribers_array) {
-        $FeedReader::core->server_send("PRIVMSG $current_subscriber :\x02Unknown Horizons Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_date $data_time\x0F ] [ $data_link ]");
+        $FeedReader::core->server_send("PRIVMSG $current_subscriber :\x02Unknown Horizons Forums\x02 | \x02$data_title\x02 by \x0303$data_author\x0F [ \x0314$data_time\x0F ] [ $data_link ]");
       }
     }
   }
