@@ -100,7 +100,7 @@ while (my $line = <$read_pipe>) {
       }
     }
 
-    $text =~ s/(#[a-z0-9]+)/\x0312$1\x0F/ig; # Color hashtags
+    $text =~ s/(#[a-z][a-z0-9]*)/\x0312$1\x0F/ig; # Color hashtags
     $text =~ s/^RT (@\w{1,15}): /(\x0314RT $1\x0F) /; # Color retweets
     $text =~ s/[\r\n]+/ /ig; # Remove newlines
 
