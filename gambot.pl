@@ -129,7 +129,6 @@ $core->log_event('Default core values set.');
 my $config = new Gambot::GAPIL::Dictionary($core,'config');
 $config->load($core->value_get('core','home_directory').'/configuration/'.$core->value_get('core','configuration_file'));
 $core->{'dictionaries'}->{'config'} = $config;
-$core->value_set('core','nick',$core->value_get('config','base_nick'));
 $core->log_event('Config file loaded.');
 
 
@@ -138,8 +137,8 @@ $core->value_add('config','server','chat.freenode.net');
 $core->value_add('config','port',6667);
 $core->value_add('config','base_nick','aGambot');
 $core->value_add('config','password','');
-$core->value_add('config','log_directory',$core->value_get('core','home_directory'));
-$core->value_add('config','irc_parser','perl '.$core->value_get('core','home_directory').'/parsers/plugin_parser/example.pl');
+$core->value_add('config','log_directory',$core->value_get('core','home_directory').'/logs/');
+$core->value_add('config','irc_parser','perl '.$core->value_get('core','home_directory').'/parsers/plugin_parser2/example.pl');
 $core->value_add('config','iterations_per_second',10); # Default max number of times to run the main loop per second
 $core->value_add('config','outgoing_messages_per_second',3); # Default max number of IRC messages to send per second
 $core->value_add('config','incoming_messages_per_second',50); # Default max number of IRC messages to process per second
@@ -148,6 +147,12 @@ $core->value_add('config','key_characters','A-Za-z0-9_:.#|`[\]{}()\\/\^\-'); # D
 $core->value_add('config','global_staff','H:wesnoth/developer/grickit'); # Default list of permission masks for users who are staff in every channel
 #A-Z a-z 0-9 _ : . # | | ` [ ] { } ( ) / \ ^ -
 $core->log_event('Default config values set.');
+
+
+
+# Set current nick from config
+$core->value_set('core','nick',$core->value_get('config','base_nick'));
+
 
 
 # Set up default IRC stats
