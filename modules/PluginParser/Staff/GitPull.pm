@@ -18,7 +18,7 @@ sub match {
 }
 
 sub git_pull {
-  my ($core,$chan) = @_;
+  my ($core) = @_;
   if(!$core->{'auth'}->test_sender($core,'global_staff')) { $core->{'auth'}->error($core,'global_staff'); return ''; }
 
   my $home_directory = $core->value_get('core','home_directory');
