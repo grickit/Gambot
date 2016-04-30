@@ -10,7 +10,7 @@ sub match {
   if($core->{'event'} ne 'on_public_message' and $core->{'event'} ne 'on_private_message') { return ''; }
 
 
-  if($core->{'message'} =~ /^(http:\/\/.+)$/) {
+  if($core->{'message'} =~ /^(https?:\/\/.+)$/) {
     return title($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
