@@ -59,7 +59,7 @@ sub act_death {
 }
 
 
-sub police {
+sub act_police {
   my ($core,$chan) = @_;
 
   $core->{'output'}->parse("ACTION>${chan}>calls the police.");
