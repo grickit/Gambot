@@ -50,6 +50,10 @@ sub youtube {
     my $title = $json->{'snippet'}->{'title'};
     my $duration = $json->{'contentDetails'}->{'duration'};
     $duration =~ s/^PT//;
+    $duration =~ m/^(([0-9]+)H)?(([0-9]+)M)?(([0-9]+)S)$/;
+    my $hours = $2 ? sprintf("%02d", $2) : '00';
+    my $minutes = $4 ? sprintf("%02d", $4) : '00';
+    my $seconds = $6 ? sprintf("%02d", $6) : '00';
     my $author = $json->{'snippet'}->{'channelTitle'};
     my $views = $json->{'statistics'}->{'viewCount'};
     my $likes = $json->{'statistics'}->{'likeCount'};
@@ -58,7 +62,7 @@ sub youtube {
     my $restrictions = "(\x0314no region restrictions\x0F)";
     if($json->{'contentDetails'}->{'regionRestriction'}) { $restrictions = "(\x0307unavailable in some regions\x0F)"; }
 
-    $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02\"${title}\"\x02 \x0306${duration}\x0F (by \x0303${author}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${video} ${restrictions}");
+    $core->{'output'}->parse("MESSAGE>${chan}>${target}: \x02\"${title}\"\x02 \x0306[${hours}:${minutes}:${seconds}]\x0F (by \x0303${author}\x0F) \x0314${views}\x0F views, \x0303${likes}\x0F likes, \x0304${dislikes}\x0F dislikes http://youtu.be/${video} ${restrictions}");
   }
   else {
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: That video does not exist.");
