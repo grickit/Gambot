@@ -54,7 +54,7 @@ if($json && scalar($json->{'data'}->{'children'}[0])) {
     my $title = decode_entities($post->{'title'});
     my $author = '/u/'.$post->{'author'};
     (my $name = $post->{'name'}) =~ s|^t3_||;
-    my $short_url = "https://redd.it}/${name}";
+    my $short_url = "https://redd.it/${name}";
     my $lcsubreddit = lc($subreddit);
 
     if(!$subscribers{$lcsubreddit}) { $subscribers{$lcsubreddit} = $core->value_get('feed_subscriptions:reddit',$lcsubreddit); }
