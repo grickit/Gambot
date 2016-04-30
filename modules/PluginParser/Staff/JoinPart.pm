@@ -37,14 +37,14 @@ sub match {
 
 sub order_join {
   my ($core,$chan) = @_;
-  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
+  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$chan); return ''; }
 
   $core->{'output'}->parse("JOIN>${chan}");
 }
 
 sub order_part {
   my ($core,$chan,$nick,$message) = @_;
-  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$core->{'sender_nick'},$core->{'receiver_chan'}); return ''; }
+  if(!$core->{'auth'}->test_sender($core,$chan)) { $core->{'auth'}->error($core,$chan); return ''; }
 
   $core->{'output'}->parse("PART>${chan}>${message} [requested by ${nick}]");
 }
