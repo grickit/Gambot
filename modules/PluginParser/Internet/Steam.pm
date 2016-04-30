@@ -48,7 +48,7 @@ sub steam {
     if($json->{'price_overview'}->{'final'}) { $price = sprintf("%.2f",$json->{'price_overview'}->{'final'}/100); }
 
     my $platforms = '';
-    if($json->{'platforms'}->{'windows'}) { $platforms = 'all platforms!'; }
+    if($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'all platforms!'; }
     elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows only :('; }
     elsif($json->{'platforms'}->{'windows'} && $json->{'platforms'}->{'mac'} && !$json->{'platforms'}->{'linux'}) { $platforms = 'Windows and Mac'; }
     elsif($json->{'platforms'}->{'windows'} && !$json->{'platforms'}->{'mac'} && $json->{'platforms'}->{'linux'}) { $platforms = 'Windows and Linux'; }
