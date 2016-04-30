@@ -14,7 +14,7 @@ sub match {
     return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$1,1);
   }
 
-  elsif($core->{'message'} =~ /^([0-9]+)d([0-9]+)$/) {
+  elsif($core->{'message'} =~ /^([0-9]{1,4})d([0-9]+)$/) {
     return roll_dice($core,$core->{'receiver_chan'},$core->{'target'},$2,$1);
   }
 
@@ -24,7 +24,11 @@ sub match {
 
 sub roll_dice {
   my ($core,$chan,$target,$size,$number) = @_;
-  my $total = int(rand($number*$size-$number))+$number;
+  
+  my $total = 0;
+  for(my $rolls = 0; $rolls < $number; $rolls++) {
+    $total += int(rand($size))+1;
+  }
 
   $core->{'output'}->parse("MESSAGE>${chan}>${target}: Rolled ${number} d${size} dice and got ${total}.");
 }
