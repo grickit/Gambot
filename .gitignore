@@ -2,3 +2,4 @@
 configuration/*.txt
 logs/*
 persistent/*
+modules/JSON/*
