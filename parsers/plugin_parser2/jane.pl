@@ -21,6 +21,7 @@ module_load('PluginParser::Basic::About');
 module_load('PluginParser::Basic::CTCP');
 module_load('PluginParser::Basic::Hug');
 module_load('PluginParser::Staff::JoinPart');
+module_load('PluginParser::Staff::Speak');
 module_load('PluginParser::Staff::GitPull');
 module_load('PluginParser::Temperature');
 module_load('PluginParser::Time');
