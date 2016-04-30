@@ -18,8 +18,8 @@ sub match {
     return time_offset($core,$core->{'receiver_chan'},$core->{'target'},'+0');
   }
 
-  elsif($core->{'message'} =~ /^time ([+-][0-9]+)$/) {
-    return time_offset($core,$core->{'receiver_chan'},$core->{'target'},$1);
+  elsif($core->{'message'} =~ /^time (([+-])?[0-9]+.?[0-9]{0,2})$/) {
+    return time_offset($core,$core->{'receiver_chan'},$core->{'target'}, ($2 ? $1 : "+${1}"));
   }
 
   elsif($core->{'message'} =~ /^time unix$/) {
