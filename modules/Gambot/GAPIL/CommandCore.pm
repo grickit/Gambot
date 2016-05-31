@@ -184,6 +184,12 @@ sub value_list {
   return $self->dictionary_get($dict,1)->value_list();
 }
 
+sub value_dump {
+  my ($self,$dict,$searchkey) = @_;
+
+  return $self->dictionary_get($dict,1)->value_dump($searchkey);
+}
+
 sub value_get {
   my ($self,$dict,$key) = @_;
 

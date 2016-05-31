@@ -106,6 +106,18 @@ sub value_get {
   return '';
 }
 
+sub value_dump {
+  my ($self,$keysearch) = @_;
+
+  my %result = ();
+  foreach my $key (keys $self->{'values'}) {
+    if ($key =~ /$keysearch/) {
+      $result{$key} = $self->{'values'}{$key};
+    }
+  }
+  return %result;
+}
+
 sub value_set {
   my ($self,$key,$value) = @_;
 

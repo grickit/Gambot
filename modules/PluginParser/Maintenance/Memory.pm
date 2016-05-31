@@ -13,18 +13,20 @@ sub match {
 }
 
 sub retrieve_messages {
-    my ($core,$channel) = @_;
-    my $pointer = $core->value_get('memory:messages',$channel.':pointer') || 0;
-    my $count = $core->value_get('memory:messages',$channel.':count') || 0;
-    my @result;
+  my ($core,$channel) = @_;
+  my %keys = $core->value_dump('memory:messages', '^'.$channel.':');
 
-    for my $index (($pointer..$count-1),(0..$pointer-1)) {
-        my $author = $core->value_get('memory:messages',$channel.':'.$index.':author');
-        my $message = $core->value_get('memory:messages',$channel.':'.$index.':message');
-        push(@result,{'author'=>$author,'message'=>$message});
-    }
+  my $pointer = $keys{$channel.':pointer'} || 0;
+  my $count = $keys{$channel.':count'} || 0;
+  my @result;
 
-    return @result;
+  for my $index (($pointer..$count-1),(0..$pointer-1)) {
+    my $author = $keys{$channel.':'.$index.':author'};
+    my $message = $keys{$channel.':'.$index.':message'};
+    push(@result,{'author'=>$author,'message'=>$message});
+  }
+
+  return @result;
 }
 
 sub record_line {
