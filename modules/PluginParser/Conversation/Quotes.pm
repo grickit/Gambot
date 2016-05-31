@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use IRC::Freenode::Specifications;
 use PluginParser::Maintenance::Memory;
+use Time::Piece;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(match);
 
@@ -43,6 +44,7 @@ sub add_quote {
   my $id = $core->value_increment('quote:counts',lc($author),1);
 
   $core->value_set('quote:messages',lc($author).'#'.$id,$message);
+  $core->value_set('quote:dates',lc($author).'#'.$id,localtime->ymd);
 
   return $id;
 }
@@ -57,7 +59,12 @@ sub get_quote {
   my $message = $core->value_get('quote:messages',lc($author).'#'.$id);
 
   if ($message) {
-    return "\"${message}\" - ${author} ${id}";
+    my $date = $core->value_get('quote:dates',lc($author).'#'.$id);
+    my $result = "\"${message}\" - ${author} ${id}";
+    if ($date) {
+      $result .= " ($date)";
+    }
+    return $result;
   }
 
   return '';
