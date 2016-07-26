@@ -13,19 +13,19 @@ sub match {
 
 
   if($core->{'message'} =~ /^quote (\d+) $validNick$/) {
-    return recall_quote($core,$core->{'receiver_chan'},$core->{'sender_nick'},$2,int($1));
+    return recall_quote($core,$core->{'receiver_chan'},$core->{'target'},$2,int($1));
   }
 
   if($core->{'message'} =~ /^quote $validNick$/) {
-    return recall_quote($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1);
+    return recall_quote($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
   if($core->{'message'} =~ /^quote $validNick (.+)$/) {
-    return recall_topical_quote($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1,$2);
+    return recall_topical_quote($core,$core->{'receiver_chan'},$core->{'target'},$1,$2);
   }
 
   if($core->{'message'} =~ /^remember $validNick (.+)$/) {
-    return remember_quote($core,$core->{'receiver_chan'},$core->{'sender_nick'},$1,$2);
+    return remember_quote($core,$core->{'receiver_chan'},$core->{'target'},$1,$2);
   }
 
 
