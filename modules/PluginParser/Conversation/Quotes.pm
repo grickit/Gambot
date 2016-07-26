@@ -21,6 +21,10 @@ sub match {
     return recall_quote($core,$core->{'receiver_chan'},$core->{'target'},$1);
   }
 
+  if($core->{'message'} =~ /^quote$/) {
+    return recall_random_quote($core,$core->{'receiver_chan'},$core->{'target'});
+  }
+
   if($core->{'message'} =~ /^quote $validNick (.+)$/) {
     return recall_topical_quote($core,$core->{'receiver_chan'},$core->{'target'},$1,$2);
   }
@@ -70,6 +74,25 @@ sub get_quote {
   return '';
 }
 
+sub get_random_quote {
+  my ($core) = @_;
+
+  my @entries = split(',', $core->value_list('quote:messages'));
+  if (!@entries) {
+    return '';
+  }
+
+  my $key = $entries[rand @entries];
+  my $message = $core->value_get('quote:messages', $key);
+  my ($author, $id) = $key =~ /^(.+)#(\d+)$/;
+  my $date = $core->value_get('quote:dates',lc($author).'#'.$id);
+  my $result = "\"${message}\" - ${author} ${id}";
+  if ($date) {
+    $result .= " ($date)";
+  }
+  return $result;
+}
+
 sub recall_quote {
   my ($core,$chan,$target,$author,$id) = @_;
 
@@ -82,6 +105,18 @@ sub recall_quote {
 
   if (!$message) {
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: I don't remember that quote.");
+    return '';
+  }
+
+  $core->{'output'}->parse("MESSAGE>${chan}>${target}: ${message}");
+}
+
+sub recall_random_quote {
+  my ($core,$chan,$target,$author) = @_;
+  my $message = get_random_quote($core);
+
+  if (!$message) {
+    $core->{'output'}->parse("MESSAGE>${chan}>${target}: I don't remember anything. :(");
     return '';
   }
 
