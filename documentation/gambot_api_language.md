@@ -34,6 +34,11 @@ They are as follows.
     * Prints a blank line if the key does not exist.
 
 
+  * ### value_dump>[dict]>[key regex] ###
+    * All (matching-)keys & corresponding values in $dicts{[dict]} will be be printed to STDIN of the calling script.
+    * Prints a blank line if the key does not exist. Keys then values are alternated, separated with a NUL character.
+
+
   * ### (return) value_add>[dict]>[key]>[value] ###
     * $dicts{[dict]}{[key]} will be set to [value] __only if it does not already exist__.
     * If "*return*" is present, the calling script will receive the new value of $dicts{[dict]}{[key]} or a "*blank line*" indicating failure.

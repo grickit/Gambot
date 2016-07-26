@@ -112,6 +112,16 @@ sub parse_message {
     $result = join(',',@list);
   }
 
+  elsif($message =~ /^value_dump>$validKey>(.+)$/) {
+    my %dump = $self->{'core'}->value_dump($1,$2,$3);
+    my @flat = ();
+    foreach my $key (keys %dump) {
+      push(@flat,$key);
+      push(@flat,$dump{$key});
+    }
+    $result = join("\0",@flat);
+  }
+
   elsif($message =~ /^value_get>$validKey>$validKey$/) {
     $result = $self->{'core'}->value_get($1,$2);
   }

@@ -174,6 +174,17 @@ sub value_list {
   return gapil_call('value_list>'.$dict,$silent);
 }
 
+sub value_dump {
+  my ($self,$dict,$searchkey,$silent) = @_;
+
+  my @flat = split(/\0/, gapil_call('value_dump>'.$dict.'>'.$searchkey,$silent));
+  my %result = ();
+  for (my $i = 0; $i < @flat; $i += 2) {
+    $result{$flat[$i]} = $flat[$i+1];
+  }
+  return %result;
+}
+
 sub value_get {
   my ($self,$dict,$key,$silent) = @_;
 
