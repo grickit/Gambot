@@ -160,7 +160,7 @@ sub remember_quote {
 
   for my $log (reverse(@messages)) {
     next unless $log->{'author'} eq $author;
-    next unless $log->{'message'} =~ /\Q$message/i;
+    next unless $log->{'message'} =~ /\b\Q$message\E\b/i;
     $match = $log;
     last;
   }
