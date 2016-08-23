@@ -48,5 +48,5 @@ sub roll_eightball {
   $response[19] = 'Very doubtful.';
   my $answer = $response[int(rand(19))];
 
-  $core->{'output'}->parse("MESSAGE>${chan}>${target}: ${answer}.");
+  $core->{'output'}->parse("MESSAGE>${chan}>${target}: ${answer}");
 }
