@@ -130,7 +130,7 @@ sub remember_quote {
 
   if ($match) {
     my $id = add_quote($core,$match->{'author'},$match->{'message'});
-    my $quote = get_quote($core,$match->{'author'},$id);
+    my $quote = format_quote($core,(author => $match->{'author'}, id => $id));
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: Remembered ${quote}");
   } else {
     $core->{'output'}->parse("MESSAGE>${chan}>${target}: I don't remember what ${author} said about ${message}");
