@@ -40,7 +40,7 @@ our @EXPORT = qw(
 our @EXPORT_OK = qw();
 
 our $charactersNick = 'A-Za-z0-9[\]\\`_^{}|-';
-our $charactersUser = 'A-Za-z0-9[\]\\`_^{}|.-~';
+our $charactersUser = 'A-Za-z0-9[\]\\`_^{}|.~-';
 our $charactersHost = ':./A-Za-z0-9[\]\\`_^{}|-';
 our $charactersChan = '#A-Za-z0-9[\]\\`_^{}|-';
 our $charactersServer = 'a-zA-Z0-9\.';
