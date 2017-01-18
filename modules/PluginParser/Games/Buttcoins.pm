@@ -113,7 +113,7 @@ sub buttcoin_transfer {
   if(lc($sender) eq lc($receiver)) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You are ${receiver}."); return ''; }
   if($value <= 0) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You must send at least 1 buttcoin."); return ''; }
   if($value > $sender_balance) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You only have ${sender_balance} buttcoins."); return ''; }
-  if(!buttcoin_get_stat_active($core,$receiver)) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You can only send buttcoins to those with active buttcoin accounts. Users can active their buttcoin account by using any buttcoin related command."); return ''; }
+  if(!buttcoin_get_stat_active($core,$receiver)) { $core->{'output'}->parse("NOTICE>${sender}>[ERROR] You can only send buttcoins to those with active buttcoin accounts. Users can activate their buttcoin account by using any buttcoin related command."); return ''; }
 
   buttcoin_sub_balance($core,$sender,$value);
   buttcoin_add_balance($core,$receiver,$value);
