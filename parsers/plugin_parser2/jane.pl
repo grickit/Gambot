@@ -30,6 +30,7 @@ module_load('PluginParser::Conversation::Quotes');
 module_load('PluginParser::Internet::FetchTitle');
 module_load('PluginParser::Internet::Youtube');
 module_load('PluginParser::Internet::Steam');
+module_load('PluginParser::Internet::Tweet');
 #module_load('PluginParser::Internet::GithubIssue');
 module_load('PluginParser::Games::Actions');
 module_load('PluginParser::Games::Memes');
