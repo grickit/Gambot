@@ -38,4 +38,4 @@ module_load('PluginParser::Games::Buttcoins');
 module_load('PluginParser::Games::Dice');
 module_load('PluginParser::Games::Eightball');
 module_load('PluginParser::Subreddit');
-#module_load('PluginParser::Internet::QMarkAPI');
+module_load('PluginParser::Internet::QMarkAPI');

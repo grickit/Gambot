@@ -26,10 +26,10 @@ sub qmark {
   my $request = LWP::UserAgent->new;
   $request->timeout(60);
   $request->env_proxy;
-  $request->agent('Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)');
+  $request->agent('perl Gambot');
   $request->max_size('1024000');
   $request->parse_head(0);
-  my $content = $request->post('http://qmark.tk/qmai.php',{'q' => $message})->decoded_content;
+  my $content = $request->post('http://qmarkai.com/qmai.php',{'q' => $message})->decoded_content;
   $content =~ s/[\r\n]+/ /g;
 
   if($content !~ /<html>/) {
