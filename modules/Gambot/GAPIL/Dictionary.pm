@@ -64,7 +64,7 @@ sub load {
 sub save {
   my ($self,$filename) = @_;
 
-  if(keys $self->{'values'}) {
+  if(keys %{$self->{'values'}}) {
     $self->{'core'}->log_debug('Saving '.$filename);
     open(my $file,'>'.$filename);
     foreach my $key ($self->value_list()) {
@@ -91,7 +91,7 @@ sub value_list {
   my ($self) = @_;
 
   my @list;
-  foreach my $key (keys $self->{'values'}) {
+  foreach my $key (keys %{$self->{'values'}}) {
     push(@list,$key);
   }
   return @list;
@@ -110,7 +110,7 @@ sub value_dump {
   my ($self,$keysearch) = @_;
 
   my %result = ();
-  foreach my $key (keys $self->{'values'}) {
+  foreach my $key (keys %{$self->{'values'}}) {
     if ($key =~ /$keysearch/) {
       $result{$key} = $self->{'values'}{$key};
     }
@@ -235,7 +235,7 @@ sub value_pull {
 sub value_count {
   my ($self) = @_;
 
-  return keys $self->{'values'};
+  return keys %{$self->{'values'}};
 }
 
 1;
