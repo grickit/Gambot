@@ -93,7 +93,7 @@ while (my $line = <$read_pipe>) {
     my $id = $tweet->{'id'}; # Get the ID
 
     if($tweet->{'entities'}->{'urls'}) { # Expand short urls
-      foreach my $url (keys $tweet->{'entities'}->{'urls'}) {
+      foreach my $url (keys %{$tweet->{'entities'}->{'urls'}}) {
         my $old_url = decode_entities($tweet->{'entities'}->{'urls'}[$url]->{'url'});
         my $new_url = decode_entities($tweet->{'entities'}->{'urls'}[$url]->{'expanded_url'});
         $text =~ s/$old_url/$new_url/;
