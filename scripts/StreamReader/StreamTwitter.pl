@@ -30,12 +30,14 @@ $feeds{'uhorizonstech'} =       269224038;
 $feeds{'Wesnoth'} =             292527834;
 $feeds{'jeb_'} =                24166202;
 $feeds{'Dinnerbone'} =          83820762;
-$feeds{'SeargeDP'} =            381007605;
+#$feeds{'SeargeDP'} =            381007605;
 $feeds{'shikadilord'} =         165991694;
 $feeds{'StatusMinecraft'} =     901296078;
 $feeds{'kairibot'} =            369296792;
 $feeds{'_grum'} =               432311300;
 $feeds{'frogatto'} =            162971133;
+$feeds{'_ladyagnes'} =			993681445;
+$feeds{'MiaLem_n'} =			606616765;
 
 my %mojangles;
 $mojangles{'716689700'} = 'PoiPoiChen';
@@ -68,6 +70,8 @@ $mojangles{'14796299'} = 'xlson';
 $mojangles{'8032822'} = 'mollstam';
 $mojangles{'381007605'} = 'SeargeDP';
 $mojangles{'2150950224'} = 'themogminer';
+$mojangles{'993681445'} = '_ladyagnes';
+$mojangles{'606616765'} = 'MiaLem_n';
 
 my $url = 'https://stream.twitter.com/1.1/statuses/filter.json';
 my $follow = uri_escape(join(',',values(%feeds)));
