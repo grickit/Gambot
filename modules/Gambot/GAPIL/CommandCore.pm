@@ -111,7 +111,7 @@ sub dictionary_list {
   my ($self) = @_;
 
   my @list;
-  foreach my $dictionary (keys $self->{'dictionaries'}) {
+  foreach my $dictionary (keys %{$self->{'dictionaries'}}) {
     push(@list,$dictionary);
   }
   return @list;
@@ -167,7 +167,7 @@ sub dictionary_save {
 sub dictionary_count {
   my ($self) = @_;
 
-  return keys $self->{'dictionaries'};
+  return keys %{$self->{'dictionaries'}};
 }
 
 
@@ -277,7 +277,7 @@ sub child_list {
   my ($self) = @_;
 
   my @list;
-  foreach my $name (keys $self->{'children'}) {
+  foreach my $name (keys %{$self->{'children'}}) {
     push(@list,$name);
   }
   return @list;
@@ -442,7 +442,7 @@ sub delay_list {
   my ($self) = @_;
 
   my @list;
-  foreach my $timestamp (keys $self->{'delays'}) {
+  foreach my $timestamp (keys %{$self->{'delays'}}) {
     push(@list,$timestamp);
   }
   return @list;
